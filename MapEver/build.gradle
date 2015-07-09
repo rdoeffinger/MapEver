@@ -6,9 +6,21 @@ dependencies {
 }
 
 android {
+    signingConfigs {
+        config {
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "22.0.1"
-
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
+        release {
+            minifyEnabled true
+            signingConfig signingConfigs.config
+        }
+    }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -28,5 +40,12 @@ android {
         // by a similar customization.
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
+    }
+    defaultConfig {
+        applicationId 'de.reimardoeffinger.mapever'
+        targetSdkVersion 22
+        signingConfig signingConfigs.config
+    }
+    productFlavors {
     }
 }
