@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 dependencies {
     compile project(':OpenCV-2.4.9-android-sdk:sdk:java')
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22.2.1'
 }
 
 android {
@@ -10,8 +10,8 @@ android {
         config {
         }
     }
-    compileSdkVersion 21
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 22
+    buildToolsVersion "23.0.1"
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
