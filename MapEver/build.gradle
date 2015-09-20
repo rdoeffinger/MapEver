@@ -45,6 +45,7 @@ android {
         applicationId 'de.reimardoeffinger.mapever'
         targetSdkVersion 22
         signingConfig signingConfigs.config
+        resConfigs "de", "en", "fr", "sv"
     }
     productFlavors {
     }
