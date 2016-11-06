@@ -99,7 +99,7 @@ public class Start extends BaseActivity {
 	private boolean isHelpShown = false;
 	private boolean isContextMenuOpen = false;
 	
-	private int noMaps = 0;
+	private boolean noMaps = true;
 	private double[] intentPos = null;
 	private static int tileSize = 0;
 
@@ -141,16 +141,14 @@ public class Start extends BaseActivity {
 		System.out.println("getAllEntries: " + mapList);
 		System.out.println("isContextMenuOpen: " + isContextMenuOpen);
 
-		if (mapList.isEmpty()) {
-			noMaps = 1;
-		}
+		noMaps = mapList.isEmpty();
 
 		Resources resources = getResources();
 
 		bitmapList.clear();
 
 		// if maps are present, get them from the list and assign them to the positions in the grid
-		if (noMaps != 1) {
+		if (!noMaps) {
 			int position = 0;
 			for (TrackDBEntry d : mapList) {
 				positionIdList.put(position, d);
@@ -314,7 +312,7 @@ public class Start extends BaseActivity {
 		// handles, if tiles can be clicked
 		@Override
 		public boolean isEnabled(int position) {
-			return noMaps == 0;
+			return !noMaps;
 		}
 		
 		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
@@ -569,7 +567,7 @@ public class Start extends BaseActivity {
 		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
 		int position = info.position;
 		String header = "";
-		if (noMaps == 0) {
+		if (!noMaps) {
 			header = positionIdList.get(position).getMapname();
 			if (header.isEmpty()) {
 				header = getResources().getString(R.string.navigation_const_name_of_unnamed_maps);
