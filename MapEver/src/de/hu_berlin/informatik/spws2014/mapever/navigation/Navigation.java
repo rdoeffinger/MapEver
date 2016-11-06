@@ -830,7 +830,8 @@ public class Navigation extends BaseActivity implements LocationListener {
 		else if (oldState == NavigationStates.RENAME_MAP) {
 			
 			// wenn ein neuer Name eingegeben wurde, so ist er in newMapName gespeichert
-			if (newMapName != "") {
+			// thisMap == null really only happens for the test map
+			if (newMapName != "" && thisMap != null) {
 				this.getSupportActionBar().setTitle(newMapName);
 				thisMap.setMapname(newMapName);
 				
