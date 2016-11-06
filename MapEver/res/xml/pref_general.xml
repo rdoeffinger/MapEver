@@ -52,7 +52,7 @@
             android:title="@string/pref_title_git_repo" >
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://github.com/diedricm/MapEver" />
+                android:data="https://github.com/rdoeffinger/MapEver" />
         </Preference>
     </PreferenceCategory>
 
