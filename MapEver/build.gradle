@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:appcompat-v7:25.0.0'
 }
 
 android {
@@ -9,8 +9,8 @@ android {
         config {
         }
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25"
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
