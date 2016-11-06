@@ -44,7 +44,7 @@ public class MapView extends LargeImageView {
 	private static final String SAVEDTODELETEPOS = "savedToDeleteRefPointPosition";
 	
 	// Konstante, die Resource ID der Testkarte angibt
-	private static final int TESTMAP_RESOURCE = R.drawable.debug_testmap;
+	private static final int TESTMAP_RESOURCE = R.raw.debug_testmap;
 	
 	// ////// NAVIGATION ACTIVITY CONTEXT
 	
