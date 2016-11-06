@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-import de.hu_berlin.informatik.spws2014.ImagePositionLocator.TriangleImagePositionLocator;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.GpsPoint;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.ILDMIOHandler;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.ImagePositionLocator;
@@ -580,11 +579,7 @@ public class Navigation extends BaseActivity implements LocationListener {
 		// LocationDataManager initialisieren
 		Point2D imageSize = new Point2D(mapView.getImageWidth(), mapView.getImageHeight());
 		ImagePositionLocator locator;
-		if (de.hu_berlin.informatik.spws2014.mapever.Settings.getPreference_leastsquares(this)) {
-			locator = new LeastSquaresImagePositionLocator();
-		} else {
-			locator = new TriangleImagePositionLocator(imageSize, IPLSettingsContainer.DefaultContainer);
-		}
+		locator = new LeastSquaresImagePositionLocator();
 		locationDataManager = new LocationDataManager(locDatManListener, iLDMIOHandler,
 				imageSize,
 				locator);

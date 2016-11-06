@@ -138,9 +138,6 @@ public class Entzerren extends BaseActivity {
 				else if (entzerrungsView.isImageTypeSupported()) {
 					entzerrungsView.showCorners(true);
 				}
-				else if (entzerrungsView.isOpenCVLoadError()) {
-					showErrorMessage(R.string.deskewing_opencv_not_available);
-				}
 				else {
 					// Image type is not supported by deskewing algorithm (GIF?) so don't allow deskewing
 					showErrorMessage(R.string.deskewing_imagetype_not_supported);
@@ -180,7 +177,7 @@ public class Entzerren extends BaseActivity {
 			loadImageFile();
 			
 			entzerrungsView.showCorners(true);
-			entzerrungsView.calcCornersWithDetector();
+			entzerrungsView.calcCornerDefaults();
 			
 			entzerrt = false;
 			

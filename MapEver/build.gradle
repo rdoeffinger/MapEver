@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile project(':OpenCV-2.4.9-android-sdk:sdk:java')
     compile 'com.android.support:appcompat-v7:22.2.1'
 }
 
@@ -10,8 +9,8 @@ android {
         config {
         }
     }
-    compileSdkVersion 22
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -26,6 +25,11 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src']
+            java.excludes = ['**/TriangleImagePositionLocator.java',
+                             '**/CornerDetectionCamera.java',
+                             '**/CornerDetectionView.java',
+                             '**/CornerDetector.java'
+                            ]
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }

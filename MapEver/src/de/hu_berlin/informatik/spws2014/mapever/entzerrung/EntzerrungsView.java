@@ -35,11 +35,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageButton;
 
-import org.opencv.android.Utils;
-import org.opencv.core.CvException;
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -283,9 +278,8 @@ public class EntzerrungsView extends LargeImageView {
 		super.onPostLoadImage(calledByOnSizeChanged);
 		
 		if (getWidth() != 0 && getHeight() != 0) {
-			// Find corners with Corner Detection Algorithm
 			if (!punkte_gesetzt) {
-				calcCornersWithDetector();
+				calcCornerDefaults();
 			}
 		}
 	}
@@ -406,80 +400,6 @@ public class EntzerrungsView extends LargeImageView {
 		corners[3].setPosition(new Point(breite_scaled, (bitmap_hoehe - hoehe_scaled)));
 		
 		Log.d("EntzerrungsView/calcCornerDefaults", "Using default, breite/hoehe_scaled: " + breite_scaled + ", " + hoehe_scaled);
-		
-		punkte_gesetzt = true;
-	}
-	
-	/**
-	 * Use corner detection algorithm to find and set corners automatically.
-	 */
-	public void calcCornersWithDetector() {
-		// Bitmap berechnen, die für CD-Algorithmus runterskaliert wurde
-		Bitmap bmp32 = getCDScaledBitmap();
-		
-		if (bmp32 == null || getImageWidth() <= 0) {
-			Log.e("EntzerrungsView/calcCornersWithDetector", bmp32 == null
-					? "getCDScaledBitmap() returned null!"
-					: "getImageWidth() is nonpositive!");
-			calcCornerDefaults();
-			return;
-		}
-		
-		float sampleSize = getImageWidth() / bmp32.getWidth();
-		
-		org.opencv.core.Point[] corner_points;
-		
-		try {
-			Mat imgMat = new Mat();
-			Utils.bitmapToMat(bmp32, imgMat);
-			Mat greyMat = new Mat();
-			Imgproc.cvtColor(imgMat, greyMat, Imgproc.COLOR_RGB2GRAY);
-			
-			corner_points = CornerDetector.guess_corners(greyMat);
-		}
-		catch (CvException e) {
-			Log.w("EntzerrungsView/calcCornersWithDetector", "Corner detection failed with CvException");
-			e.printStackTrace();
-			
-			// it seems that the image type is not supported by the corner detection algorithm (GIF?)
-			// it won't be deskewable either, so deactivate that feature
-			showCorners(false);
-			imageTypeSupportsDeskew = false;
-			
-			calcCornerDefaults();
-			return;
-		}
-		catch (UnsatisfiedLinkError e) {
-			Log.w("EntzerrungsView/calcCornersWithDetector", "OpenCV not available");
-			openCVLoadError = true;
-			calcCornerDefaults();
-			return;
-		}
-
-		
-		// Im Fehlerfall Standardecken verwenden
-		if (corner_points == null) {
-			Log.w("EntzerrungsView/calcCornersWithDetector", "Corner detection returned null");
-			calcCornerDefaults();
-			return;
-		}
-		
-		// Koordinaten auf ursprüngliche Bildgröße hochrechnen
-		for (int i = 0; i < corner_points.length; i++) {
-			corner_points[i].x *= sampleSize;
-			corner_points[i].y *= sampleSize;
-		}
-		
-		Log.d("Corner points", "0: " + corner_points[0] + " 1: " + corner_points[1] + " 2: " + corner_points[2] + " 3: " + corner_points[3]);
-		
-		// Algorithmusergebnis als Eckpunkte verwenden
-		corners[0].setPosition(corner_points[0]);
-		corners[1].setPosition(corner_points[1]);
-		corners[2].setPosition(corner_points[2]);
-		corners[3].setPosition(corner_points[3]);
-		
-		// Sortieren (obwohl sie eigentlich sortiert sein sollten...?)
-		sortCorners();
 		
 		punkte_gesetzt = true;
 	}

@@ -11,14 +11,6 @@
             android:summaryOn="@string/pref_sum_quick_help_on"
             android:title="@string/pref_title_quick_help" />
 
-        <!-- CORNER DETECTOR CAMERA -->
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_cdCamera"
-            android:summaryOff="@string/pref_sum_cdCamera_off"
-            android:summaryOn="@string/pref_sum_cdCamera_on"
-            android:title="@string/pref_title_cdCamera" />
-
         <!-- MULTITOUCH -->
         <CheckBoxPreference
             android:defaultValue="false"
@@ -26,13 +18,6 @@
             android:summaryOff="@string/pref_sum_liv_multitouch_off"
             android:summaryOn="@string/pref_sum_liv_multitouch_on"
             android:title="@string/pref_title_liv_multitouch" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_leastsquares"
-            android:summaryOff="@string/pref_sum_leastsquares_off"
-            android:summaryOn="@string/pref_sum_leastsquares_on"
-            android:title="@string/pref_title_leastsquares" />
     </PreferenceCategory>
 
     <!-- === DEVELOPER SETTINGS === -->

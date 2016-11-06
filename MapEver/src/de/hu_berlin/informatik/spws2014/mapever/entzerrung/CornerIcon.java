@@ -128,16 +128,6 @@ public class CornerIcon extends OverlayIcon {
 		update();
 	}
 	
-	/**
-	 * Setze Bildkoordinaten des Eckpunktes.
-	 * 
-	 * @param position neue Position als OpenCV-Point (double-basiert)
-	 */
-	public void setPosition(org.opencv.core.Point position) {
-		setPosition(new Point((int) position.x, (int) position.y));
-	}
-	
-	
 	// ////////////////////////////////////////////////////////////////////////
 	// //////////// EVENT HANDLERS
 	// ////////////////////////////////////////////////////////////////////////

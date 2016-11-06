@@ -59,7 +59,6 @@
     <string name="deskewing_error_invalidcorners">Anordnung der Eckpunkte so nicht möglich!</string>
     <string name="deskewing_error_deskewfailure">Entzerrung fehlgeschlagen!</string>
     <string name="deskewing_imagetype_not_supported">Die Entzerrung wird für dieses Bildformat nicht unterstützt!</string>
-    <string name="deskewing_opencv_not_available">OpenCV für Eckpunkterkennung ist nicht verfügbar!</string>
 
     <!-- ContentDescriptions of images -->
     <string name="deskewing_desc_do_deskew">Button, der die Entzerrung ausführt</string>
@@ -127,20 +126,10 @@
     <string name="pref_sum_quick_help_on">Ein Button zum Öffnen der Schnellhilfe wird in der Menüleiste anzeigt.</string>
     <string name="pref_sum_quick_help_off">Die Hilfe kann über das Menü aufgerufen werden.</string>
 
-    <!-- General: Corner detection camera -->
-    <string name="pref_title_cdCamera">Kamera mit Eckenerkennung</string>
-    <string name="pref_sum_cdCamera_on">Eine Kamerafunktion mit Vorschau für die Eckenerkennung wird verwendet.</string>
-    <string name="pref_sum_cdCamera_off">Die Systemkamera wird verwendet (die Eckenerkennung findet ohne Vorschau statt).</string>
-
     <!-- General: LIV Multitouch -->
     <string name="pref_title_liv_multitouch">Entzerrung: Eckpunkt-Multitouch</string>
     <string name="pref_sum_liv_multitouch_on">Mehrere Eckpunkte können gleichzeitig verschoben werden.</string>
     <string name="pref_sum_liv_multitouch_off">Es kann immer nur eine Ecke gleichzeitig verschoben werden.</string>
-
-    <!-- General: least squares -->
-    <string name="pref_title_leastsquares">Alternative Lokalisierungsmethode</string>
-    <string name="pref_sum_leastsquares_on">Linearer Gleichungslöser.</string>
-    <string name="pref_sum_leastsquares_off">Basierend auf OpenCV Triangulierung.</string>
 
     <!-- Developers: Debug mode -->
     <string name="pref_title_debugmode">Debug-Modus</string>

@@ -48,8 +48,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import org.opencv.android.OpenCVLoader;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,7 +62,6 @@ import java.util.regex.Matcher;
 
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.TrackDB;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.TrackDBEntry;
-import de.hu_berlin.informatik.spws2014.mapever.camera.CornerDetectionCamera;
 import de.hu_berlin.informatik.spws2014.mapever.entzerrung.Entzerren;
 import de.hu_berlin.informatik.spws2014.mapever.navigation.Navigation;
 
@@ -87,13 +84,6 @@ public class Start extends BaseActivity {
 	// image path
 	public static final String INTENT_IMAGEPATH = "de.hu_berlin.informatik.spws2014.mapever.Start.NewImagePath";
 	public static final String INTENT_EXIT = "de.hu_berlin.informatik.spws2014.mapever.Start.Exit";
-	
-	// OpenCV initialisieren
-	static {
-		if (!OpenCVLoader.initDebug()) {
-			Log.e("OpenCV", "Could not load OpenCV!");
-		}
-	}
 	
 	// keeps track of the maps and their respective positions in the grid
 	private Map<Integer, TrackDBEntry> positionIdList = new HashMap<Integer, TrackDBEntry>();
@@ -542,21 +532,10 @@ public class Start extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				Intent photoIntent;
-				
-				if (Settings.getPreference_cdCamera(Start.this)) {
-					// Intent erzeugen, der die CornerDetectionCamera startet
-					photoIntent = new Intent(getApplicationContext(), CornerDetectionCamera.class);
-					
-					// (In MediaStore.EXTRA_OUTPUT wird hier ein String statt einer Uri übergeben.)
-					photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, MapEverApp.getAbsoluteFilePath(IMAGE_TARGET_FILENAME));
-					photoIntent.putExtra(CornerDetectionCamera.NO_CONFIRM, true);
-				}
-				else {
-					// Intent erzeugen, der Standard-Android-Kamera startet
-					photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-					File destFile = new File(MapEverApp.getAbsoluteFilePath(IMAGE_TARGET_FILENAME));
-					photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destFile));
-				}
+				// Intent erzeugen, der Standard-Android-Kamera startet
+				photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				File destFile = new File(MapEverApp.getAbsoluteFilePath(IMAGE_TARGET_FILENAME));
+				photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destFile));
 				
 				// Activity starten und auf Ergebnis (Bild) warten
 				startActivityForResult(photoIntent, TAKE_PICTURE_REQUESTCODE);

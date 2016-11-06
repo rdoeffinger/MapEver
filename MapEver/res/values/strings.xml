@@ -60,7 +60,6 @@
     <string name="deskewing_error_invalidcorners">Invalid arrangement of corners!</string>
     <string name="deskewing_error_deskewfailure">Deskewing failed!</string>
     <string name="deskewing_imagetype_not_supported">Image type is not supported to be deskewed!</string>
-    <string name="deskewing_opencv_not_available">OpenCV not available for corner detection!</string>
 
     <!-- ContentDescriptions of images -->
     <string name="deskewing_desc_do_deskew">Button for deskewing the image</string>
@@ -128,20 +127,10 @@
     <string name="pref_sum_quick_help_on">A help button is shown in the Action Bar.</string>
     <string name="pref_sum_quick_help_off">Help can be found in the menu.</string>
 
-    <!-- General: Corner detection camera -->
-    <string name="pref_title_cdCamera">Camera with corner detection</string>
-    <string name="pref_sum_cdCamera_on">A camera with a preview for the automatic corner detection will be used.</string>
-    <string name="pref_sum_cdCamera_off">The system camera will be used (corners will still be detected at deskewing).</string>
-
     <!-- General: LIV Multitouch -->
     <string name="pref_title_liv_multitouch">Deskewing: Corner multitouch</string>
     <string name="pref_sum_liv_multitouch_on">Multiple corners can be dragged simultaneously.</string>
     <string name="pref_sum_liv_multitouch_off">Only one corner can be dragged at a time.</string>
-
-    <!-- General: least squares -->
-    <string name="pref_title_leastsquares">Alternative location algo</string>
-    <string name="pref_sum_leastsquares_on">Use linear least-squares solver.</string>
-    <string name="pref_sum_leastsquares_off">Use OpenCV triangulation based solver.</string>
 
     <!-- Developers: Debug mode -->
     <string name="pref_title_debugmode">Debug mode</string>
