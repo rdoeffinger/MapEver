@@ -16,10 +16,12 @@
 
 package de.hu_berlin.informatik.spws2014.mapever;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +29,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -97,8 +101,110 @@ public class Start extends BaseActivity {
 	private int noMaps = 0;
 	private double[] intentPos = null;
 	private static int tileSize = 0;
-	
-	
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		if (TrackDB.main == null &&
+			ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+			if (!TrackDB.loadDB(new File(MapEverApp.getAbsoluteFilePath("")))) {
+				trackDBErrorAlert();
+				return;
+			}
+			// hack since refreshMapGrid does not work
+			Intent intent = getIntent();
+			finish();
+			startActivity(intent);
+		}
+	}
+
+	private void trackDBErrorAlert() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+		builder.setTitle("error");
+		builder.setMessage("unable to read TrackDB");
+		builder.setNeutralButton("Close", null);
+		builder.create().show();
+	}
+
+	// TODO: cannot find a way to actually make it refresh the view
+	private void refreshMapGrid() {
+		ArrayList<TrackDBEntry> mapList = TrackDB.main == null ? new ArrayList<TrackDBEntry>() : new ArrayList<TrackDBEntry>(TrackDB.main.getAllMaps());
+		Collections.sort(mapList, new Comparator<TrackDBEntry>() {
+			public int compare(TrackDBEntry t1, TrackDBEntry t2) {
+				if (t1.getIdentifier() > t2.getIdentifier()) return -1;
+				if (t1.getIdentifier() < t2.getIdentifier()) return 1;
+				return 0;
+			}
+		});
+
+		// Debug
+		System.out.println("getAllEntries: " + mapList);
+		System.out.println("isContextMenuOpen: " + isContextMenuOpen);
+
+		if (mapList.isEmpty()) {
+			noMaps = 1;
+		}
+
+		Resources resources = getResources();
+
+		bitmapList.clear();
+
+		// uses null tiles to enforce the respective orientation layouts
+		if (noMaps == 1) {
+			// no maps present, landscape orientation
+			if (getResources().getConfiguration().orientation == 2) {
+				bitmapList.add(null);
+				bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
+				bitmapList.add(null);
+			}
+			// no maps present, portrait orientation
+			else {
+				bitmapList.add(null);
+				bitmapList.add(null);
+				bitmapList.add(null);
+				bitmapList.add(null);
+				bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
+				bitmapList.add(null);
+			}
+		}
+		// if maps are present, get them from the list and assign them to the positions in the grid
+		else {
+			bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
+
+			int position = 0;
+			for (TrackDBEntry d : mapList) {
+				position++;
+				positionIdList.put(position, d);
+
+				// get the ID of the map
+				String id_string = Long.toString(positionIdList.get(position).getIdentifier());
+				File thumbFile = new File(MapEverApp.getAbsoluteFilePath(id_string + "_thumb"));
+				Bitmap thumbBitmap = null;
+
+				// try to load bitmap of thumbnail if it exists
+				if (thumbFile.exists()) {
+					thumbBitmap = BitmapFactory.decodeFile(thumbFile.getAbsolutePath());
+				}
+
+				// add the thumbnail of the map to the bitmapList if it exists, a dummy picture otherwise
+				if (thumbBitmap != null) {
+					bitmapList.add(thumbBitmap);
+				}
+				else {
+					bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.map_dummy));
+				}
+
+				// (((Debug
+				System.out.println("mapID: " + d.getIdentifier());
+				System.out.println("ID String:" + MapEverApp.getAbsoluteFilePath(id_string));
+				System.out.println("ID map (position , ID)");
+				for (Map.Entry<Integer, TrackDBEntry> entry : positionIdList.entrySet()) {
+					System.out.println("ID map: " + "(" + entry.getKey() + " , " + entry.getValue() + ")");
+				}
+				// )))Debug
+			}
+		}
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d("Start", "onCreate..." + (savedInstanceState != null ? " with savedInstanceState" : ""));
@@ -142,92 +248,25 @@ public class Start extends BaseActivity {
 		
 		// number of columns for the gridview
 		int column = 3;
-		Resources resources = getResources();
-		
+
 		// get a list of all maps from the databse
 		if (!TrackDB.loadDB(new File(MapEverApp.getAbsoluteFilePath("")))) {
 			Log.e("Start", "Could not start DB!");
-			System.exit(-1);
-		}
-		
-		ArrayList<TrackDBEntry> mapList = new ArrayList<TrackDBEntry>(TrackDB.main.getAllMaps());
-		Collections.sort(mapList, new Comparator<TrackDBEntry>() {
-			public int compare(TrackDBEntry t1, TrackDBEntry t2) {
-				if (t1.getIdentifier() > t2.getIdentifier()) return -1;
-				if (t1.getIdentifier() < t2.getIdentifier()) return 1;
-				return 0;
+			if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+				ActivityCompat.requestPermissions(this,
+						new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+								Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+			} else {
+				trackDBErrorAlert();
 			}
-		});
-		
-		// Debug
-		System.out.println("getAllEntries: " + mapList);
-		System.out.println("isContextMenuOpen: " + isContextMenuOpen);
-		
+		}
+
 		final GridView gridview = (GridView) findViewById(R.id.start);
 		gridview.setNumColumns(column);
 		gridview.setAdapter(new ImageAdapter(this));
-		
-		if (mapList.isEmpty()) {
-			noMaps = 1;
-		}
-		
-		// uses null tiles to enforce the respective orientation layouts
-		if (noMaps == 1) {
-			// no maps present, landscape orientation
-			if (getResources().getConfiguration().orientation == 2) {
-				bitmapList.add(null);
-				bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
-				bitmapList.add(null);
-			}
-			// no maps present, portrait orientation
-			else {
-				bitmapList.add(null);
-				bitmapList.add(null);
-				bitmapList.add(null);
-				bitmapList.add(null);
-				bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
-				bitmapList.add(null);
-			}
-		}
-		// if maps are present, get them from the list and assign them to the positions in the grid
-		else {
-			bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
-			
-			int position = 0;
-			for (TrackDBEntry d : mapList) {
-				position++;
-				positionIdList.put(position, d);
-				
-				// get the ID of the map
-				String id_string = Long.toString(positionIdList.get(position).getIdentifier());
-				File thumbFile = new File(MapEverApp.getAbsoluteFilePath(id_string + "_thumb"));
-				Bitmap thumbBitmap = null;
-				
-				// try to load bitmap of thumbnail if it exists
-				if (thumbFile.exists()) {
-					thumbBitmap = BitmapFactory.decodeFile(thumbFile.getAbsolutePath());
-				}
-				
-				// add the thumbnail of the map to the bitmapList if it exists, a dummy picture otherwise
-				if (thumbBitmap != null) {
-					bitmapList.add(thumbBitmap);
-				}
-				else {
-					bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.map_dummy));
-				}
-				
-				// (((Debug
-				System.out.println("mapID: " + d.getIdentifier());
-				System.out.println("ID String:" + MapEverApp.getAbsoluteFilePath(id_string));
-				System.out.println("ID map (position , ID)");
-				for (Map.Entry<Integer, TrackDBEntry> entry : positionIdList.entrySet()) {
-					System.out.println("ID map: " + "(" + entry.getKey() + " , " + entry.getValue() + ")");
-				}
-				// )))Debug
-			}
-		}
-		
-		
+
+		refreshMapGrid();
+
 		// ////////// hier wird das popup fenster erstellt ///////////////
 		newMapPopup = new AlertDialog.Builder(Start.this).create();
 		// /////////sobald man irgendwo ausserhalb den bildschirm beruehrt
@@ -536,7 +575,13 @@ public class Start extends BaseActivity {
 				photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 				File destFile = new File(MapEverApp.getAbsoluteFilePath(IMAGE_TARGET_FILENAME));
 				photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destFile));
-				
+
+				if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+					ActivityCompat.requestPermissions(Start.this,
+							new String[]{Manifest.permission.CAMERA}, 0);
+					return;
+				}
+
 				// Activity starten und auf Ergebnis (Bild) warten
 				startActivityForResult(photoIntent, TAKE_PICTURE_REQUESTCODE);
 			}
@@ -634,6 +679,7 @@ public class Start extends BaseActivity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					deleteMap(positionIdList.get(info.position));
+					// hack since refreshMapGrid does not work
 					Intent intent = getIntent();
 					finish();
 					startActivity(intent);

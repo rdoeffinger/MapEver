@@ -16,12 +16,14 @@
 
 package de.hu_berlin.informatik.spws2014.mapever.navigation;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,6 +31,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -268,8 +272,12 @@ public class Navigation extends BaseActivity implements LocationListener {
 		Log.d("onCreate", "Loading map: " + currentMapID + (currentMapID == -1 ? " (new map!)" : ""));
 		initLoadMap();
 		
-		// Initialisiere GPS-Modul
-		initGPSModule();
+		if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+		} else {
+			// Initialisiere GPS-Modul
+			initGPSModule();
+		}
 		
 		// Initialiales update(), damit alles korrekt dargestellt wird
 		mapView.update();
@@ -307,7 +315,7 @@ public class Navigation extends BaseActivity implements LocationListener {
 		Log.d("Navigation", "onStart...");
 		
 		//Prompt user to activate GPS
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+		if (locationManager != null && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			DialogInterface.OnClickListener gpsPromptListener = new DialogInterface.OnClickListener() {
 			    @Override
 			    public void onClick(DialogInterface dialog, int which) {
@@ -338,9 +346,11 @@ public class Navigation extends BaseActivity implements LocationListener {
 		super.onResume();
 		Log.d("Navigation", "onResume...");
 		
-		// Abonniere GPS Updates
-		// TODO Genauigkeit (Parameter 2, 3)? default aus Tutorial (400, 1)
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200, (float) 0.2, this);
+		if (locationManager != null) {
+			// Abonniere GPS Updates
+			// TODO Genauigkeit (Parameter 2, 3)? default aus Tutorial (400, 1)
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200, (float) 0.2, this);
+		}
 	}
 	
 	@Override
@@ -348,8 +358,10 @@ public class Navigation extends BaseActivity implements LocationListener {
 		super.onPause();
 		Log.d("Navigation", "onPause...");
 		
-		// Deabonniere GPS Updates
-		locationManager.removeUpdates(this);
+		if (locationManager != null) {
+			// Deabonniere GPS Updates
+			locationManager.removeUpdates(this);
+		}
 		
 		// Stelle sicher, dass LDM-IO-Handler letzte Daten geschrieben hat
 		if (locationDataManager != null) {
@@ -616,6 +628,14 @@ public class Navigation extends BaseActivity implements LocationListener {
 	}
 	
 	
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		if (locationManager == null &&
+			ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+			initGPSModule();
+		}
+	}
+
 	// ////////////////////////////////////////////////////////////////////////
 	// //////////// HANDLING VON USERINPUT
 	// ////////////////////////////////////////////////////////////////////////
