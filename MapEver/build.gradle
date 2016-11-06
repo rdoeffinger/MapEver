@@ -17,7 +17,7 @@ android {
             applicationIdSuffix ".debug"
         }
         release {
-            minifyEnabled true
+            minifyEnabled false // currently interferes with serialization
             shrinkResources true
             signingConfig signingConfigs.config
         }
