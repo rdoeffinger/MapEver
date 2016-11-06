@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/start_help_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/ImageView1"
@@ -20,35 +21,25 @@
         android:layout_height="wrap_content"
         android:padding="10dp" >
 
-        <RelativeLayout
-            android:id="@+id/new_map_help"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/new_map_help_button"
+            app:useCompatPadding="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:background="@android:color/white" >
-
-            <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:background="@drawable/neue_karte"
-                android:contentDescription="@string/start_desc_new_map" />
-        </RelativeLayout>
+            android:src="@drawable/ic_add_black_24dp" />
 
         <TextView
             android:id="@+id/start_help_text"
+            android:layout_alignParentBottom="true"
             android:layout_width="214dp"
             android:layout_height="39dp"
-            android:layout_alignParentTop="true"
             android:layout_marginLeft="33dp"
             android:layout_marginStart="33dp"
-            android:layout_marginTop="16dp"
-            android:layout_toEndOf="@+id/new_map_help"
-            android:layout_toRightOf="@+id/new_map_help"
+            android:layout_marginBottom="16dp"
+            android:layout_toStartOf="@+id/new_map_help_button"
+            android:layout_toLeftOf="@+id/new_map_help_button"
             android:text="@string/start_help_text"
             android:textColor="@android:color/white" />
     </RelativeLayout>

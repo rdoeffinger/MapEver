@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
@@ -148,31 +149,10 @@ public class Start extends BaseActivity {
 
 		bitmapList.clear();
 
-		// uses null tiles to enforce the respective orientation layouts
-		if (noMaps == 1) {
-			// no maps present, landscape orientation
-			if (getResources().getConfiguration().orientation == 2) {
-				bitmapList.add(null);
-				bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
-				bitmapList.add(null);
-			}
-			// no maps present, portrait orientation
-			else {
-				bitmapList.add(null);
-				bitmapList.add(null);
-				bitmapList.add(null);
-				bitmapList.add(null);
-				bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
-				bitmapList.add(null);
-			}
-		}
 		// if maps are present, get them from the list and assign them to the positions in the grid
-		else {
-			bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.neue_karte));
-
+		if (noMaps != 1) {
 			int position = 0;
 			for (TrackDBEntry d : mapList) {
-				position++;
 				positionIdList.put(position, d);
 
 				// get the ID of the map
@@ -201,6 +181,7 @@ public class Start extends BaseActivity {
 					System.out.println("ID map: " + "(" + entry.getKey() + " , " + entry.getValue() + ")");
 				}
 				// )))Debug
+				position++;
 			}
 		}
 	}
@@ -261,6 +242,14 @@ public class Start extends BaseActivity {
 			}
 		}
 
+		final FloatingActionButton floatNewMapButton = (FloatingActionButton)findViewById(R.id.floatNewMapButton);
+		floatNewMapButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				showNewMapPopup();
+			}
+		});
+
 		final GridView gridview = (GridView) findViewById(R.id.start);
 		gridview.setNumColumns(column);
 		gridview.setAdapter(new ImageAdapter(this));
@@ -288,19 +277,11 @@ public class Start extends BaseActivity {
 					return;
 				}
 				
-				// Erster Button: Neue Karte
-				// Wenn keine Karten vorhanden sind, ist die Position des Buttons egal
-				if (noMaps == 1 || position == 0) {
-					// //////sobald neue karte button geklickt erscheint schon das popup///////
-					showNewMapPopup();
-				}
-				else {
 					// Toast.makeText(Start.this, "" + position, Toast.LENGTH_SHORT).show();
 					Intent intent = new Intent(getApplicationContext(), Navigation.class);
 					intent.putExtra(Navigation.INTENT_LOADMAPID,  positionIdList.get(position).getIdentifier());
 					intent.putExtra(Navigation.INTENT_POS, intentPos);
 					startActivityForResult(intent, NAVIGATION_REQUESTCODE);
-				}
 			}
 		});
 		registerForContextMenu(gridview);
@@ -333,23 +314,7 @@ public class Start extends BaseActivity {
 		// handles, if tiles can be clicked
 		@Override
 		public boolean isEnabled(int position) {
-			if (noMaps == 0) {
-				return true;
-			}
-			else {
-				if (getResources().getConfiguration().orientation == 1 && position == 4) {
-					return true;
-				}
-				else if (getResources().getConfiguration().orientation == 2 && position != 1) {
-					return false;
-				}
-				else if (getResources().getConfiguration().orientation == 2 && position == 1) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
+			return noMaps == 0;
 		}
 		
 		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
@@ -371,10 +336,6 @@ public class Start extends BaseActivity {
 			// adds bitmaps of the map-thumbnails to the grid
 			Bitmap[] bitmapArray = new Bitmap[bitmapList.size()];
 			bitmapList.toArray(bitmapArray);
-			
-			if (position == 0) {
-				imageView.setFocusable(false);
-			}
 			
 			if (bitmapArray[position] != null) {
 				imageView.setImageBitmap(bitmapArray[position]);
@@ -608,13 +569,11 @@ public class Start extends BaseActivity {
 		final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
 		int position = info.position;
 		String header = "";
-		if (position != 0 && noMaps == 0) {
+		if (noMaps == 0) {
 			header = positionIdList.get(position).getMapname();
 			if (header.isEmpty()) {
 				header = getResources().getString(R.string.navigation_const_name_of_unnamed_maps);
 			}
-		}
-		if (position != 0 && noMaps == 0) {
 			String rename = getString(R.string.start_context_rename);
 			String delete = getString(R.string.start_context_delete);
 			menu.add(0, v.getId(), 0, rename);
