@@ -327,7 +327,7 @@ public class MapView extends LargeImageView {
 		
 		if (mapID == 0) {
 			// Ohne Parameter oder im Fehlerfall wird Testkarte angezeigt
-			setImageResource(TESTMAP_RESOURCE);
+			setImageResourceRaw(TESTMAP_RESOURCE);
 		}
 		
 		Log.d("MapView/loadMap", "Loading map #" + mapID + (mapID == 0 ? " [test_karte]" : "")

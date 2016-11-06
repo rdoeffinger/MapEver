@@ -268,15 +268,18 @@ public class LargeImageView extends ImageView {
 		return staticBitmap;
 	}
 	
-	/**
-	 * Lädt eine Resource als Bildquelle. Hierbei wird nach Möglichkeit über CachedImage ein BitmapRegionDecoder
-	 * instanziiert, indem ein InputStream is erzeugt und setImageStream(is) aufgerufen wird.
-	 */
 	@Override
 	public void setImageResource(int resId) {
+		assert false;
+	}
+	/**
+	 * Lädt eine  raw Resource als Bildquelle. Hierbei wird nach Möglichkeit über CachedImage ein BitmapRegionDecoder
+	 * instanziiert, indem ein InputStream is erzeugt und setImageStream(is) aufgerufen wird.
+	 */
+	public void setImageResourceRaw(int resId) {
 		try {
 			// Lade die Resource per Stream
-			InputStream stream = getResources().openRawResource(resId);
+			InputStream stream = getResources().openRawResource(+resId);
 			setImageStream(stream);
 		}
 		catch (IOException e) {
@@ -285,7 +288,7 @@ public class LargeImageView extends ImageView {
 			Log.w("LIV/setImageStream", e.toString());
 			
 			// Fallback: Lade das Bild statisch als Bitmap (Stream muss neu geöffnet werden)
-			InputStream stream = getResources().openRawResource(resId);
+			InputStream stream = getResources().openRawResource(+resId);
 			setImageBitmap(BitmapFactory.decodeStream(stream));
 		}
 	}
