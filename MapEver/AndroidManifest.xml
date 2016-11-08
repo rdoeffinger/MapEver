@@ -53,23 +53,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".camera.CornerDetectionCamera"
-            android:label="@string/app_name"
-            android:parentActivityName=".Start"
-            android:screenOrientation="landscape" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Start" />
-        </activity>
-        <activity
-            android:name=".camera.ConfirmImageActivity"
-            android:label="@string/app_name"
-            android:parentActivityName=".camera.CornerDetectionCamera" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".camera.CornerDetectionCamera" />
-        </activity>
-        <activity
             android:name=".entzerrung.Entzerren"
             android:label="@string/title_activity_deskew"
             android:parentActivityName=".Start" >
