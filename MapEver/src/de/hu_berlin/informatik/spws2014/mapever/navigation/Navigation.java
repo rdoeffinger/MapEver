@@ -401,6 +401,21 @@ public class Navigation extends BaseActivity implements LocationListener {
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    private void returnToStart() {
+        // Wenn wir zur�ckgehen, muss der Zustand nicht gespeichert werden
+        saveState = false;
+
+        // Startbildschirm aufrufen und Activity finishen
+        Intent intent = new Intent(getApplicationContext(), Start.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intentPos != null) {
+            intentPos = null;
+            intent.putExtra(Start.INTENT_EXIT, true);
+        }
+        startActivity(intent);
+        finish();
+    }
+
     /**
      * Beim Bet�tigen der Zur�cktaste gelangen wir wieder zum Startbildschirm.
      */
@@ -425,18 +440,7 @@ public class Navigation extends BaseActivity implements LocationListener {
             return;
         }
 
-        // Wenn wir zur�ckgehen, muss der Zustand nicht gespeichert werden
-        saveState = false;
-
-        // Startbildschirm aufrufen und Activity finishen
-        Intent intent = new Intent(getApplicationContext(), Start.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        if (intentPos != null) {
-            intentPos = null;
-            intent.putExtra(Start.INTENT_EXIT, true);
-        }
-        startActivity(intent);
-        finish();
+        returnToStart();
     }
 
     @Override
@@ -458,6 +462,9 @@ public class Navigation extends BaseActivity implements LocationListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+        case R.id.home:
+            returnToStart();
+            return true;
 
         case R.id.action_rename_map:
             changeState(NavigationStates.RENAME_MAP);
@@ -1007,7 +1014,7 @@ public class Navigation extends BaseActivity implements LocationListener {
             }
 
             if (intentPos != null) {
-                onBackPressed();
+                returnToStart();
                 return;
             }
             break;
