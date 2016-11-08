@@ -40,7 +40,7 @@
         android:layout_marginRight="20dp"
         android:background="@drawable/ic_action_collection"
         android:contentDescription="@string/new_map_desc_filechooser"
-        android:scaleType="matrix" />
+        android:scaleType="fitCenter" />
 
     <ImageButton
         android:id="@+id/camera"
@@ -54,7 +54,7 @@
         android:layout_marginStart="20dp"
         android:background="@drawable/ic_action_camera"
         android:contentDescription="@string/new_map_desc_camera"
-        android:scaleType="matrix" />
+        android:scaleType="fitCenter" />
 
     <TextView
         android:id="@+id/camera_label"
