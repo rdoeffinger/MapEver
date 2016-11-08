@@ -17,7 +17,8 @@ android {
             applicationIdSuffix ".debug"
         }
         release {
-            minifyEnabled false // currently interferes with serialization
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
             shrinkResources true
             signingConfig signingConfigs.config
         }
