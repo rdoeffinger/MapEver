@@ -21,67 +21,67 @@ package de.hu_berlin.informatik.spws2014.mapever.navigation;
  * Enum zur einfacheren Beschreibung des aktuellen Zustands der Navigation
  */
 public enum NavigationStates {
-	/**
-	 * normaler Betrieb, angezeigte Buttons: RefPoint Setzen
-	 */
-	RUNNING,
-	
-	/**
-	 * RefPoint Setzen betätigt, Warte auf Setzen des Referenzpunkts durch Nutzer
-	 */
-	MARK_REFPOINT,
-	
-	/**
-	 * RefPoint gesetzt, Nutzer muss ihn noch bestätigen, angezeigte Buttons: akzeptieren, verwerfen
-	 */
-	ACCEPT_REFPOINT,
-	
-	/**
-	 * RefPoint wurde angewählt, Nutzer muss entscheiden, ob er ihn löschen
-	 * möchte oder aber nicht, angezeigte Buttons: RefPoint löschen, zurück
-	 */
-	DELETE_REFPOINT,
-	
-	/**
-	 * Die Karte kann nun umbenannt werden, es wird ein EditText Feld angezeigt.
-	 */
-	RENAME_MAP,
-	
-	/**
-	 * Der Hilfebildschirm für RUNNING wird angezeigt
-	 */
-	HELP_RUNNING,
-	
-	/**
-	 * Der Hilfebildschirm für MARK_REFPOINT wird angezeigt
-	 */
-	HELP_MARK_REFPOINT,
-	
-	/**
-	 * Der Hilfebildschirm für ACCEPT_REFPOINT wird angezeigt
-	 */
-	HELP_ACCEPT_REFPOINT,
-	
-	/**
-	 * Der Hilfebildschirm für DELETE_REFPOINT wird angezeigt
-	 */
-	HELP_DELETE_REFPOINT;
-	
-	/**
-	 * gehört dieser Zustand zur Schnellhilfe?
-	 * 
-	 * @return
-	 */
-	public boolean isHelpState() {
-		switch (this) {
-			case HELP_ACCEPT_REFPOINT:
-			case HELP_DELETE_REFPOINT:
-			case HELP_MARK_REFPOINT:
-			case HELP_RUNNING:
-				return true;
-				
-			default:
-				return false;
-		}
-	}
+    /**
+     * normaler Betrieb, angezeigte Buttons: RefPoint Setzen
+     */
+    RUNNING,
+
+    /**
+     * RefPoint Setzen betätigt, Warte auf Setzen des Referenzpunkts durch Nutzer
+     */
+    MARK_REFPOINT,
+
+    /**
+     * RefPoint gesetzt, Nutzer muss ihn noch bestätigen, angezeigte Buttons: akzeptieren, verwerfen
+     */
+    ACCEPT_REFPOINT,
+
+    /**
+     * RefPoint wurde angewählt, Nutzer muss entscheiden, ob er ihn löschen
+     * möchte oder aber nicht, angezeigte Buttons: RefPoint löschen, zurück
+     */
+    DELETE_REFPOINT,
+
+    /**
+     * Die Karte kann nun umbenannt werden, es wird ein EditText Feld angezeigt.
+     */
+    RENAME_MAP,
+
+    /**
+     * Der Hilfebildschirm für RUNNING wird angezeigt
+     */
+    HELP_RUNNING,
+
+    /**
+     * Der Hilfebildschirm für MARK_REFPOINT wird angezeigt
+     */
+    HELP_MARK_REFPOINT,
+
+    /**
+     * Der Hilfebildschirm für ACCEPT_REFPOINT wird angezeigt
+     */
+    HELP_ACCEPT_REFPOINT,
+
+    /**
+     * Der Hilfebildschirm für DELETE_REFPOINT wird angezeigt
+     */
+    HELP_DELETE_REFPOINT;
+
+    /**
+     * gehört dieser Zustand zur Schnellhilfe?
+     *
+     * @return
+     */
+    public boolean isHelpState() {
+        switch (this) {
+        case HELP_ACCEPT_REFPOINT:
+        case HELP_DELETE_REFPOINT:
+        case HELP_MARK_REFPOINT:
+        case HELP_RUNNING:
+            return true;
+
+        default:
+            return false;
+        }
+    }
 }

@@ -22,46 +22,46 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 public class Settings extends PreferenceActivity {
-	
-	public static final String key_quickHelp = "pref_quick_help";
-	public static final String key_livMultitouch = "pref_liv_multitouch";
-	public static final String key_debugMode = "pref_debugmode";
-	
-	// Ignore deprecation warnings (there are no API 10 compatible alternatives)
-	@SuppressWarnings("deprecation")
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		
-		addPreferencesFromResource(R.xml.pref_general);
-	}
-	
-	// Preference getters
-	
-	/**
-	 * Returns true if quick help button should be visible in Action Bar.
-	 * 
-	 * @param context Just use 'this'
-	 */
-	public static boolean getPreference_quickHelp(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_quickHelp, false);
-	}
-	
-	/**
-	 * Returns true if multitouch in LIV should be enabled.
-	 * 
-	 * @param context Just use 'this'
-	 */
-	public static boolean getPreference_livMultitouch(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_livMultitouch, false);
-	}
 
-	/**
-	 * Returns true if debug mode should be activated.
-	 * 
-	 * @param context Just use 'this'
-	 */
-	public static boolean getPreference_debugMode(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_debugMode, false);
-	}
+    public static final String key_quickHelp = "pref_quick_help";
+    public static final String key_livMultitouch = "pref_liv_multitouch";
+    public static final String key_debugMode = "pref_debugmode";
+
+    // Ignore deprecation warnings (there are no API 10 compatible alternatives)
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        addPreferencesFromResource(R.xml.pref_general);
+    }
+
+    // Preference getters
+
+    /**
+     * Returns true if quick help button should be visible in Action Bar.
+     *
+     * @param context Just use 'this'
+     */
+    public static boolean getPreference_quickHelp(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_quickHelp, false);
+    }
+
+    /**
+     * Returns true if multitouch in LIV should be enabled.
+     *
+     * @param context Just use 'this'
+     */
+    public static boolean getPreference_livMultitouch(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_livMultitouch, false);
+    }
+
+    /**
+     * Returns true if debug mode should be activated.
+     *
+     * @param context Just use 'this'
+     */
+    public static boolean getPreference_debugMode(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_debugMode, false);
+    }
 }

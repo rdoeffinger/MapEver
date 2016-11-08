@@ -35,58 +35,57 @@ import java.io.IOException;
 // SIEHE AUCH: http://stackoverflow.com/a/708317
 
 public class MapEverApp extends Application {
-	
-	// Basisverzeichnis, in dem unsere Dateien zu finden sind
-	public static final String BASE_DIR_DIRNAME = "mapever";
-	public static final String BASE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + BASE_DIR_DIRNAME;
-	
-	public static final String TEMP_IMAGE_FILENAME = "temp";
-	public static final String THUMB_EXT = "_thumb";
-	
-	public MapEverApp() {
-		// ////// INITIALIZE APP
-		
-		// Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
-		try {
-			initializeBaseDir();
-		}
-		catch (IOException e) {
-			Log.e("MapEverApp", "Failed to initialize base directory!");
-			e.printStackTrace();
-		}
-	}
-	
-	private void initializeBaseDir() throws IOException {
-		File baseDir = new File(BASE_DIR);
-		
-		// Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
-		if (!baseDir.exists()) {
-			Log.d("MapEverApp", "Base directory does not exist, creating new one at '" + BASE_DIR + "'");
-			
-			if (!baseDir.mkdirs()) {
-				throw new IOException("mkdirs() returned false");
-			}
 
-			File nomediaFile = new File(BASE_DIR + File.separator + ".nomedia");
-			nomediaFile.createNewFile();
-		}
-	}
-	
-	/**
-	 * Wandelt einen relativen Pfad in einen absoluten Pfad um. Die Pfade sind dabei relativ zum Appverzeichnis
-	 * (externalStorageDirectory + "/mapever/") anzugeben.
-	 * 
-	 * @param relativeFilename
-	 * @return
-	 */
-	public static String getAbsoluteFilePath(String relativeFilename) {
-		return BASE_DIR + File.separator + relativeFilename;
-	}
-	
-	/**
-	 * Gibt true zurück, falls Debug-Mode aktiviert ist.
-	 */
-	public static boolean isDebugModeEnabled(Context context) {
-		return Settings.getPreference_debugMode(context);
-	}
+    // Basisverzeichnis, in dem unsere Dateien zu finden sind
+    public static final String BASE_DIR_DIRNAME = "mapever";
+    public static final String BASE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + BASE_DIR_DIRNAME;
+
+    public static final String TEMP_IMAGE_FILENAME = "temp";
+    public static final String THUMB_EXT = "_thumb";
+
+    public MapEverApp() {
+        // ////// INITIALIZE APP
+
+        // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
+        try {
+            initializeBaseDir();
+        } catch (IOException e) {
+            Log.e("MapEverApp", "Failed to initialize base directory!");
+            e.printStackTrace();
+        }
+    }
+
+    private void initializeBaseDir() throws IOException {
+        File baseDir = new File(BASE_DIR);
+
+        // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
+        if (!baseDir.exists()) {
+            Log.d("MapEverApp", "Base directory does not exist, creating new one at '" + BASE_DIR + "'");
+
+            if (!baseDir.mkdirs()) {
+                throw new IOException("mkdirs() returned false");
+            }
+
+            File nomediaFile = new File(BASE_DIR + File.separator + ".nomedia");
+            nomediaFile.createNewFile();
+        }
+    }
+
+    /**
+     * Wandelt einen relativen Pfad in einen absoluten Pfad um. Die Pfade sind dabei relativ zum Appverzeichnis
+     * (externalStorageDirectory + "/mapever/") anzugeben.
+     *
+     * @param relativeFilename
+     * @return
+     */
+    public static String getAbsoluteFilePath(String relativeFilename) {
+        return BASE_DIR + File.separator + relativeFilename;
+    }
+
+    /**
+     * Gibt true zurück, falls Debug-Mode aktiviert ist.
+     */
+    public static boolean isDebugModeEnabled(Context context) {
+        return Settings.getPreference_debugMode(context);
+    }
 }

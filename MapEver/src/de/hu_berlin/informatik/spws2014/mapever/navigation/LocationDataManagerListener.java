@@ -23,21 +23,21 @@ import java.util.concurrent.Callable;
  * Nutzer vorliegt zu behandeln.
  */
 public class LocationDataManagerListener implements Callable<Void> {
-	// Context der Activity
-	Navigation navigationContext;
-	
-	public LocationDataManagerListener(Navigation context) {
-		this.navigationContext = context;
-	}
-	
-	/**
-	 * Wird vom LocationDataManager aufgerufen, wenn er eine neue Position für
-	 * den Nutzer ermittelt hat
-	 */
-	@Override
-	public Void call() throws Exception {
-		// An Navigation übergeben
-		navigationContext.onNewUserPosition();
-		return null;
-	}
+    // Context der Activity
+    Navigation navigationContext;
+
+    public LocationDataManagerListener(Navigation context) {
+        this.navigationContext = context;
+    }
+
+    /**
+     * Wird vom LocationDataManager aufgerufen, wenn er eine neue Position für
+     * den Nutzer ermittelt hat
+     */
+    @Override
+    public Void call() throws Exception {
+        // An Navigation übergeben
+        navigationContext.onNewUserPosition();
+        return null;
+    }
 }

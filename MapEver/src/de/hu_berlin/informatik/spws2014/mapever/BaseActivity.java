@@ -26,61 +26,59 @@ import android.view.MenuItem;
 import android.view.Window;
 
 public class BaseActivity extends ActionBarActivity {
-	// ÜberUns popup
-	private AlertDialog aboutUsPopup;
-	
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// ////////// hier wird das popup fenster erstellt ///////////////
-		aboutUsPopup = new AlertDialog.Builder(BaseActivity.this).create();
-		
-		// /////////sobald man irgendwo ausserhalb den bildschirm beruehrt
-		// /////////wird das popup geschlossen
-		aboutUsPopup.setCanceledOnTouchOutside(true);
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Show quick help button only in Action Bar if the corresponding setting is activated
-		MenuItem item = menu.findItem(R.id.action_quick_help);
-		
-		if (item != null) {
-			if (Settings.getPreference_quickHelp(this)) {
-				MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-			}
-			else {
-				MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_NEVER);
-			}
-		}
-		
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		
-		if (id == R.id.action_about) {
-			showAboutUsPopup();
-			return true;
-		}
-		else if (id == R.id.action_settings) {
-			// open settings
-			Intent settings = new Intent(getApplicationContext(), Settings.class);
-			startActivity(settings);
-		}
-		
-		return super.onOptionsItemSelected(item);
-	}
-	
-	
-	private void showAboutUsPopup() {
-		aboutUsPopup.show();
-		Window win = aboutUsPopup.getWindow();
-		win.setContentView(R.layout.aboutus);
-	}
-	
+    // ÜberUns popup
+    private AlertDialog aboutUsPopup;
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // ////////// hier wird das popup fenster erstellt ///////////////
+        aboutUsPopup = new AlertDialog.Builder(BaseActivity.this).create();
+
+        // /////////sobald man irgendwo ausserhalb den bildschirm beruehrt
+        // /////////wird das popup geschlossen
+        aboutUsPopup.setCanceledOnTouchOutside(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Show quick help button only in Action Bar if the corresponding setting is activated
+        MenuItem item = menu.findItem(R.id.action_quick_help);
+
+        if (item != null) {
+            if (Settings.getPreference_quickHelp(this)) {
+                MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+            } else {
+                MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_NEVER);
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_about) {
+            showAboutUsPopup();
+            return true;
+        } else if (id == R.id.action_settings) {
+            // open settings
+            Intent settings = new Intent(getApplicationContext(), Settings.class);
+            startActivity(settings);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    private void showAboutUsPopup() {
+        aboutUsPopup.show();
+        Window win = aboutUsPopup.getWindow();
+        win.setContentView(R.layout.aboutus);
+    }
+
 }

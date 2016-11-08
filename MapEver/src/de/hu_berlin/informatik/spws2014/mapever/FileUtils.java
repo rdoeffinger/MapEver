@@ -24,38 +24,38 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class FileUtils {
-	
-	public static void copyStreamToStream(InputStream srcStream, OutputStream destStream) throws IOException {
-		byte[] buffer = new byte[4096];
-		int n;
-		
-		while ((n = srcStream.read(buffer)) > 0) {
-			destStream.write(buffer, 0, n);
-		}
-	}
-	
-	public static void copyStreamToFile(InputStream srcStream, File destFile) throws IOException {
-		// OutputStream für Zieldatei erzeugen
-		OutputStream destStream = new FileOutputStream(destFile);
-		
-		// Kopiere Daten von InputStream zu OutputStream
-		copyStreamToStream(srcStream, destStream);
-		
-		// OutputStream schließen
-		destStream.close();
-	}
-	
-	public static void copyFileToFile(File srcFile, File destFile) throws IOException {
-		// Streams für Quell- und für Zieldatei erzeugen
-		InputStream srcStream = new FileInputStream(srcFile);
-		OutputStream destStream = new FileOutputStream(destFile);
-		
-		// Kopiere Daten von InputStream zu OutputStream
-		copyStreamToStream(srcStream, destStream);
-		
-		// Streams schließen
-		srcStream.close();
-		destStream.close();
-	}
-	
+
+    public static void copyStreamToStream(InputStream srcStream, OutputStream destStream) throws IOException {
+        byte[] buffer = new byte[4096];
+        int n;
+
+        while ((n = srcStream.read(buffer)) > 0) {
+            destStream.write(buffer, 0, n);
+        }
+    }
+
+    public static void copyStreamToFile(InputStream srcStream, File destFile) throws IOException {
+        // OutputStream für Zieldatei erzeugen
+        OutputStream destStream = new FileOutputStream(destFile);
+
+        // Kopiere Daten von InputStream zu OutputStream
+        copyStreamToStream(srcStream, destStream);
+
+        // OutputStream schließen
+        destStream.close();
+    }
+
+    public static void copyFileToFile(File srcFile, File destFile) throws IOException {
+        // Streams für Quell- und für Zieldatei erzeugen
+        InputStream srcStream = new FileInputStream(srcFile);
+        OutputStream destStream = new FileOutputStream(destFile);
+
+        // Kopiere Daten von InputStream zu OutputStream
+        copyStreamToStream(srcStream, destStream);
+
+        // Streams schließen
+        srcStream.close();
+        destStream.close();
+    }
+
 }
