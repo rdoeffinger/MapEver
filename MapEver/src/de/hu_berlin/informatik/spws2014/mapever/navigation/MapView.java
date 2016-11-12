@@ -62,6 +62,7 @@ public class MapView extends LargeImageView {
     // Marker für die Position des Users
     private LocationIcon locationIcon;
 
+    public Point2D longClickPos = null;
 
     // ////// BEHANDLUNG VON REFERENZPUNKTEN
 
@@ -187,6 +188,13 @@ public class MapView extends LargeImageView {
 
         // Führe Defaulthandler aus (der Klicks, Pan und Zoom behandelt)
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean performLongClick() {
+        PointF imagePos = screenToImagePosition(touchStartX, touchStartY);
+        longClickPos = new Point2D((int)imagePos.x, (int)imagePos.y);
+        return super.performLongClick();
     }
 
     @Override

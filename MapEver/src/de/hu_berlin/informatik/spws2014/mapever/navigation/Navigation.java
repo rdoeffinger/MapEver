@@ -28,6 +28,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.provider.Settings;
@@ -36,6 +37,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -293,6 +295,7 @@ public class Navigation extends BaseActivity implements LocationListener {
         if (trackPosition) {
             trackPosition(trackPositionButton);
         }
+        registerForContextMenu(mapView);
     }
 
     @Override
@@ -483,6 +486,27 @@ public class Navigation extends BaseActivity implements LocationListener {
         default:
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        final MenuItem share = menu.add("Share this position");
+        share.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                GpsPoint pos = locationDataManager.getGpsPosition(mapView.longClickPos);
+                if (pos == null) {
+                    if (!toastMissingRefpoints()) {
+                        Toast.makeText(Navigation.this, "Unknown error translating position", Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("geo:" + pos.latitude + "," + pos.longitude));
+                startActivity(intent);
+                return true;
+            }
+        });
     }
 
     /**
