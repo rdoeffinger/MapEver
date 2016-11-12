@@ -263,6 +263,7 @@ public class Navigation extends BaseActivity implements LocationListener {
                 changeState(restoredState);
             }
         }
+        trackPositionButton.setVisibility(trackPosition ? View.GONE : View.VISIBLE);
 
         // ////// KARTE LADEN UND KOMPONENTEN INITIALISIEREN
 
@@ -1003,10 +1004,7 @@ public class Navigation extends BaseActivity implements LocationListener {
                 disableSetRefPointButton(false);
             }
 
-            if (isUserPositionKnown()) {
-                // track position button anzeigen, ist default ausgeblendet um crashes zu verhinden
-                trackPositionButton.setVisibility(View.VISIBLE);
-            }
+            trackPositionButton.setVisibility(trackPosition ? View.GONE : View.VISIBLE);
 
             // nur in RUNNING kann man die Karte umbenennen
             if (menu != null) {

@@ -343,6 +343,7 @@ public class MapView extends LargeImageView {
      * Zentriert die Ansicht auf die aktuelle Benutzerposition.
      */
     public void centerCurrentLocation() {
+        if (!navigation.isUserPositionKnown()) return;
         // Benutzerposition abfragen
         Point2D location = navigation.getUserPosition();
 
