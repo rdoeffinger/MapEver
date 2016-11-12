@@ -107,6 +107,7 @@ public class Start extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (TrackDB.main == null &&
                 ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            MapEverApp.initializeBaseDir();
             if (!TrackDB.loadDB(new File(MapEverApp.getAbsoluteFilePath("")))) {
                 trackDBErrorAlert();
                 return;
@@ -119,7 +120,7 @@ public class Start extends BaseActivity {
     }
 
     private void trackDBErrorAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("error");
         builder.setMessage("unable to read TrackDB");
         builder.setNeutralButton("Close", null);

@@ -47,15 +47,10 @@ public class MapEverApp extends Application {
         // ////// INITIALIZE APP
 
         // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
-        try {
-            initializeBaseDir();
-        } catch (IOException e) {
-            Log.e("MapEverApp", "Failed to initialize base directory!");
-            e.printStackTrace();
-        }
+        initializeBaseDir();
     }
 
-    private void initializeBaseDir() throws IOException {
+    public static void initializeBaseDir() {
         File baseDir = new File(BASE_DIR);
 
         // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
@@ -63,11 +58,17 @@ public class MapEverApp extends Application {
             Log.d("MapEverApp", "Base directory does not exist, creating new one at '" + BASE_DIR + "'");
 
             if (!baseDir.mkdirs()) {
-                throw new IOException("mkdirs() returned false");
+                Log.e("MapEverApp", "Failed to initialize base directory, mkdirs returned false!");
+                return;
             }
 
             File nomediaFile = new File(BASE_DIR + File.separator + ".nomedia");
-            nomediaFile.createNewFile();
+            try {
+                nomediaFile.createNewFile();
+            } catch (IOException e) {
+                Log.e("MapEverApp", "Failed to create .nomedia file");
+                e.printStackTrace();
+            }
         }
     }
 
