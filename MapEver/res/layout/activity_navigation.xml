@@ -3,6 +3,7 @@
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#CCCCCC"
     tools:context="de.hu_berlin.informatik.spws2014.mapever.navigation.Navigation" >
 
     <de.hu_berlin.informatik.spws2014.mapever.navigation.MapView
@@ -85,7 +86,6 @@
         android:contentDescription="@string/navigation_desc_track_position"
         android:onClick="trackPosition"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_action_location_found"
-        android:visibility="gone" />
+	android:src="@drawable/ic_action_location_found" />
 
 </RelativeLayout>

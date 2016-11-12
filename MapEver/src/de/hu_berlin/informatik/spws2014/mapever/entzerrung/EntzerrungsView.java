@@ -118,9 +118,6 @@ public class EntzerrungsView extends LargeImageView {
 
         entzerren = (Entzerren) this.getContext();
 
-        // Set background of view to black
-        this.setBackgroundColor(Color.BLACK);
-
         // Set transparency of LIV image
         setForegroundAlpha(PICTURE_TRANSPARENT);
 
