@@ -804,6 +804,12 @@ public class Navigation extends BaseActivity implements LocationListener {
      * @param view
      */
     public void trackPosition(View view) {
+        if (!isUserPositionKnown()) {
+            if (!toastMissingRefpoints()) {
+                Toast.makeText(this, getString(R.string.navigation_toast_no_gpsfix_yet), Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
         trackPosition = true;
         view.setVisibility(View.GONE);
         mapView.centerCurrentLocation();
@@ -1242,6 +1248,19 @@ public class Navigation extends BaseActivity implements LocationListener {
         return userPosition != null;
     }
 
+    private boolean toastMissingRefpoints() {
+        // Wieviele Referenzpunkte muss der Nutzer noch setzen?
+        int refPointsLeftToSet = locationDataManager.remainingUserMarkerInputs();
+        if (refPointsLeftToSet <= 0) return false;
+
+        // Wenn der Nutzer noch nicht genug Referenzpunkte gesetzt hat, wird er darauf hingewiesen
+        Toast.makeText(this,
+                       getString(R.string.navigation_toast_set_refpoint_prompt, refPointsLeftToSet),
+                       Toast.LENGTH_SHORT
+                      ).show();
+	return true;
+    }
+
     /**
      * Tr�gt einen neuen Referenzpunkt an der �bergebenen Position und mit dem
      * �bergebenen timestamp beim LocationDataManager ein
@@ -1278,16 +1297,7 @@ public class Navigation extends BaseActivity implements LocationListener {
             return false;
         }
 
-        // Wieviele Referenzpunkte muss der Nutzer noch setzen?
-        int refPointsLeftToSet = locationDataManager.remainingUserMarkerInputs();
-
-        // Wenn der Nutzer noch nicht genug Referenzpunkte gesetzt hat, wird er darauf hingewiesen
-        if (refPointsLeftToSet > 0) {
-            Toast.makeText(this,
-                           getString(R.string.navigation_toast_set_refpoint_prompt, refPointsLeftToSet),
-                           Toast.LENGTH_SHORT
-                          ).show();
-        }
+        toastMissingRefpoints();
 
         return true;
     }
