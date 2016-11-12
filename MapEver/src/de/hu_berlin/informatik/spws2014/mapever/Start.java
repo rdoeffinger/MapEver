@@ -240,14 +240,6 @@ public class Start extends BaseActivity {
             }
         }
 
-        final FloatingActionButton floatNewMapButton = (FloatingActionButton)findViewById(R.id.floatNewMapButton);
-        floatNewMapButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                showNewMapPopup();
-            }
-        });
-
         final GridView gridview = (GridView) findViewById(R.id.start);
         gridview.setNumColumns(column);
         gridview.setAdapter(new ImageAdapter(this));
@@ -432,14 +424,12 @@ public class Start extends BaseActivity {
             hideHelp();
         } else {
             getLayoutInflater().inflate(R.layout.start_help, layout);
-            findViewById(R.id.start_help_layout).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    hideHelp();
-                }
-            });
             isHelpShown = true;
         }
+    }
+
+    public void onHelpLayoutClick(View dummy) {
+        hideHelp();
     }
 
     private boolean hideHelp() {
@@ -513,46 +503,40 @@ public class Start extends BaseActivity {
         }
     }
 
+    public void onNewMapClick(View dummy) {
+        showNewMapPopup();
+    }
+
+    public void onCameraClick(View dummy) {
+        Intent photoIntent;
+        // Intent erzeugen, der Standard-Android-Kamera startet
+        photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File destFile = new File(MapEverApp.getAbsoluteFilePath(IMAGE_TARGET_FILENAME));
+        photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destFile));
+
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(Start.this,
+                                              new String[] {Manifest.permission.CAMERA}, 0);
+            return;
+        }
+
+        // Activity starten und auf Ergebnis (Bild) warten
+        startActivityForResult(photoIntent, TAKE_PICTURE_REQUESTCODE);
+    }
+
+    public void onFilechooserClick(View dummy) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        Intent i = Intent.createChooser(intent, "File");
+        startActivityForResult(i, CHOOSE_FILE_REQUESTCODE);
+    }
+
     private void showNewMapPopup() {
         newMapPopup.show();
         isPopupOpen = true;
         Window win = newMapPopup.getWindow();
         win.setContentView(R.layout.newmap);
-
-        // camera
-        ImageButton camera = (ImageButton) win.findViewById(R.id.camera);
-        camera.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent photoIntent;
-                // Intent erzeugen, der Standard-Android-Kamera startet
-                photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File destFile = new File(MapEverApp.getAbsoluteFilePath(IMAGE_TARGET_FILENAME));
-                photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destFile));
-
-                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(Start.this,
-                                                      new String[] {Manifest.permission.CAMERA}, 0);
-                    return;
-                }
-
-                // Activity starten und auf Ergebnis (Bild) warten
-                startActivityForResult(photoIntent, TAKE_PICTURE_REQUESTCODE);
-            }
-        });
-
-        // filechooser
-        ImageButton filechooser = (ImageButton) win.findViewById(R.id.filechooser);
-        filechooser.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("image/*");
-                Intent i = Intent.createChooser(intent, "File");
-                startActivityForResult(i, CHOOSE_FILE_REQUESTCODE);
-            }
-        });
     }
 
     @Override
