@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.InputDevice;
@@ -99,8 +100,8 @@ public class LargeImageView extends ImageView {
 
     // Startkoordinaten bei einem Touch-Down-Event um Klicks zu erkennen
     private boolean touchCouldBeClick = false;
-    private float touchStartX;
-    private float touchStartY;
+    protected float touchStartX;
+    protected float touchStartY;
 
     // SGD behandelt die Zoom-Gesten
     private ScaleGestureDetector SGD;
@@ -685,10 +686,7 @@ public class LargeImageView extends ImageView {
     public boolean onTouchEvent(MotionEvent event) {
         // ////// KLICKERKENNUNG
 
-        // Wenn Klick erkannt wurde, wurde das Event behandelt.
-        if (onTouchEvent_clickDetection(event)) {
-            return true;
-        }
+        onTouchEvent_clickDetection(event);
 
         // ////// OVERLAYICON DRAG AND DROP
 
@@ -901,20 +899,33 @@ public class LargeImageView extends ImageView {
 
     // ////// CLICK DETECTION
 
+    final GestureDetector gestureDetector = new GestureDetector(getContext(),
+        new GestureDetector.SimpleOnGestureListener() {
+            public void onLongPress(MotionEvent e) {
+                if (!touchCouldBeClick) return;
+                performLongClick();
+            }
+            public boolean onSingleTapUp(MotionEvent e) {
+                if (!touchCouldBeClick) return false;
+                return performClick();
+            }
+        });
+
     /**
      * Führt die Klickerkennung durch. Wird von onTouchEvent aufgerufen, welches nur dann weitermacht, wenn hier false
      * zurückgegeben wird (d.h. wenn kein Klick detektiert wurde).
      * Die Klickerkennung wurde ausgelagert, damit Subklassen onTouchEvent überschreiben und damit das Panning
      * deaktivieren, aber dennoch per Aufruf von super.onTouchEvent_clickDetection() Klicks erkennen lassen können.
      */
-    public boolean onTouchEvent_clickDetection(MotionEvent event) {
+    public void onTouchEvent_clickDetection(MotionEvent event) {
         // Was für ein MotionEvent wurde detektiert?
         int action = event.getActionMasked();
 
         // Falls mehrere Finger das Touchscreen berühren, kann es kein Klick sein.
         if (event.getPointerCount() > 1) {
             touchCouldBeClick = false;
-            return false;
+            gestureDetector.onTouchEvent(event);
+            return;
         }
 
         // Position des Fingers ermitteln
@@ -942,22 +953,10 @@ public class LargeImageView extends ImageView {
                 }
             }
             break;
-
-        case MotionEvent.ACTION_UP:
-            // Der letzte Finger wird gehoben
-
-            // Klick auslösen, falls das Event als Klick interpretiert wurde (d.h. nur ein Finger und vom
-            // Startpunkt nicht weiter als TOUCH_CLICK_TOLERANCE Pixel entfernt).
-            if (touchCouldBeClick) {
-                touchCouldBeClick = false;
-                performClick();
-                return true;
-            }
-            break;
         }
+        gestureDetector.onTouchEvent(event);
 
-        // Event wurde nicht behandelt, reiche es an (den Rest von) onTouchEvent weiter.
-        return false;
+        return;
     }
 
     @Override
