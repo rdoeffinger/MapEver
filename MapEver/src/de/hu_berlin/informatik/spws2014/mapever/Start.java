@@ -18,6 +18,7 @@ package de.hu_berlin.informatik.spws2014.mapever;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -522,7 +523,11 @@ public class Start extends BaseActivity {
         }
 
         // Activity starten und auf Ergebnis (Bild) warten
-        startActivityForResult(photoIntent, TAKE_PICTURE_REQUESTCODE);
+        try {
+            startActivityForResult(photoIntent, TAKE_PICTURE_REQUESTCODE);
+        } catch (ActivityNotFoundException e) {
+            showToast("No camera application available!");
+        }
     }
 
     public void onFilechooserClick(View dummy) {
