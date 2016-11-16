@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="de.hu_berlin.informatik.spws2014.mapever"
-    android:versionCode="9"
-    android:versionName="1.0alpha2" >
+    android:versionCode="10"
+    android:versionName="1.1.0" >
 
     <uses-sdk
         android:minSdkVersion="10"
