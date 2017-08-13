@@ -71,6 +71,8 @@ import de.hu_berlin.informatik.spws2014.mapever.R;
 import de.hu_berlin.informatik.spws2014.mapever.Start;
 import de.hu_berlin.informatik.spws2014.mapever.Thumbnail;
 
+import static de.hu_berlin.informatik.spws2014.mapever.FileUtils.copyFileToFile;
+
 public class Navigation extends BaseActivity implements LocationListener {
 
     // ////// KEYS F�R ZU SPEICHERNDE DATEN IM SAVEDINSTANCESTATE-BUNDLE
@@ -559,9 +561,14 @@ public class Navigation extends BaseActivity implements LocationListener {
                 String targetFilenameThumb = targetFilename + MapEverApp.THUMB_EXT;
 
                 // Bilddatei umbenennen
-                File renameFrom = new File(MapEverApp.getAbsoluteFilePath(MapEverApp.TEMP_IMAGE_FILENAME));
+                File renameFrom = new File(getCacheDir() + "/" + MapEverApp.TEMP_IMAGE_FILENAME);
                 File renameTo = new File(targetFilename);
-                renameFrom.renameTo(renameTo);
+                try {
+                    copyFileToFile(renameFrom, renameTo);
+                } catch (IOException e)
+                {
+                    // TODO: do something useful
+                }
 
                 // Thumbnail erstellen
                 try {

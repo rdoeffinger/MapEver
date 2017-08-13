@@ -33,6 +33,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -476,8 +477,8 @@ public class Start extends BaseActivity {
                 InputStream inStream = this.getContentResolver().openInputStream(srcUri);
 
                 // Zieldatei erstellen
-                String destFilename = IMAGE_TARGET_FILENAME;
-                File destFile = new File(MapEverApp.getAbsoluteFilePath(destFilename));
+                String destFilename = getCacheDir() + "/" + IMAGE_TARGET_FILENAME;
+                File destFile = new File(destFilename);
 
                 // Kopiere Daten von InputStream zu OutputStream
                 FileUtils.copyStreamToFile(inStream, destFile);
@@ -495,7 +496,7 @@ public class Start extends BaseActivity {
             startActivity(EntzerrenActivity);
         } else if (requestCode == TAKE_PICTURE_REQUESTCODE && resultCode == RESULT_OK) {
             Intent EntzerrenActivity = new Intent(getApplicationContext(), Entzerren.class);
-            EntzerrenActivity.putExtra(INTENT_IMAGEPATH, IMAGE_TARGET_FILENAME);
+            EntzerrenActivity.putExtra(INTENT_IMAGEPATH, getCacheDir() + "/" + IMAGE_TARGET_FILENAME);
             startActivity(EntzerrenActivity);
         } else if (requestCode == NAVIGATION_REQUESTCODE && resultCode != RESULT_OK) {
             // Die Navigation hat einen Fehler zurückgegeben.
@@ -513,8 +514,13 @@ public class Start extends BaseActivity {
         Intent photoIntent;
         // Intent erzeugen, der Standard-Android-Kamera startet
         photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File destFile = new File(MapEverApp.getAbsoluteFilePath(IMAGE_TARGET_FILENAME));
-        photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(destFile));
+        File destFile = new File(getCacheDir() + "/" + IMAGE_TARGET_FILENAME);
+        try {
+            destFile.createNewFile();
+        } catch (IOException ex) {
+            // TODO: handle somehow!
+        }
+        photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", destFile));
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Start.this,

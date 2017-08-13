@@ -43,6 +43,8 @@ import de.hu_berlin.informatik.spws2014.mapever.MapEverApp;
 import de.hu_berlin.informatik.spws2014.mapever.R;
 import de.hu_berlin.informatik.spws2014.mapever.navigation.Navigation;
 
+import static de.hu_berlin.informatik.spws2014.mapever.Start.INTENT_IMAGEPATH;
+
 public class Entzerren extends BaseActivity {
 
     // savedInstanceState constants
@@ -50,8 +52,8 @@ public class Entzerren extends BaseActivity {
     private static final String IMAGEENTZERRT = "IMAGEENTZERRT";
 
     // other constants
-    private static final String INPUTFILENAME = MapEverApp.TEMP_IMAGE_FILENAME;
-    private static final String INPUTFILENAMEBAK = INPUTFILENAME + "_bak";
+    private String INPUTFILENAME = null;
+    private String INPUTFILENAMEBAK = null;
 
     // View references
     private EntzerrungsView entzerrungsView;
@@ -68,6 +70,9 @@ public class Entzerren extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entzerren);
 
+        INPUTFILENAME = getCacheDir() + "/" + MapEverApp.TEMP_IMAGE_FILENAME;
+        INPUTFILENAMEBAK = INPUTFILENAME + "_bak";
+
         // Layout aufbauen
         layoutFrame = new FrameLayout(getBaseContext());
         setContentView(layoutFrame);
@@ -82,8 +87,9 @@ public class Entzerren extends BaseActivity {
         // Wird die Activity frisch neu erstellt oder haben wir einen gespeicherten Zustand?
         if (savedInstanceState == null) {
             // Verwende statischen Dateinamen als Eingabe
-            File imageFile = new File(MapEverApp.getAbsoluteFilePath(INPUTFILENAME));
-            File imageFile_bak = new File(MapEverApp.getAbsoluteFilePath(INPUTFILENAMEBAK));
+            assert getIntent().getStringExtra(INTENT_IMAGEPATH) == INPUTFILENAME;
+            File imageFile = new File(INPUTFILENAME);
+            File imageFile_bak = new File(INPUTFILENAMEBAK);
 
             // Backup von der Datei erstellen, um ein Rückgängigmachen zu ermöglichen
             copy(imageFile, imageFile_bak);
@@ -164,8 +170,8 @@ public class Entzerren extends BaseActivity {
 
         if (entzerrt) {
             // ersetze das Bild mit dem Backup
-            File imageFile_bak = new File(MapEverApp.getAbsoluteFilePath(INPUTFILENAMEBAK));
-            File imageFile = new File(MapEverApp.getAbsoluteFilePath(INPUTFILENAME));
+            File imageFile_bak = new File(INPUTFILENAMEBAK);
+            File imageFile = new File(INPUTFILENAME);
 
             copy(imageFile_bak, imageFile);
 
@@ -212,10 +218,10 @@ public class Entzerren extends BaseActivity {
             startLoadingScreen();
 
             // Entzerrung in AsyncTask starten
-            new EntzerrenTask().execute();
+            new EntzerrenTask(INPUTFILENAME).execute();
         } else {
             // temp_bak löschen
-            File imageFile_bak = new File(MapEverApp.getAbsoluteFilePath(INPUTFILENAMEBAK));
+            File imageFile_bak = new File(INPUTFILENAMEBAK);
             if (imageFile_bak.exists()) {
                 imageFile_bak.delete();
             }
@@ -326,7 +332,7 @@ public class Entzerren extends BaseActivity {
 
     public void loadImageFile() {
         // Verwende statischen Dateinamen als Eingabe
-        File imageFile = new File(MapEverApp.getAbsoluteFilePath(INPUTFILENAME));
+        File imageFile = new File(INPUTFILENAME);
 
         try {
             // Bild in die View laden
@@ -342,7 +348,7 @@ public class Entzerren extends BaseActivity {
 
     // TODO mit neuem optimiertem Entzerrungsalgorithmus hinfällig...?
     private boolean saveBitmap(Bitmap bitmap, String outFilename) {
-        File outFile = new File(MapEverApp.getAbsoluteFilePath(outFilename));
+        File outFile = new File(outFilename);
 
         try {
             // Outputstream öffnen
@@ -374,6 +380,12 @@ public class Entzerren extends BaseActivity {
 
     private class EntzerrenTask extends AsyncTask<Void, Void, String> {
         Bitmap entzerrtesBitmap = null;
+        String fileName = null;
+
+        EntzerrenTask(String fileName)
+        {
+            this.fileName = fileName;
+        }
 
         @Override
         protected String doInBackground(Void... params) {
@@ -419,7 +431,7 @@ public class Entzerren extends BaseActivity {
                     Log.e("EntzerrenTask/doInBackground", "Couldn't decode stream after " + sampleSize + " tries!");
                 } else {
                     // entzerrtes Bild abspeichern
-                    saveBitmap(entzerrtesBitmap, Entzerren.INPUTFILENAME);
+                    saveBitmap(entzerrtesBitmap, fileName);
                 }
             } catch (OutOfMemoryError e) {
                 result = getResources().getString(R.string.error_outofmemory);
