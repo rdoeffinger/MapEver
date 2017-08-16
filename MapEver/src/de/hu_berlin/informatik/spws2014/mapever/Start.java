@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -520,12 +521,19 @@ public class Start extends BaseActivity {
         } catch (IOException ex) {
             // TODO: handle somehow!
         }
-        photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", destFile));
+        Uri photoDestUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", destFile);
+        photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoDestUri);
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Start.this,
                                               new String[] {Manifest.permission.CAMERA}, 0);
             return;
+        }
+        // Hack for older Android versions: need to explicitly grant permission or Camera app will crash
+        List<ResolveInfo> intentTargets = getPackageManager().queryIntentActivities(photoIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo  intentTarget : intentTargets) {
+            // For some reason, even read permission is required
+            grantUriPermission(intentTarget.activityInfo.packageName, photoDestUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
 
         // Activity starten und auf Ergebnis (Bild) warten
