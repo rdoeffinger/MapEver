@@ -69,8 +69,7 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
 
         last_corners = new Point[] { new Point(), new Point(), new Point(), new Point() };
         run_detection = true;
-        corner_detection_task = new AsyncCornerDetection(this);
-        corner_detection_task.execute();
+        new AsyncCornerDetection(this).execute();
     }
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
@@ -167,7 +166,7 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        preview_resolution_menu = menu.addSubMenu("PreviewResolution");
+        SubMenu preview_resolution_menu = menu.addSubMenu("PreviewResolution");
         List<Size> available_resolutions = camera_view.get_preview_resolutions();
         int i = 0;
         for (Size res : available_resolutions) {
@@ -175,7 +174,7 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
             ++i;
         }
 
-        picture_resolution_menu = menu.addSubMenu("PictureResolution");
+        SubMenu picture_resolution_menu = menu.addSubMenu("PictureResolution");
         available_resolutions = camera_view.get_picture_resolutions();
         i = 0;
         for (Size res : available_resolutions) {
@@ -185,7 +184,7 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
 
         List<String> flash_modes=camera_view.get_flash_modes();
         if(flash_modes!=null) {
-            flash_menu = menu.addSubMenu("FlashModes");
+            SubMenu flash_menu = menu.addSubMenu("FlashModes");
             i = 0;
             for (String mode : flash_modes) {
                 flash_menu.add(FLASH_MENU_ID, i, Menu.NONE, mode);
@@ -228,13 +227,11 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
         return true;
     }
 
-    private AsyncCornerDetection corner_detection_task;
     private Mat last_frame;
     private Point[] last_corners;
     private boolean run_detection;
 
     private CornerDetectionView camera_view;
-    private SubMenu preview_resolution_menu, picture_resolution_menu, flash_menu;
     private static final int PREVIEW_MENU_ID = 1, PICTURE_MENU_ID = 2, FLASH_MENU_ID = 3;
     private static final int CONFIRM_RESULT_CODE = 100;
     private static final Scalar CIRCLE_COLOR = new Scalar(0, 255, 0, 255);

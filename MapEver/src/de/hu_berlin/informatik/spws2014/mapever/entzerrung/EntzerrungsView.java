@@ -73,7 +73,6 @@ public class EntzerrungsView extends LargeImageView {
     // InputStream zum Bild
     private File imageFile;
     private boolean imageTypeSupportsDeskew = true;
-    private final boolean openCVLoadError = true;
 
     // Eckpunkte als OverlayIcons
     private final CornerIcon[] corners = new CornerIcon[CORNERS_COUNT];
@@ -193,13 +192,6 @@ public class EntzerrungsView extends LargeImageView {
      */
     public boolean isImageTypeSupported() {
         return imageTypeSupportsDeskew;
-    }
-
-    /**
-     * Returns true, if we failed to load OpenCV
-     */
-    public boolean isOpenCVLoadError() {
-        return openCVLoadError;
     }
 
     /**
