@@ -142,9 +142,6 @@ public class Navigation extends BaseActivity implements LocationListener {
     // Lokalisierungsalgorithmus
     private LocationDataManager locationDataManager;
 
-    // LocationDataManagerListener, der das Eintreffen neuer Positionen handled
-    private LocationDataManagerListener locDatManListener;
-
     // Debug-GPS-Mocker
     private Toast mockStatusToast = null;
     private Location mockBaseLocation = null;
@@ -622,7 +619,7 @@ public class Navigation extends BaseActivity implements LocationListener {
         // ////// LOCATIONDATAMANAGER INITIALISIEREN
 
         // Listener f�r neue Userkoordinaten erstellen
-        locDatManListener = new LocationDataManagerListener(this);
+        LocationDataManagerListener locDatManListener = new LocationDataManagerListener(this);
 
         // LocationDataManager initialisieren
         Point2D imageSize = new Point2D(mapView.getImageWidth(), mapView.getImageHeight());
