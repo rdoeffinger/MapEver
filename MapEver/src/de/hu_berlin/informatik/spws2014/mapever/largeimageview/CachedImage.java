@@ -34,7 +34,7 @@ import java.util.ArrayList;
 class CachedImage extends LruCache<String, Bitmap> {
 
     interface CacheMissResolvedCallback {
-        public void onCacheMissResolved();
+        void onCacheMissResolved();
     }
 
     // ////// CONSTANTS

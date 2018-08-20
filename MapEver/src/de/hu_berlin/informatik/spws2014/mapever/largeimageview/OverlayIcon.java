@@ -317,7 +317,6 @@ public abstract class OverlayIcon {
         // (Ein Rückgabewert macht hier wenig Sinn. Wenn das Icon gedraggt wurde und der Dragvorgang beendet werden
         // soll, MUSS dieses Event behandelt werden. Andernfalls wird es gar nicht getriggert.)
         stopDrag();
-        return;
     }
 
 

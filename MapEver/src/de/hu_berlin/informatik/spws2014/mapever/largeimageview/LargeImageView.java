@@ -591,7 +591,6 @@ public class LargeImageView extends AppCompatImageView {
      * Subklassen überschrieben werden.
      */
     protected void onTouchPanZoomChange() {
-        return;
     }
 
     /**
@@ -953,8 +952,6 @@ public class LargeImageView extends AppCompatImageView {
             break;
         }
         gestureDetector.onTouchEvent(event);
-
-        return;
     }
 
     @Override
@@ -982,13 +979,13 @@ public class LargeImageView extends AppCompatImageView {
                 }
 
                 // Führe onClick-Event aus. Return, falls onClick das Event behandelt hat.
-                if (icon.onClick(touchStartX, touchStartY) == true)
+                if (icon.onClick(touchStartX, touchStartY))
                     return true;
             }
         }
 
         // onClickPosition-Event auslösen. Falls es true zurückgibt, wurde das Event behandelt...
-        if (onClickPosition(touchStartX, touchStartY) == true)
+        if (onClickPosition(touchStartX, touchStartY))
             return true;
 
         // ... ansonsten Standard-Handler ausführen, der dann andere onClick-Events triggert.
@@ -1040,7 +1037,7 @@ public class LargeImageView extends AppCompatImageView {
                 // war der Klick innerhalb der Icon-Hitbox?
                 if (icon.getTouchHitbox().contains(relativeX, relativeY)) {
                     // Ja, führe onDragDown-Event aus. Return, falls onClick das Event behandelt hat.
-                    if (icon.onDragDown(pointerID, x, y) == true) {
+                    if (icon.onDragDown(pointerID, x, y)) {
                         // Merken, dass ein Drag-Vorgang läuft (Extra-Test, da onDragDown() z.B. auch laufende
                         // Drag-Vorgänge abbrechen könnte (gilt als behandeltes Event))
                         if (icon.getDragPointerID() != -1) {
@@ -1075,7 +1072,7 @@ public class LargeImageView extends AppCompatImageView {
                     // (Falls nicht gedraggt, gibt die Methode -1 zurück)
                     if (icon.getDragPointerID() == event.getPointerId(i)) {
                         // ... falls ja, führe onDragMove-Event aus
-                        if (icon.onDragMove(event.getX(i), event.getY(i)) == true)
+                        if (icon.onDragMove(event.getX(i), event.getY(i)))
                             handledDragAndDrop = true;
                     }
                 }
@@ -1118,7 +1115,7 @@ public class LargeImageView extends AppCompatImageView {
                 currentlyDragging = false;
             }
 
-            if (returnvalue == true)
+            if (returnvalue)
                 return true;
 
             break;
@@ -1192,11 +1189,7 @@ public class LargeImageView extends AppCompatImageView {
      * Check this if you override onDraw!
      */
     protected boolean isReadyToDraw() {
-        if (Float.isNaN(panCenterX) || Float.isNaN(panCenterY) || getWidth() == 0 || getHeight() == 0) {
-            return false;
-        }
-
-        return true;
+        return !Float.isNaN(panCenterX) && !Float.isNaN(panCenterY) && getWidth() != 0 && getHeight() != 0;
     }
 
     /**

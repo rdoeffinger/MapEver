@@ -714,7 +714,6 @@ public class Navigation extends BaseActivity implements LocationListener {
             break;
         default:
             Log.e("startQuickHelp", "Schnellhilfe f�r diesen Zustand fehlt noch!");
-            return;
 
         }
 
@@ -1063,7 +1062,6 @@ public class Navigation extends BaseActivity implements LocationListener {
             // wenn wir wieder bei RUNNING angekommen sind, wird die Hilfe erst wieder auf Nutzerwunsch ausgel�st
             if (state == NavigationStates.RUNNING) {
                 quickTutorial = false;
-                return;
             } else {
                 // Ansonsten zeigen wir den Hilfe-Bildschirm an
                 startQuickHelp();
