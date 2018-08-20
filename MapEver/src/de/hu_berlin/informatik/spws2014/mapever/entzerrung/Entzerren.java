@@ -411,6 +411,7 @@ public class Entzerren extends BaseActivity {
                         if (sampledBitmap == null) {
                             Log.e("EntzerrenTask/doInBackground", "Decoding bitmap with SampleSize " + sampleSize + " resulted in null...");
                             sampleSize *= 2;
+                            continue;
                         }
 
                         // Bitmap entzerren
