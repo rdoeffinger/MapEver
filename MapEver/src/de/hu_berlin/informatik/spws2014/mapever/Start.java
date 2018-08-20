@@ -520,6 +520,7 @@ public class Start extends BaseActivity {
         }
         Uri photoDestUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", destFile);
         photoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoDestUri);
+        photoIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Start.this,
