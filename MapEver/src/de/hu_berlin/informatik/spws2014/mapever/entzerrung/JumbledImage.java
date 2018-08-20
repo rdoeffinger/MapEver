@@ -104,7 +104,7 @@ public class JumbledImage {
         return src[(int) pos[0] + stride * (int) pos[1]];
     }
 
-    public static void sort_corners(float unsorted[]) {
+    private static void sort_corners(float unsorted[]) {
         assert (unsorted.length == 8);
 
         float center[] = new float[2];

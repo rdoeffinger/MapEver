@@ -37,8 +37,8 @@ import java.io.IOException;
 public class MapEverApp extends Application {
 
     // Basisverzeichnis, in dem unsere Dateien zu finden sind
-    public static final String BASE_DIR_DIRNAME = "mapever";
-    public static final String BASE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + BASE_DIR_DIRNAME;
+    private static final String BASE_DIR_DIRNAME = "mapever";
+    private static final String BASE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + BASE_DIR_DIRNAME;
 
     public static final String TEMP_IMAGE_FILENAME = "temp";
     public static final String THUMB_EXT = "_thumb";

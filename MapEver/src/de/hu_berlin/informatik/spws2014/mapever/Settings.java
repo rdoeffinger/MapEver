@@ -23,9 +23,9 @@ import android.preference.PreferenceManager;
 
 public class Settings extends PreferenceActivity {
 
-    public static final String key_quickHelp = "pref_quick_help";
-    public static final String key_livMultitouch = "pref_liv_multitouch";
-    public static final String key_debugMode = "pref_debugmode";
+    private static final String key_quickHelp = "pref_quick_help";
+    private static final String key_livMultitouch = "pref_liv_multitouch";
+    private static final String key_debugMode = "pref_debugmode";
 
     // Ignore deprecation warnings (there are no API 10 compatible alternatives)
     @SuppressWarnings("deprecation")

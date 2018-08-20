@@ -39,7 +39,7 @@ import de.hu_berlin.informatik.spws2014.mapever.entzerrung.CornerDetector;
 @SuppressWarnings("deprecation")
 public class CornerDetectionCamera extends AppCompatActivity implements CvCameraViewListener2 {
     private class AsyncCornerDetection extends AsyncTask<Void, Void, Void> {
-        public AsyncCornerDetection(CornerDetectionCamera parent) {
+        AsyncCornerDetection(CornerDetectionCamera parent) {
             this.parent = parent;
         }
 
@@ -53,7 +53,7 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
             return null;
         }
 
-        private CornerDetectionCamera parent;
+        private final CornerDetectionCamera parent;
     }
 
     @Override
@@ -71,12 +71,6 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
         run_detection = true;
         corner_detection_task = new AsyncCornerDetection(this);
         corner_detection_task.execute();
-    }
-
-    public void onCameraViewStarted(int width, int height) {
-    }
-
-    public void onCameraViewStopped() {
     }
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
@@ -246,5 +240,5 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
     private static final Scalar CIRCLE_COLOR = new Scalar(0, 255, 0, 255);
     private static final Scalar LINE_COLOR = new Scalar(255, 0, 0);
 
-    public static final String NO_CONFIRM = "de.hu_berlin.informatik.spws2014.mapever.camera.CornerDetectionCamera.NoConfirm";
+    private static final String NO_CONFIRM = "de.hu_berlin.informatik.spws2014.mapever.camera.CornerDetectionCamera.NoConfirm";
 }

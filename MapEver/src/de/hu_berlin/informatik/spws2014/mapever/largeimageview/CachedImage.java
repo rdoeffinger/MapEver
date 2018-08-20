@@ -31,7 +31,7 @@ import java.util.ArrayList;
 // Der LruCache-bezogene Code wurde in Anlehnung an folgendes Tutorial erstellt:
 // http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html
 
-public class CachedImage extends LruCache<String, Bitmap> {
+class CachedImage extends LruCache<String, Bitmap> {
 
     interface CacheMissResolvedCallback {
         public void onCacheMissResolved();
@@ -49,10 +49,10 @@ public class CachedImage extends LruCache<String, Bitmap> {
     private BitmapRegionDecoder regionDecoder;
 
     // Liste für Keys der Tiles, die aktuell von TileWorkerTasks generiert werden
-    private ArrayList<String> workingTileTasks = new ArrayList<>();
+    private final ArrayList<String> workingTileTasks = new ArrayList<>();
 
     // Callback, wenn nach einem Cache-Miss das gesuchte Tile erzeugt und gecachet wurde.
-    private CacheMissResolvedCallback cacheMissResolvedCallback;
+    private final CacheMissResolvedCallback cacheMissResolvedCallback;
 
 
     // ////////////////////////////////////////////////////////////////////////
@@ -240,9 +240,11 @@ public class CachedImage extends LruCache<String, Bitmap> {
      * Asynchroner Task, der ein Tile generiert und es anschließend im Cache speichert.
      */
     class TileWorkerTask extends AsyncTask<Void, Void, Bitmap> {
-        private int x, y, sampleSize;
+        private final int x;
+        private final int y;
+        private final int sampleSize;
 
-        public TileWorkerTask(int x, int y, int sampleSize) {
+        TileWorkerTask(int x, int y, int sampleSize) {
             this.x = x;
             this.y = y;
             this.sampleSize = sampleSize;

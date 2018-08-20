@@ -118,7 +118,7 @@ public class Navigation extends BaseActivity implements LocationListener {
     private ImageButton trackPositionButton;
 
     // Liste aller ImageButtons
-    private ArrayList<ImageButton> imageButtonList = new ArrayList<>();
+    private final ArrayList<ImageButton> imageButtonList = new ArrayList<>();
 
 
     // ////// KARTEN- UND NAVIGATIONSINFORMATIONEN
@@ -171,7 +171,7 @@ public class Navigation extends BaseActivity implements LocationListener {
 
     // die Anbindung an die Datenbank
     private ILDMIOHandler iLDMIOHandler;
-    TrackDBEntry thisMap;
+    private TrackDBEntry thisMap;
 
     // ////////////////////////////////////////////////////////////////////////
     // //////////// ACTIVITY LIFECYCLE UND INITIALISIERUNG
@@ -434,7 +434,7 @@ public class Navigation extends BaseActivity implements LocationListener {
 
         // ... genauso wie das Setzen von Referenzpunkten
         if (state == NavigationStates.MARK_REFPOINT || state == NavigationStates.ACCEPT_REFPOINT) {
-            cancelReferencePoint(null);
+            cancelReferencePoint();
             return;
         }
 
@@ -524,8 +524,8 @@ public class Navigation extends BaseActivity implements LocationListener {
 
     // //////// KARTE LADEN / NEUE KARTE ERSTELLEN
 
-    static final int LOAD_TEST_MAP = 0;
-    static final int CREATE_NEW_MAP = -1;
+    private static final int LOAD_TEST_MAP = 0;
+    private static final int CREATE_NEW_MAP = -1;
 
     private void initLoadMap() {
         // ////// LDM-IO-HANDLER INITIALISIEREN
@@ -681,7 +681,7 @@ public class Navigation extends BaseActivity implements LocationListener {
     /**
      * Startet die Schnellhilfe, wenn nicht bereits aktiv.
      */
-    public void startQuickHelp() {
+    private void startQuickHelp() {
         // Bis RUNNING wieder erreicht ist, wird der Hilfebildschirm immer angezeigt
         quickTutorial = true;
 
@@ -792,9 +792,8 @@ public class Navigation extends BaseActivity implements LocationListener {
     /**
      * Der Nutzer will den neu gesetzten Referenzpunkt verwerfen.
      *
-     * @param view
      */
-    public void cancelReferencePoint(View view) {
+    private void cancelReferencePoint() {
         // kann damit auch von onBackPressed aufgerufen werden, wenn wir noch in MARK_REFPOINT sind
         if (state == NavigationStates.ACCEPT_REFPOINT) {
             mapView.cancelReferencePoint();
@@ -833,7 +832,7 @@ public class Navigation extends BaseActivity implements LocationListener {
      *
      * @param view
      */
-    public void trackPosition(View view) {
+    private void trackPosition(View view) {
         if (!isUserPositionKnown()) {
             if (!toastMissingRefpoints()) {
                 Toast.makeText(this, getString(R.string.navigation_toast_no_gpsfix_yet), Toast.LENGTH_SHORT).show();
@@ -1252,7 +1251,7 @@ public class Navigation extends BaseActivity implements LocationListener {
      *
      * @param newPos Koordinaten als Point2D
      */
-    public void setUserPosition(Point2D newPos) {
+    private void setUserPosition(Point2D newPos) {
         userPosition = newPos;
 
         // Locationmarker aktualisieren

@@ -24,7 +24,7 @@ import android.graphics.drawable.Drawable;
 public abstract class OverlayIcon {
 
     // LargeImageView, an die das Overlay gebunden ist
-    private LargeImageView parentLIV;
+    private final LargeImageView parentLIV;
 
     // das Bild des Icons als Drawable
     private Drawable drawable;
@@ -43,7 +43,7 @@ public abstract class OverlayIcon {
     // //////////// CONSTRUCTORS AND LAYOUT STUFF
     // ////////////////////////////////////////////////////////////////////////
 
-    public OverlayIcon(LargeImageView liv) {
+    protected OverlayIcon(LargeImageView liv) {
         // Referenz auf die LargeImageView merken, zu der das Icon gehört
         this.parentLIV = liv;
 
@@ -57,7 +57,7 @@ public abstract class OverlayIcon {
     /**
      * Gibt die LargeImageView zurück, zu der das Icon gehört.
      */
-    public LargeImageView getParentLIV() {
+    protected LargeImageView getParentLIV() {
         return parentLIV;
     }
 
@@ -79,14 +79,14 @@ public abstract class OverlayIcon {
     /**
      * Gibt die Breite des Icons zurück.
      */
-    public int getWidth() {
+    protected int getWidth() {
         return getDrawable() == null ? 0 : getDrawable().getIntrinsicWidth();
     }
 
     /**
      * Gibt die Höhe des Icons zurück.
      */
-    public int getHeight() {
+    protected int getHeight() {
         return getDrawable() == null ? 0 : getDrawable().getIntrinsicHeight();
     }
 
@@ -155,7 +155,7 @@ public abstract class OverlayIcon {
     /**
      * Setze das Iconbild in Form eines Drawables.
      */
-    public void setDrawable(Drawable _drawable) {
+    protected void setDrawable(Drawable _drawable) {
         drawable = _drawable;
 
         // Boundaries/Bildgröße setzen
@@ -165,7 +165,7 @@ public abstract class OverlayIcon {
     /**
      * Gibt das Iconbild-Drawable zurück.
      */
-    public Drawable getDrawable() {
+    private Drawable getDrawable() {
         return drawable;
     }
 
@@ -206,7 +206,7 @@ public abstract class OverlayIcon {
      *
      * @param newAlpha Wert von 0 (vollkommen transparent) bis 255 (undurchsichtig).
      */
-    public void setOverlayAlpha(int newAlpha) {
+    private void setOverlayAlpha(int newAlpha) {
         overlayAlpha = newAlpha;
 
         // Darstellung aktualisieren
@@ -342,7 +342,7 @@ public abstract class OverlayIcon {
      * Aktualisiert die Darstellung des Icons (ruft invalidate() auf).
      * Sollte immer aufgerufen werden, wenn z.B. die Position oder die Transparenz verändert wurde.
      */
-    public void update() {
+    protected void update() {
         parentLIV.invalidate();
     }
 

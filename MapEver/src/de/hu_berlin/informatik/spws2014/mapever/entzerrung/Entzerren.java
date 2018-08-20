@@ -236,14 +236,14 @@ public class Entzerren extends BaseActivity {
     }
 
 
-    public void startLoadingScreen() {
+    private void startLoadingScreen() {
         if (!loading_active) {
             loading_active = true;
             getLayoutInflater().inflate(R.layout.entzerren_loading, layoutFrame);
         }
     }
 
-    public void endLoadingScreen() {
+    private void endLoadingScreen() {
         if (loading_active) {
             loading_active = false;
             layoutFrame.removeViewAt(layoutFrame.getChildCount() - 1);
@@ -255,7 +255,7 @@ public class Entzerren extends BaseActivity {
     }
 
 
-    public void startQuickHelp() {
+    private void startQuickHelp() {
         if (!tutorial) {
             tutorial = true;
             getLayoutInflater().inflate(R.layout.entzerren_help, layoutFrame);
@@ -273,16 +273,16 @@ public class Entzerren extends BaseActivity {
         return tutorial;
     }
 
-    public void showErrorMessage(String text) {
+    private void showErrorMessage(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
-    public void showErrorMessage(int resID) {
+    private void showErrorMessage(int resID) {
         showErrorMessage(getResources().getString(resID));
     }
 
 
-    public void lockScreenOrientation() {
+    private void lockScreenOrientation() {
         WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Configuration configuration = getResources().getConfiguration();
         int rotation = windowManager.getDefaultDisplay().getRotation();
@@ -326,12 +326,12 @@ public class Entzerren extends BaseActivity {
         }
     }
 
-    public void unlockScreenOrientation() {
+    private void unlockScreenOrientation() {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
 
-    public void loadImageFile() {
+    private void loadImageFile() {
         // Verwende statischen Dateinamen als Eingabe
         File imageFile = new File(INPUTFILENAME);
 
@@ -369,7 +369,7 @@ public class Entzerren extends BaseActivity {
     }
 
 
-    public void copy(File src, File dst) {
+    private void copy(File src, File dst) {
         try {
             FileUtils.copyFileToFile(src, dst);
         } catch (IOException e) {
@@ -381,7 +381,7 @@ public class Entzerren extends BaseActivity {
 
     private class EntzerrenTask extends AsyncTask<Void, Void, String> {
         Bitmap entzerrtesBitmap = null;
-        String fileName;
+        final String fileName;
 
         EntzerrenTask(String fileName)
         {

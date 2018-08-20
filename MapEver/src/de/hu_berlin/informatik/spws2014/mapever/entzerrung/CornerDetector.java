@@ -174,5 +174,5 @@ public class CornerDetector {
                              MIN_LINE_LENGTH_FRACTION = 4,
                              MAX_LINE_GAP = 10;
 
-    private static double TOO_CLOSE_FRACTION = 0.0001;
+    private static final double TOO_CLOSE_FRACTION = 0.0001;
 }

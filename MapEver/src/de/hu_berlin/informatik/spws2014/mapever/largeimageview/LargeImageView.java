@@ -118,24 +118,24 @@ public class LargeImageView extends AppCompatImageView {
 
 
     // ////// OVERLAY ICONS
-    private ArrayList<OverlayIcon> overlayIconList = new ArrayList<>();
+    private final ArrayList<OverlayIcon> overlayIconList = new ArrayList<>();
 
 
     // ////////////////////////////////////////////////////////////////////////
     // //////////// CONSTRUCTORS AND INITIALIZATION
     // ////////////////////////////////////////////////////////////////////////
 
-    public LargeImageView(Context context) {
+    protected LargeImageView(Context context) {
         super(context);
         init();
     }
 
-    public LargeImageView(Context context, AttributeSet attrs) {
+    protected LargeImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public LargeImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    protected LargeImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -214,7 +214,7 @@ public class LargeImageView extends AppCompatImageView {
      * @param inputStream
      * @throws IOException
      */
-    public void setImageStream(InputStream inputStream) throws IOException {
+    private void setImageStream(InputStream inputStream) throws IOException {
         // reset image references
         cachedImage = null;
         staticBitmap = null;
@@ -277,7 +277,7 @@ public class LargeImageView extends AppCompatImageView {
      * Lädt eine  raw Resource als Bildquelle. Hierbei wird nach Möglichkeit über CachedImage ein BitmapRegionDecoder
      * instanziiert, indem ein InputStream is erzeugt und setImageStream(is) aufgerufen wird.
      */
-    public void setImageResourceRaw(int resId) {
+    protected void setImageResourceRaw(int resId) {
         try {
             // Lade die Resource per Stream
             InputStream stream = getResources().openRawResource(+resId);
@@ -297,7 +297,7 @@ public class LargeImageView extends AppCompatImageView {
      * Lädt eine Bilddatei per Dateinamen als Bildquelle. Hierbei wird nach Möglichkeit über CachedImage ein
      * BitmapRegionDecoder instanziiert, indem ein InputStream is erzeugt und setImageStream(is) aufgerufen wird.
      */
-    public void setImageFilename(String filename) throws FileNotFoundException {
+    protected void setImageFilename(String filename) throws FileNotFoundException {
         try {
             // Lade das Bild per Stream
             InputStream stream = new FileInputStream(filename);
@@ -384,7 +384,7 @@ public class LargeImageView extends AppCompatImageView {
      *
      * @param newAlpha Wert von 0 (vollkommen transparent) bis 255 (undurchsichtig).
      */
-    public void setForegroundAlpha(int newAlpha) {
+    protected void setForegroundAlpha(int newAlpha) {
         bgAlphaPaint = new Paint();
         bgAlphaPaint.setAlpha(newAlpha);
     }
@@ -412,7 +412,7 @@ public class LargeImageView extends AppCompatImageView {
     }
 
     /** Setzt neue Pan-Center-Koordinaten (Bildpunkt, der im Sichtfeld zentriert wird). */
-    public void setPanCenter(float newX, float newY) {
+    protected void setPanCenter(float newX, float newY) {
         panCenterX = newX;
         panCenterY = newY;
         update();
@@ -440,7 +440,7 @@ public class LargeImageView extends AppCompatImageView {
     }
 
     /** Setzt neues Zoom-Level und berechnet Sample-Stufe neu. */
-    public void setZoomScale(float newZoomScale) {
+    private void setZoomScale(float newZoomScale) {
         zoomScale = newZoomScale;
 
         // Zoom-Level darf Minimum und Maximum nicht unter-/überschreiten
@@ -457,7 +457,7 @@ public class LargeImageView extends AppCompatImageView {
      * Setzt neue Pan-Center-Koordinaten (Bildpunkt, der im Sichtfeld zentriert wird) und neues Zoom-Level
      * (und berechnet Sample-Stufe neu).
      */
-    public void setPanZoom(float newX, float newY, float newZoomScale) {
+    private void setPanZoom(float newX, float newY, float newZoomScale) {
         panCenterX = newX;
         panCenterY = newY;
         setZoomScale(newZoomScale); // calls update()
@@ -475,7 +475,7 @@ public class LargeImageView extends AppCompatImageView {
      * bis kein Teil des Bildes mehr abgeschnitten wird, eventuell mit Letterbox/Pillarbox, aber es wird nicht
      * herangezoomt.
      */
-    public void setPanZoomFitImage() {
+    private void setPanZoomFitImage() {
         if (getWidth() == 0 || getHeight() == 0 || imageWidth <= 0 || imageHeight <= 0) {
             Log.w("LIV/setPanZoomFitImage", "Some dimensions are still unknown: getWidth/getHeight: " + getWidth() +
                   "/" + getHeight() + ", imageWidth/imageHeight: " + imageWidth + "/" + imageHeight);
@@ -501,7 +501,7 @@ public class LargeImageView extends AppCompatImageView {
      * @param scale Zoom-Stufe
      * @return Sample-Stufe
      */
-    public static int calculateSampleSize(float scale) {
+    private static int calculateSampleSize(float scale) {
         int sample = 1;
 
         // bilde ganzzahligen Kehrwert von scale (kann für scale < 1 null werden)
@@ -709,7 +709,7 @@ public class LargeImageView extends AppCompatImageView {
      *
      * @return true. Auch Overrides sollten stets true zurückgeben (sonst kommen folgende Touch-Events nicht mehr an).
      */
-    public boolean onTouchEvent_panZoom(MotionEvent event, boolean dragAndDropHandled) {
+    private void onTouchEvent_panZoom(MotionEvent event, boolean dragAndDropHandled) {
         // Was für ein MotionEvent wurde detektiert?
         int action = event.getActionMasked();
 
@@ -740,7 +740,7 @@ public class LargeImageView extends AppCompatImageView {
 
             // Nur behandeln, wenn wir einen aktiven Pan-Finger haben
             if (panActivePointerId == -1)
-                return true;
+                return;
 
             // Position des aktuellen Pointers ermitteln
             final int pointerIndex = event.findPointerIndex(panActivePointerId);
@@ -750,7 +750,7 @@ public class LargeImageView extends AppCompatImageView {
             // Führe Panning nur dann durch, wenn das Event sicher kein Klick ist. Das verhindert kleine
             // Bewegungen des Bildes beim Klicken.
             if (touchCouldBeClick) {
-                return true;
+                return;
             }
 
             // Wenn wir gerade Zoomen, richtet sich das Panning nach dem ScaleFocus
@@ -833,7 +833,6 @@ public class LargeImageView extends AppCompatImageView {
         // Position/Skalierung der ImageView anpassen
         update();
 
-        return true;
     }
 
     // ////// SCALELISTENER: implementiert die onScale-Methode des SGD und kümmert sich damit um den Zoom.
@@ -899,7 +898,7 @@ public class LargeImageView extends AppCompatImageView {
 
     // ////// CLICK DETECTION
 
-    final GestureDetector gestureDetector = new GestureDetector(getContext(),
+    private final GestureDetector gestureDetector = new GestureDetector(getContext(),
         new GestureDetector.SimpleOnGestureListener() {
             public void onLongPress(MotionEvent e) {
                 if (!touchCouldBeClick) return;
@@ -916,7 +915,7 @@ public class LargeImageView extends AppCompatImageView {
      * Die Klickerkennung wurde ausgelagert, damit Subklassen onTouchEvent überschreiben und damit das Panning
      * deaktivieren, aber dennoch per Aufruf von super.onTouchEvent_clickDetection() Klicks erkennen lassen können.
      */
-    public void onTouchEvent_clickDetection(MotionEvent event) {
+    protected void onTouchEvent_clickDetection(MotionEvent event) {
         // Was für ein MotionEvent wurde detektiert?
         int action = event.getActionMasked();
 
@@ -1004,7 +1003,7 @@ public class LargeImageView extends AppCompatImageView {
      * nur dann weitermacht, wenn hier false zurückgegeben wird (d.h. wenn für den aktuellen Finger kein Drag and Drop
      * detektiert wurde).
      */
-    public boolean onTouchEvent_dragAndDrop(MotionEvent event) {
+    private boolean onTouchEvent_dragAndDrop(MotionEvent event) {
         // Was für ein MotionEvent wurde detektiert?
         int action = event.getActionMasked();
 
@@ -1239,7 +1238,7 @@ public class LargeImageView extends AppCompatImageView {
     /**
      * Übernimmt den Teil von {@link #onDraw(Canvas)}, der ein gecachtes Bild (in Tiles) anzeigt.
      */
-    protected void onDraw_cachedImage(Canvas canvas) {
+    private void onDraw_cachedImage(Canvas canvas) {
         // Effektive Skalierung berechnen (Skalierung, die nach dem Sampling noch erforderlich ist)
         float effectiveScale = sampleSize * zoomScale;
 
@@ -1297,7 +1296,7 @@ public class LargeImageView extends AppCompatImageView {
      * @param canvas
      * @return False, falls auch kein staticBitmap vorhanden ist... Benutze super.onDraw().
      */
-    protected boolean onDraw_staticBitmap(Canvas canvas) {
+    private boolean onDraw_staticBitmap(Canvas canvas) {
         // Viewport berechnen: sichtbarer Bildausschnitt (relativ zum Bild)
         int viewportWidth = (int) (getWidth() / zoomScale);
         int viewportHeight = (int) (getHeight() / zoomScale);
@@ -1324,7 +1323,7 @@ public class LargeImageView extends AppCompatImageView {
     /**
      * Übernimmt den Teil von {@link #onDraw(Canvas)}, der die OverlayIcons zeichnet.
      */
-    protected void onDraw_overlayIcons(Canvas canvas) {
+    private void onDraw_overlayIcons(Canvas canvas) {
         // Nichts tun, falls keine Overlay Icons vorhanden
         if (overlayIconList.isEmpty())
             return;

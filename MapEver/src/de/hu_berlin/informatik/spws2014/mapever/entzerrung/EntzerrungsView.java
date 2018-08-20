@@ -73,18 +73,18 @@ public class EntzerrungsView extends LargeImageView {
     // InputStream zum Bild
     private File imageFile;
     private boolean imageTypeSupportsDeskew = true;
-    private boolean openCVLoadError = true;
+    private final boolean openCVLoadError = true;
 
     // Eckpunkte als OverlayIcons
-    private CornerIcon[] corners = new CornerIcon[CORNERS_COUNT];
+    private final CornerIcon[] corners = new CornerIcon[CORNERS_COUNT];
 
     // Zustandsvariablen
     private boolean show_corners = true;
     private boolean punkte_gesetzt = false;
 
     // Some objects for onDraw
-    private Paint white = new Paint();
-    private Path wallpath = new Path();
+    private final Paint white = new Paint();
+    private final Path wallpath = new Path();
 
 
 

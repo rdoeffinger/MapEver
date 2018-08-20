@@ -25,7 +25,7 @@ import java.io.OutputStream;
 
 public class FileUtils {
 
-    public static void copyStreamToStream(InputStream srcStream, OutputStream destStream) throws IOException {
+    private static void copyStreamToStream(InputStream srcStream, OutputStream destStream) throws IOException {
         byte[] buffer = new byte[4096];
         int n;
 

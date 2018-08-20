@@ -22,9 +22,9 @@ import java.util.concurrent.Callable;
  * Dient dazu, die Mitteilung der Lokalisierung, dass eine neue Position für den
  * Nutzer vorliegt zu behandeln.
  */
-public class LocationDataManagerListener implements Callable<Void> {
+class LocationDataManagerListener implements Callable<Void> {
     // Context der Activity
-    Navigation navigationContext;
+    private final Navigation navigationContext;
 
     public LocationDataManagerListener(Navigation context) {
         this.navigationContext = context;
@@ -35,7 +35,7 @@ public class LocationDataManagerListener implements Callable<Void> {
      * den Nutzer ermittelt hat
      */
     @Override
-    public Void call() throws Exception {
+    public Void call() {
         // An Navigation übergeben
         navigationContext.onNewUserPosition();
         return null;

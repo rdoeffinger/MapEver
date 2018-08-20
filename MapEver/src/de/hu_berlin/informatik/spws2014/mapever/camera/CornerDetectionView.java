@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public class CornerDetectionView extends JavaCameraView implements PictureCallback {
+class CornerDetectionView extends JavaCameraView implements PictureCallback {
     interface PictureCallback {
         void onPictureTaken();
     }
@@ -212,6 +212,6 @@ public class CornerDetectionView extends JavaCameraView implements PictureCallba
 
     private String picture_filename;
     private PictureCallback picture_callback;
-    private OrientationEventListener orientation_listener;
+    private final OrientationEventListener orientation_listener;
     private int device_orientation;
 }

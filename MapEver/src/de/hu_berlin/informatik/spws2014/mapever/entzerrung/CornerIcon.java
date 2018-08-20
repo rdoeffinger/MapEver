@@ -28,10 +28,10 @@ import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon;
 public class CornerIcon extends OverlayIcon {
 
     // Resource des zu verwendenden Bildes
-    private static int cornerImageResource = R.drawable.entzerrung_corner;
+    private static final int cornerImageResource = R.drawable.entzerrung_corner;
 
     // Context der Activity
-    private Context context;
+    private final Context context;
 
     // Bildkoordinaten des Eckpunktes
     private Point cornerPosition;

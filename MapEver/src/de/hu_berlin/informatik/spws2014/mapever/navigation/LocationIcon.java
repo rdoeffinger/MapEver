@@ -26,7 +26,7 @@ import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon;
 public class LocationIcon extends OverlayIcon {
 
     // Resource des zu verwendenden Bildes
-    private static int locationImageResource = R.drawable.current_position;
+    private static final int locationImageResource = R.drawable.current_position;
 
     // Bildkoordinaten der Benutzerposition
     private Point2D locationPosition = new Point2D(0, 0);

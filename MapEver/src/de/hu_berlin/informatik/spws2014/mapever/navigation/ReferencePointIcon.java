@@ -26,12 +26,12 @@ import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon;
 public class ReferencePointIcon extends OverlayIcon {
 
     // Resource des zu verwendenden Bildes
-    private static int refPointImageResource = R.drawable.ref_punkt;
+    private static final int refPointImageResource = R.drawable.ref_punkt;
 
     // Dauer des Verblassens und letztendlich zu erreichender Alpha-Wert
-    private static float hiddenAlpha = 0.4f;
-    private static long fadingTimeOut = 2000;
-    private static long fadingTimeIn = 200;
+    private static final float hiddenAlpha = 0.4f;
+    private static final long fadingTimeOut = 2000;
+    private static final long fadingTimeIn = 200;
 
 
     // Bildkoordinaten des Referenzpunktes
@@ -128,7 +128,7 @@ public class ReferencePointIcon extends OverlayIcon {
      *
      * @param position neue Position
      */
-    public void setPosition(Point2D position) {
+    private void setPosition(Point2D position) {
         refPointPosition = position;
 
         // Darstellung aktualisieren

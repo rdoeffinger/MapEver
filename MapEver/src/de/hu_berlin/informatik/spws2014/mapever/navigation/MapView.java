@@ -67,7 +67,7 @@ public class MapView extends LargeImageView {
     // ////// BEHANDLUNG VON REFERENZPUNKTEN
 
     // Liste der gesetzten Referenzpunkte
-    private HashSet<ReferencePointIcon> refPointIcons = new HashSet<>();
+    private final HashSet<ReferencePointIcon> refPointIcons = new HashSet<>();
 
     // neu erstellter, aber unbestätigter Referenzpunkt
     private ReferencePointIcon unacceptedRefPointIcon = null;
@@ -100,11 +100,7 @@ public class MapView extends LargeImageView {
      */
     private void init() {
         // Speichere Activity Context
-        // (Der try-catch-Block ist nur notwendig, damit der Layouteditor von Eclipse nicht meckert... -.-)
-        try {
-            navigation = (Navigation) getContext();
-        } catch (Exception e) {
-        }
+        navigation = (Navigation) getContext();
     }
 
     @Override
@@ -401,7 +397,7 @@ public class MapView extends LargeImageView {
      *
      * @param pos Position des Referenzpunktes im Bild als Point2D
      */
-    public void createUnacceptedReferencePoint(Point2D pos) {
+    private void createUnacceptedReferencePoint(Point2D pos) {
         // Prüfe die Position auf Sinnhaftigkeit (vermeide Referenzpunkte außerhalb der Bildgrenzen)
         if (pos.x < 0 || pos.y < 0 || pos.x >= getImageWidth() || pos.y >= getImageHeight()) {
             // Fehlermeldung als Toast ausgeben

@@ -91,13 +91,13 @@ public class Start extends BaseActivity {
     public static final String INTENT_EXIT = "de.hu_berlin.informatik.spws2014.mapever.Start.Exit";
 
     // keeps track of the maps and their respective positions in the grid
-    private Map<Integer, TrackDBEntry> positionIdList = new HashMap<>();
-    private List<Bitmap> bitmapList = new ArrayList<>();
+    private final Map<Integer, TrackDBEntry> positionIdList = new HashMap<>();
+    private final List<Bitmap> bitmapList = new ArrayList<>();
 
     // track the state of some GUI-elements for orientation changes
     private boolean isPopupOpen = false;
     private boolean isHelpShown = false;
-    private boolean isContextMenuOpen = false;
+    private final boolean isContextMenuOpen = false;
 
     private boolean noMaps = true;
     private double[] intentPos = null;
@@ -278,10 +278,10 @@ public class Start extends BaseActivity {
         registerForContextMenu(gridview);
     }
 
-    public class ImageAdapter extends BaseAdapter {
-        private Context mContext;
+    class ImageAdapter extends BaseAdapter {
+        private final Context mContext;
 
-        public ImageAdapter(Context c) {
+        ImageAdapter(Context c) {
             mContext = c;
         }
 
@@ -297,7 +297,7 @@ public class Start extends BaseActivity {
             return 0;
         }
 
-        public int getPx(int dimensionDp) {
+        int getPx(int dimensionDp) {
             float density = getResources().getDisplayMetrics().density;
             return (int) (dimensionDp * density + 0.5f);
         }
@@ -308,7 +308,7 @@ public class Start extends BaseActivity {
             return !noMaps;
         }
 
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView = new ImageView(mContext);
@@ -433,13 +433,12 @@ public class Start extends BaseActivity {
         hideHelp();
     }
 
-    private boolean hideHelp() {
+    private void hideHelp() {
         if (!isHelpShown) {
-            return false;
+            return;
         }
         layout.removeViewAt(layout.getChildCount() - 1);
         isHelpShown = false;
-        return true;
     }
 
     public static int getStatusBarHeight(Context context) {
@@ -578,7 +577,7 @@ public class Start extends BaseActivity {
         }
     }
 
-    public void deleteMap(TrackDBEntry map) {
+    private void deleteMap(TrackDBEntry map) {
         TrackDB.main.delete(map);
         String basefile = MapEverApp.getAbsoluteFilePath(Long.toString(map.getIdentifier()));
         //noinspection ResultOfMethodCallIgnored
@@ -587,7 +586,7 @@ public class Start extends BaseActivity {
         new File(basefile + MapEverApp.THUMB_EXT).delete();
     }
 
-    public void renameMap(TrackDBEntry map, String newName) {
+    private void renameMap(TrackDBEntry map, String newName) {
         map.setMapname(newName);
     }
 
