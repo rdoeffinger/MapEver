@@ -64,6 +64,8 @@ public class Thumbnail {
 
         int current_width=options.outWidth, current_height=options.outHeight;
         int current_sample_size=1;
+        thumb_width = thumb_width < 16 ? 16 : thumb_width;
+        thumb_height = thumb_height < 16 ? 16 : thumb_height;
 
         //increase sample size until it produces an image that is too small
         while(current_width>=thumb_width && current_height>=thumb_height) {

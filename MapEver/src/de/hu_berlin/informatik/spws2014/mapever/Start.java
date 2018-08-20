@@ -100,7 +100,7 @@ public class Start extends BaseActivity {
 
     private boolean noMaps = true;
     private double[] intentPos = null;
-    private static int tileSize = 0;
+    private static int tileSize = 120 * DisplayMetrics.DENSITY_DEFAULT;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -278,9 +278,11 @@ public class Start extends BaseActivity {
 
     class ImageAdapter extends BaseAdapter {
         private final Context mContext;
+        private final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
         ImageAdapter(Context c) {
             mContext = c;
+            tileSize = (int)(120 * displayMetrics.density);
         }
 
         public int getCount() {
@@ -296,7 +298,7 @@ public class Start extends BaseActivity {
         }
 
         int getPx(int dimensionDp) {
-            float density = getResources().getDisplayMetrics().density;
+            float density = displayMetrics.density;
             return (int) (dimensionDp * density + 0.5f);
         }
 
@@ -306,14 +308,11 @@ public class Start extends BaseActivity {
             return !noMaps;
         }
 
-        final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView = new ImageView(mContext);
 
             if (convertView == null) {
                 // About 3/4 inch seems like a good size
-                tileSize = (int)(120 * displayMetrics.density);
                 imageView.setLayoutParams(new GridView.LayoutParams(tileSize, tileSize));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setPadding(getPx(8), getPx(8), getPx(8), getPx(8));
