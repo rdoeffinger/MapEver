@@ -97,7 +97,6 @@ public class Start extends BaseActivity {
     // track the state of some GUI-elements for orientation changes
     private boolean isPopupOpen = false;
     private boolean isHelpShown = false;
-    private final boolean isContextMenuOpen = false;
 
     private boolean noMaps = true;
     private double[] intentPos = null;
@@ -140,7 +139,6 @@ public class Start extends BaseActivity {
 
         // Debug
         System.out.println("getAllEntries: " + mapList);
-        System.out.println("isContextMenuOpen: " + isContextMenuOpen);
 
         noMaps = mapList.isEmpty();
 
