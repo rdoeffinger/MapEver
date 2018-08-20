@@ -59,9 +59,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,8 +89,8 @@ public class Start extends BaseActivity {
     public static final String INTENT_EXIT = "de.hu_berlin.informatik.spws2014.mapever.Start.Exit";
 
     // keeps track of the maps and their respective positions in the grid
-    private final Map<Integer, TrackDBEntry> positionIdList = new HashMap<>();
-    private final List<Bitmap> bitmapList = new ArrayList<>();
+    private final ArrayList<TrackDBEntry> positionIdList = new ArrayList<>();
+    private final ArrayList<Bitmap> bitmapList = new ArrayList<>();
 
     // track the state of some GUI-elements for orientation changes
     private boolean isPopupOpen = false;
@@ -145,15 +143,17 @@ public class Start extends BaseActivity {
         Resources resources = getResources();
 
         bitmapList.clear();
+        positionIdList.clear();
 
         // if maps are present, get them from the list and assign them to the positions in the grid
         if (!noMaps) {
-            int position = 0;
+            bitmapList.ensureCapacity(mapList.size());
+            positionIdList.ensureCapacity(mapList.size());
             for (TrackDBEntry d : mapList) {
-                positionIdList.put(position, d);
+                positionIdList.add(d);
 
                 // get the ID of the map
-                String id_string = Long.toString(positionIdList.get(position).getIdentifier());
+                String id_string = Long.toString(d.getIdentifier());
                 File thumbFile = new File(MapEverApp.getAbsoluteFilePath(id_string + "_thumb"));
                 Bitmap thumbBitmap = null;
 
@@ -168,16 +168,6 @@ public class Start extends BaseActivity {
                 } else {
                     bitmapList.add(BitmapFactory.decodeResource(resources, R.drawable.map_dummy));
                 }
-
-                // (((Debug
-                System.out.println("mapID: " + d.getIdentifier());
-                System.out.println("ID String:" + MapEverApp.getAbsoluteFilePath(id_string));
-                System.out.println("ID map (position , ID)");
-                for (Map.Entry<Integer, TrackDBEntry> entry : positionIdList.entrySet()) {
-                    System.out.println("ID map: " + "(" + entry.getKey() + " , " + entry.getValue() + ")");
-                }
-                // )))Debug
-                position++;
             }
         }
     }
@@ -321,11 +311,8 @@ public class Start extends BaseActivity {
             }
 
             // adds bitmaps of the map-thumbnails to the grid
-            Bitmap[] bitmapArray = new Bitmap[bitmapList.size()];
-            bitmapList.toArray(bitmapArray);
-
-            if (bitmapArray[position] != null) {
-                imageView.setImageBitmap(bitmapArray[position]);
+            if (bitmapList.get(position) != null) {
+                imageView.setImageBitmap(bitmapList.get(position));
             }
             return imageView;
         }
