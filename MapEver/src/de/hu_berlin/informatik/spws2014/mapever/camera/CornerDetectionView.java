@@ -25,7 +25,7 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.util.AttributeSet;
 import android.view.OrientationEventListener;
 
