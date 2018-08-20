@@ -183,45 +183,26 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
     public boolean onCreateOptionsMenu(Menu menu) {
         preview_resolution_menu = menu.addSubMenu("PreviewResolution");
         List<Size> available_resolutions = camera_view.get_preview_resolutions();
-        preview_resolution_items = new MenuItem[available_resolutions.size()];
         int i = 0;
         for (Size res : available_resolutions) {
-            preview_resolution_items[i] = preview_resolution_menu.add(
-                                              PREVIEW_MENU_ID,
-                                              i,
-                                              Menu.NONE,
-                                              res.width + "x" + res.height
-                                          );
+            preview_resolution_menu.add(PREVIEW_MENU_ID, i, Menu.NONE, res.width + "x" + res.height);
             ++i;
         }
 
         picture_resolution_menu = menu.addSubMenu("PictureResolution");
         available_resolutions = camera_view.get_picture_resolutions();
-        picture_resolution_items = new MenuItem[available_resolutions.size()];
         i = 0;
         for (Size res : available_resolutions) {
-            picture_resolution_items[i] = picture_resolution_menu.add(
-                                              PICTURE_MENU_ID,
-                                              i,
-                                              Menu.NONE,
-                                              res.width + "x" + res.height
-                                          );
+            picture_resolution_menu.add(PICTURE_MENU_ID, i, Menu.NONE, res.width + "x" + res.height);
             ++i;
         }
 
         List<String> flash_modes=camera_view.get_flash_modes();
         if(flash_modes!=null) {
             flash_menu = menu.addSubMenu("FlashModes");
-            flash_menu_items = new MenuItem[flash_modes.size()];
-
             i = 0;
             for (String mode : flash_modes) {
-                flash_menu_items[i] = flash_menu.add(
-                                          FLASH_MENU_ID,
-                                          i,
-                                          Menu.NONE,
-                                          mode
-                                      );
+                flash_menu.add(FLASH_MENU_ID, i, Menu.NONE, mode);
                 ++i;
             }
         }
@@ -268,7 +249,6 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
 
     private CornerDetectionView camera_view;
     private SubMenu preview_resolution_menu, picture_resolution_menu, flash_menu;
-    private MenuItem[] preview_resolution_items, picture_resolution_items, flash_menu_items;
     private static final int PREVIEW_MENU_ID = 1, PICTURE_MENU_ID = 2, FLASH_MENU_ID = 3;
     private static final int CONFIRM_RESULT_CODE = 100;
     private static final Scalar CIRCLE_COLOR = new Scalar(0, 255, 0, 255);
