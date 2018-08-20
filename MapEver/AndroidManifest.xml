@@ -67,9 +67,10 @@
             android:name=".entzerrung.Entzerren"
             android:label="@string/title_activity_deskew"
             android:parentActivityName=".Start" >
+            <!-- This variant for older Android versions seems to only work with the full absolute name -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Start" />
+                android:value="de.hu_berlin.informatik.spws2014.mapever.Start" />
         </activity>
         <activity
             android:name=".navigation.Navigation"
@@ -77,7 +78,7 @@
             android:parentActivityName=".Start" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Start" />
+                android:value="de.hu_berlin.informatik.spws2014.mapever.Start" />
         </activity>
         <activity
             android:name=".Settings"
@@ -85,7 +86,7 @@
             android:parentActivityName=".Start" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Start" />
+                android:value="de.hu_berlin.informatik.spws2014.mapever.Start" />
         </activity>
     </application>
 
