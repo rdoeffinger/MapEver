@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import de.hu_berlin.informatik.spws2014.mapever.BaseActivity;
 import de.hu_berlin.informatik.spws2014.mapever.FileUtils;
@@ -218,7 +219,7 @@ public class Entzerren extends BaseActivity {
             startLoadingScreen();
 
             // Entzerrung in AsyncTask starten
-            new EntzerrenTask(INPUTFILENAME).execute();
+            new EntzerrenTask(this, INPUTFILENAME).execute();
         } else {
             // temp_bak löschen
             File imageFile_bak = new File(INPUTFILENAMEBAK);
@@ -379,12 +380,14 @@ public class Entzerren extends BaseActivity {
     }
 
 
-    private class EntzerrenTask extends AsyncTask<Void, Void, String> {
+    private static class EntzerrenTask extends AsyncTask<Void, Void, String> {
         Bitmap entzerrtesBitmap = null;
+        private final WeakReference<Entzerren> parent;
         final String fileName;
 
-        EntzerrenTask(String fileName)
+        EntzerrenTask(Entzerren parent, String fileName)
         {
+            this.parent = new WeakReference<>(parent);
             this.fileName = fileName;
         }
 
@@ -404,10 +407,10 @@ public class Entzerren extends BaseActivity {
                 while (sampleSize <= 32) {
                     try {
                         // Punktkoordinaten als float[8] abrufen
-                        float coordinates[] = entzerrungsView.getPointOffsets(sampleSize);
+                        float coordinates[] = parent.get().entzerrungsView.getPointOffsets(sampleSize);
 
                         // Bitmap erzeugen
-                        Bitmap sampledBitmap = entzerrungsView.getSampledBitmap(sampleSize);
+                        Bitmap sampledBitmap = parent.get().entzerrungsView.getSampledBitmap(sampleSize);
 
                         if (sampledBitmap == null) {
                             Log.e("EntzerrenTask/doInBackground", "Decoding bitmap with SampleSize " + sampleSize + " resulted in null...");
@@ -433,19 +436,19 @@ public class Entzerren extends BaseActivity {
                     Log.e("EntzerrenTask/doInBackground", "Couldn't decode stream after " + sampleSize + " tries!");
                 } else {
                     // entzerrtes Bild abspeichern
-                    saveBitmap(entzerrtesBitmap, fileName);
+                    parent.get().saveBitmap(entzerrtesBitmap, fileName);
                 }
             } catch (OutOfMemoryError e) {
-                result = getResources().getString(R.string.error_outofmemory);
+                result = parent.get().getResources().getString(R.string.error_outofmemory);
                 e.printStackTrace();
             } catch (ArrayIndexOutOfBoundsException e) {
-                result = getResources().getString(R.string.deskewing_error_invalidcorners);
+                result = parent.get().getResources().getString(R.string.deskewing_error_invalidcorners);
             } catch (IllegalArgumentException e) {
-                result = getResources().getString(R.string.deskewing_error_invalidcorners);
+                result = parent.get().getResources().getString(R.string.deskewing_error_invalidcorners);
             } catch (NullPointerException e) {
                 // passiert z.B. bei unpassendem Dateiformat (GIF?)
                 // TODO irgendwas weiter machen? Entzerrung für GIFs von vornherein deaktivieren?
-                result = getResources().getString(R.string.deskewing_error_deskewfailure);
+                result = parent.get().getResources().getString(R.string.deskewing_error_deskewfailure);
                 Log.e("EntzerrenTask/doInBackground", "NullPointerException while trying to deskew image");
                 e.printStackTrace();
             }
@@ -457,21 +460,21 @@ public class Entzerren extends BaseActivity {
         protected void onPostExecute(String result) {
             // execution of result of long time consuming operation
             if (result != null) {
-                showErrorMessage(result);
+                parent.get().showErrorMessage(result);
             } else {
                 // entzerrtes Bild in die View laden
-                loadImageFile();
+                parent.get().loadImageFile();
 
-                entzerrungsView.showCorners(false);
-                entzerrungsView.calcCornerDefaults();
+                parent.get().entzerrungsView.showCorners(false);
+                parent.get().entzerrungsView.calcCornerDefaults();
 
-                entzerrt = true;
+                parent.get().entzerrt = true;
             }
 
-            endLoadingScreen();
-            unlockScreenOrientation();
+            parent.get().endLoadingScreen();
+            parent.get().unlockScreenOrientation();
 
-            entzerrungsView.update();
+            parent.get().entzerrungsView.update();
         }
     }
 

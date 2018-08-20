@@ -26,6 +26,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 // Der LruCache-bezogene Code wurde in Anlehnung an folgendes Tutorial erstellt:
@@ -239,12 +240,14 @@ class CachedImage extends LruCache<String, Bitmap> {
     /**
      * Asynchroner Task, der ein Tile generiert und es anschließend im Cache speichert.
      */
-    class TileWorkerTask extends AsyncTask<Void, Void, Bitmap> {
+    static class TileWorkerTask extends AsyncTask<Void, Void, Bitmap> {
+        private final WeakReference<CachedImage> parent;
         private final int x;
         private final int y;
         private final int sampleSize;
 
-        TileWorkerTask(int x, int y, int sampleSize) {
+        TileWorkerTask(CachedImage parent, int x, int y, int sampleSize) {
+            this.parent = new WeakReference<>(parent);
             this.x = x;
             this.y = y;
             this.sampleSize = sampleSize;
@@ -253,7 +256,7 @@ class CachedImage extends LruCache<String, Bitmap> {
         @Override
         protected Bitmap doInBackground(Void... params) {
             // Tile generieren
-            return generateTileBitmap(x, y, sampleSize);
+            return parent.get().generateTileBitmap(x, y, sampleSize);
         }
 
         @Override
@@ -264,14 +267,14 @@ class CachedImage extends LruCache<String, Bitmap> {
             }
 
             // Tile in Cache speichern falls ungleich null
-            putTileInCache(x, y, sampleSize, result);
+            parent.get().putTileInCache(x, y, sampleSize, result);
 
             // bei Fertigstellung wird der Eintrag in workingTileTasks entfernt
-            workingTileTasks.remove(getCacheKey(x, y, sampleSize));
+            parent.get().workingTileTasks.remove(getCacheKey(x, y, sampleSize));
 
             // Callback aufrufen, das in der LargeImageView dann this.invalidated.
-            if (cacheMissResolvedCallback != null) {
-                cacheMissResolvedCallback.onCacheMissResolved();
+            if (parent.get().cacheMissResolvedCallback != null) {
+                parent.get().cacheMissResolvedCallback.onCacheMissResolved();
             }
         }
     }
@@ -308,7 +311,7 @@ class CachedImage extends LruCache<String, Bitmap> {
                 Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache -> generating (async)...");
 
                 // Starte Task
-                TileWorkerTask task = new TileWorkerTask(x, y, sampleSize);
+                TileWorkerTask task = new TileWorkerTask(this, x, y, sampleSize);
                 task.execute();
 
                 // Wir merken uns, dass dieses Tile jetzt generiert wird, damit bei einem nächsten Aufruf vor der

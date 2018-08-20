@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import de.hu_berlin.informatik.spws2014.mapever.R;
@@ -38,22 +39,22 @@ import de.hu_berlin.informatik.spws2014.mapever.entzerrung.CornerDetector;
 
 @SuppressWarnings("deprecation")
 public class CornerDetectionCamera extends AppCompatActivity implements CvCameraViewListener2 {
-    private class AsyncCornerDetection extends AsyncTask<Void, Void, Void> {
+    private static class AsyncCornerDetection extends AsyncTask<Void, Void, Void> {
         AsyncCornerDetection(CornerDetectionCamera parent) {
-            this.parent = parent;
+            this.parent = new WeakReference<>(parent);
         }
 
         protected Void doInBackground(Void... unused) {
-            while (parent != null && parent.run_detection) {
-                if (parent.last_frame != null) {
-                    parent.last_corners = CornerDetector.guess_corners(parent.last_frame);
+            while (parent.get().run_detection) {
+                if (parent.get().last_frame != null) {
+                    parent.get().last_corners = CornerDetector.guess_corners(parent.get().last_frame);
                 }
             }
 
             return null;
         }
 
-        private final CornerDetectionCamera parent;
+        private final WeakReference<CornerDetectionCamera> parent;
     }
 
     @Override
