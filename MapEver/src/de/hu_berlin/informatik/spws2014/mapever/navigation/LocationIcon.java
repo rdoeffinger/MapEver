@@ -43,7 +43,7 @@ public class LocationIcon extends OverlayIcon {
      */
     public LocationIcon(MapView parentMapView) {
         // Superkonstruktor, registriert Icon bei der LIV
-        super((LargeImageView) parentMapView);
+        super(parentMapView);
 
         // Appresource als Bild setzen
         setDrawable(parentMapView.getResources().getDrawable(locationImageResource));

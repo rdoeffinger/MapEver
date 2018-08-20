@@ -423,8 +423,8 @@ public class LargeImageView extends AppCompatImageView {
         if (point == null) {
             panCenterX = panCenterY = 0;
         } else {
-            panCenterX = (float) point.x;
-            panCenterY = (float) point.y;
+            panCenterX = point.x;
+            panCenterY = point.y;
         }
         update();
     }

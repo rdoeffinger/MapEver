@@ -57,7 +57,7 @@ public class CornerIcon extends OverlayIcon {
      */
     public CornerIcon(EntzerrungsView parentEView, Point position) {
         // Superkonstruktor, registriert Icon bei der LIV
-        super((LargeImageView) parentEView);
+        super(parentEView);
 
         // Save activity context for later...
         context = parentEView.getContext();

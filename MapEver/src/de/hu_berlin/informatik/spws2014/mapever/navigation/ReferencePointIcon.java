@@ -57,7 +57,7 @@ public class ReferencePointIcon extends OverlayIcon {
      */
     public ReferencePointIcon(MapView parentMapView, Point2D position, long time, boolean isFadedOut) {
         // Superkonstruktor, registriert Icon bei der LIV
-        super((LargeImageView) parentMapView);
+        super(parentMapView);
 
         // Appresource als Bild setzen
         setDrawable(parentMapView.getResources().getDrawable(refPointImageResource));

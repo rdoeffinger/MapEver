@@ -1001,7 +1001,7 @@ public class Navigation extends BaseActivity implements LocationListener {
             // Anzeigen des Dialog
             dialog.show();
 
-            EditText input = (EditText) renameDialogLayout.findViewById(R.id.editTextToNameMap);
+            EditText input = renameDialogLayout.findViewById(R.id.editTextToNameMap);
 
             // Wenn der Text ge�ndert wird, wird der String newMapName angepasst
             input.addTextChangedListener(new TextWatcher() {
