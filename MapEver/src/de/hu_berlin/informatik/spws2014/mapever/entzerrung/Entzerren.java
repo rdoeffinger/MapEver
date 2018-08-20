@@ -223,6 +223,7 @@ public class Entzerren extends BaseActivity {
             // temp_bak löschen
             File imageFile_bak = new File(INPUTFILENAMEBAK);
             if (imageFile_bak.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 imageFile_bak.delete();
             }
 
@@ -380,7 +381,7 @@ public class Entzerren extends BaseActivity {
 
     private class EntzerrenTask extends AsyncTask<Void, Void, String> {
         Bitmap entzerrtesBitmap = null;
-        String fileName = null;
+        String fileName;
 
         EntzerrenTask(String fileName)
         {

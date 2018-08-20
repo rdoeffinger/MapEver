@@ -23,7 +23,6 @@ import android.util.Log;
 
 import de.hu_berlin.informatik.spws2014.mapever.R;
 import de.hu_berlin.informatik.spws2014.mapever.Settings;
-import de.hu_berlin.informatik.spws2014.mapever.largeimageview.LargeImageView;
 import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon;
 
 public class CornerIcon extends OverlayIcon {

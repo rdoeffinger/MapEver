@@ -46,10 +46,10 @@ public class CachedImage extends LruCache<String, Bitmap> {
     // ////// BITMAP, TILE AND CACHE STUFF
 
     // BitmapRegionDecoder (liest Bildausschnitte aus InputStreams)
-    private BitmapRegionDecoder regionDecoder = null;
+    private BitmapRegionDecoder regionDecoder;
 
     // Liste für Keys der Tiles, die aktuell von TileWorkerTasks generiert werden
-    private ArrayList<String> workingTileTasks = new ArrayList<String>();
+    private ArrayList<String> workingTileTasks = new ArrayList<>();
 
     // Callback, wenn nach einem Cache-Miss das gesuchte Tile erzeugt und gecachet wurde.
     private CacheMissResolvedCallback cacheMissResolvedCallback;

@@ -118,7 +118,7 @@ public class LargeImageView extends AppCompatImageView {
 
 
     // ////// OVERLAY ICONS
-    private ArrayList<OverlayIcon> overlayIconList = new ArrayList<OverlayIcon>();
+    private ArrayList<OverlayIcon> overlayIconList = new ArrayList<>();
 
 
     // ////////////////////////////////////////////////////////////////////////
@@ -906,8 +906,7 @@ public class LargeImageView extends AppCompatImageView {
                 performLongClick();
             }
             public boolean onSingleTapUp(MotionEvent e) {
-                if (!touchCouldBeClick) return false;
-                return performClick();
+                return touchCouldBeClick && performClick();
             }
         });
 

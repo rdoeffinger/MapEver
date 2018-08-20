@@ -118,7 +118,7 @@ public class Navigation extends BaseActivity implements LocationListener {
     private ImageButton trackPositionButton;
 
     // Liste aller ImageButtons
-    private ArrayList<ImageButton> imageButtonList = new ArrayList<ImageButton>();
+    private ArrayList<ImageButton> imageButtonList = new ArrayList<>();
 
 
     // ////// KARTEN- UND NAVIGATIONSINFORMATIONEN
@@ -872,7 +872,7 @@ public class Navigation extends BaseActivity implements LocationListener {
 
             // wenn ein neuer Name eingegeben wurde, so ist er in newMapName gespeichert
             // thisMap == null really only happens for the test map
-            if (newMapName != "" && thisMap != null) {
+            if (newMapName.isEmpty() && thisMap != null) {
                 this.getSupportActionBar().setTitle(newMapName);
                 thisMap.setMapname(newMapName);
 
@@ -1308,7 +1308,7 @@ public class Navigation extends BaseActivity implements LocationListener {
             Log.w("registerReferencePoint", "addMarker failed because of NoGpsDataAvailableException: " + e.getMessage());
 
             // Fehlermeldung per Toast anzeigen
-            int errorMsgID = e.getMessage() == "Point already known!"
+            int errorMsgID = e.getMessage().equals("Point already known!")
                              ? R.string.navigation_toast_refpoint_already_set_for_this_position
                              : R.string.navigation_toast_no_gpsfix_yet;
 

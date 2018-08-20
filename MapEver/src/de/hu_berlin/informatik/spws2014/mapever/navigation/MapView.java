@@ -67,7 +67,7 @@ public class MapView extends LargeImageView {
     // ////// BEHANDLUNG VON REFERENZPUNKTEN
 
     // Liste der gesetzten Referenzpunkte
-    private HashSet<ReferencePointIcon> refPointIcons = new HashSet<ReferencePointIcon>();
+    private HashSet<ReferencePointIcon> refPointIcons = new HashSet<>();
 
     // neu erstellter, aber unbestätigter Referenzpunkt
     private ReferencePointIcon unacceptedRefPointIcon = null;

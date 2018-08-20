@@ -29,8 +29,6 @@ import android.media.ExifInterface;
 import android.util.AttributeSet;
 import android.view.OrientationEventListener;
 
-import org.opencv.android.JavaCameraView;
-
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +143,7 @@ public class CornerDetectionView extends JavaCameraView implements PictureCallba
             return;
         CameraInfo info = new CameraInfo();
         Camera.getCameraInfo(getCameraId(),info);
-        int rotation = 0;
+        int rotation;
         if(info.facing == CameraInfo.CAMERA_FACING_FRONT) {
             rotation = (info.orientation - device_orientation +360) % 360;
         } else {

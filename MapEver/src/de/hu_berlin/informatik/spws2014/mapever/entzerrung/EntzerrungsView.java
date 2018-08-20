@@ -164,6 +164,7 @@ public class EntzerrungsView extends LargeImageView {
 
         // Lade Positionen der 4 Eckpunkte
         Point[] cornerPoints = (Point[]) bundle.getSerializable(SAVEDCORNERS);
+        assert cornerPoints != null;
         for (int i = 0; i < CORNERS_COUNT; i++) {
             corners[i].setPosition(cornerPoints[i]);
         }

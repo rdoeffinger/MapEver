@@ -16,11 +16,6 @@
 
 package de.hu_berlin.informatik.spws2014.mapever.entzerrung;
 
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-
 public class CornerDetector {
     /**
      * Guesses the most likly corners of a distorted map within an image.

@@ -91,8 +91,8 @@ public class Start extends BaseActivity {
     public static final String INTENT_EXIT = "de.hu_berlin.informatik.spws2014.mapever.Start.Exit";
 
     // keeps track of the maps and their respective positions in the grid
-    private Map<Integer, TrackDBEntry> positionIdList = new HashMap<Integer, TrackDBEntry>();
-    private List<Bitmap> bitmapList = new ArrayList<Bitmap>();
+    private Map<Integer, TrackDBEntry> positionIdList = new HashMap<>();
+    private List<Bitmap> bitmapList = new ArrayList<>();
 
     // track the state of some GUI-elements for orientation changes
     private boolean isPopupOpen = false;
@@ -129,7 +129,7 @@ public class Start extends BaseActivity {
 
     // TODO: cannot find a way to actually make it refresh the view
     private void refreshMapGrid() {
-        ArrayList<TrackDBEntry> mapList = TrackDB.main == null ? new ArrayList<TrackDBEntry>() : new ArrayList<TrackDBEntry>(TrackDB.main.getAllMaps());
+        ArrayList<TrackDBEntry> mapList = TrackDB.main == null ? new ArrayList<TrackDBEntry>() : new ArrayList<>(TrackDB.main.getAllMaps());
         Collections.sort(mapList, new Comparator<TrackDBEntry>() {
             public int compare(TrackDBEntry t1, TrackDBEntry t2) {
                 if (t1.getIdentifier() > t2.getIdentifier()) return -1;
@@ -471,6 +471,7 @@ public class Start extends BaseActivity {
 
             try {
                 // InputStream für Quelldatei erzeugen
+                assert srcUri != null;
                 Log.d("Neue_Karte/onActivityResult", "Copying file '" + srcUri.toString() + "'");
                 InputStream inStream = this.getContentResolver().openInputStream(srcUri);
 
@@ -563,7 +564,7 @@ public class Start extends BaseActivity {
 
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         int position = info.position;
-        String header = "";
+        String header;
         if (!noMaps) {
             header = positionIdList.get(position).getMapname();
             if (header.isEmpty()) {
@@ -580,7 +581,9 @@ public class Start extends BaseActivity {
     public void deleteMap(TrackDBEntry map) {
         TrackDB.main.delete(map);
         String basefile = MapEverApp.getAbsoluteFilePath(Long.toString(map.getIdentifier()));
+        //noinspection ResultOfMethodCallIgnored
         new File(basefile).delete();
+        //noinspection ResultOfMethodCallIgnored
         new File(basefile + MapEverApp.THUMB_EXT).delete();
     }
 
