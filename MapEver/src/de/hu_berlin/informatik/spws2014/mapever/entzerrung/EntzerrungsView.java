@@ -68,7 +68,7 @@ public class EntzerrungsView extends LargeImageView {
     // ////// PRIVATE MEMBERS
 
     // Activity context
-    private Entzerren entzerren;
+    public Entzerren entzerren;
 
     // InputStream zum Bild
     private File imageFile;
@@ -114,8 +114,6 @@ public class EntzerrungsView extends LargeImageView {
         // nichts weiter tun, wenn die View in Eclipse's GUI-Editor angezeigt wird
         if (this.isInEditMode())
             return;
-
-        entzerren = (Entzerren) this.getContext();
 
         // Set transparency of LIV image
         setForegroundAlpha(PICTURE_TRANSPARENT);

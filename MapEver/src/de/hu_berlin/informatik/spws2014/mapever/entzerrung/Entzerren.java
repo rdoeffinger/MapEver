@@ -81,6 +81,7 @@ public class Entzerren extends BaseActivity {
 
         // Referenz auf EntzerrungsView speichern
         entzerrungsView = (EntzerrungsView) findViewById(R.id.entzerrungsview);
+        entzerrungsView.entzerren = this;
 
         // Bild in die View laden
         loadImageFile();

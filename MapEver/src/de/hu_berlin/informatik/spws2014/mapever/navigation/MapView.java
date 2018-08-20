@@ -48,7 +48,7 @@ public class MapView extends LargeImageView {
 
     // ////// NAVIGATION ACTIVITY CONTEXT
 
-    private Navigation navigation;
+    public Navigation navigation;
 
 
     // ////// MAP VIEW UND DATEN
@@ -82,25 +82,14 @@ public class MapView extends LargeImageView {
 
     public MapView(Context context) {
         super(context);
-        init();
     }
 
     public MapView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
     public MapView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
-    }
-
-    /**
-     * Initialisiert das MapView-Objekt (wird vom Konstruktor aufgerufen).
-     */
-    private void init() {
-        // Speichere Activity Context
-        navigation = (Navigation) getContext();
     }
 
     @Override
