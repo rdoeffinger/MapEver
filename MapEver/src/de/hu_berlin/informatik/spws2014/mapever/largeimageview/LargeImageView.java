@@ -26,14 +26,14 @@ import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.InputDevice;
 import android.view.ScaleGestureDetector;
-import android.widget.ImageView;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -43,7 +43,7 @@ import java.util.ArrayList;
 
 import de.hu_berlin.informatik.spws2014.mapever.largeimageview.CachedImage.CacheMissResolvedCallback;
 
-public class LargeImageView extends ImageView {
+public class LargeImageView extends AppCompatImageView {
 
     // ////// KEYS FÜR ZU SPEICHERNDE DATEN IM SAVEDINSTANCESTATE-BUNDLE
 

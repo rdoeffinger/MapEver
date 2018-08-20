@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -25,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/set_refpoint_help"
         android:contentDescription="@string/navigation_desc_location"
-        android:src="@drawable/current_position" />
+        app:srcCompat="@drawable/current_position" />
 
     <TextView
         android:id="@+id/location_help_text"
@@ -45,7 +46,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/navigation_desc_set_refpoint"
-        android:src="@drawable/ic_action_reference_point_marker" />
+        app:srcCompat="@drawable/ic_action_reference_point_marker" />
 
     <TextView
         android:id="@+id/set_refpoint_help_text"
@@ -65,7 +66,7 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/set_refpoint_help"
         android:contentDescription="@string/navigation_desc_refpoint"
-        android:src="@drawable/ref_punkt" />
+        app:srcCompat="@drawable/ref_punkt" />
 
     <TextView
         android:id="@+id/refpoint_help_text"

@@ -23,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -44,7 +45,7 @@ import de.hu_berlin.informatik.spws2014.mapever.R;
 import de.hu_berlin.informatik.spws2014.mapever.entzerrung.CornerDetector;
 
 @SuppressWarnings("deprecation")
-public class CornerDetectionCamera extends Activity implements CvCameraViewListener2 {
+public class CornerDetectionCamera extends AppCompatActivity implements CvCameraViewListener2 {
     private class AsyncCornerDetection extends AsyncTask<Void, Void, Void> {
         public AsyncCornerDetection(CornerDetectionCamera parent) {
             this.parent = parent;

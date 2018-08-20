@@ -17,7 +17,6 @@
 package de.hu_berlin.informatik.spws2014.mapever.navigation;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -34,6 +33,7 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -55,7 +55,6 @@ import java.util.Random;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.GpsPoint;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.ILDMIOHandler;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.ImagePositionLocator;
-import de.hu_berlin.informatik.spws2014.ImagePositionLocator.IPLSettingsContainer;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.LDMIOEmpty;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.LeastSquaresImagePositionLocator;
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.LocationDataManager;

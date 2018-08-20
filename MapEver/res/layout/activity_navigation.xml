@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
@@ -21,7 +22,7 @@
         android:backgroundTint="#151515"
         android:contentDescription="@string/navigation_desc_set_refpoint"
         android:onClick="setRefPoint"
-        android:src="@drawable/ic_action_reference_point_marker" />
+        app:srcCompat="@drawable/ic_action_reference_point_marker" />
 
     <ImageView
         android:id="@+id/spacing"
@@ -42,7 +43,7 @@
         android:backgroundTint="#151515"
         android:contentDescription="@string/navigation_desc_cancel_refpoint"
         android:onClick="cancelReferencePoint"
-        android:src="@drawable/ic_action_cancel" />
+        app:srcCompat="@drawable/ic_action_cancel" />
 
     <ImageButton
         android:id="@+id/accept_refpoint"
@@ -55,7 +56,7 @@
         android:backgroundTint="#151515"
         android:contentDescription="@string/navigation_desc_accept_refpoint"
         android:onClick="acceptReferencePoint"
-        android:src="@drawable/ic_action_done" />
+        app:srcCompat="@drawable/ic_action_done" />
 
     <ImageButton
         android:id="@+id/delete_refpoint"
@@ -70,7 +71,7 @@
         android:backgroundTint="#151515"
         android:contentDescription="@string/navigation_desc_delete_refpoint"
         android:onClick="deleteReferencePoint"
-        android:src="@drawable/ic_action_delete" />
+        app:srcCompat="@drawable/ic_action_delete" />
 
     <ImageButton
         android:id="@+id/track_position"
@@ -86,6 +87,6 @@
         android:contentDescription="@string/navigation_desc_track_position"
         android:onClick="trackPosition"
         android:scaleType="fitCenter"
-	android:src="@drawable/ic_action_location_found" />
+	app:srcCompat="@drawable/ic_action_location_found" />
 
 </RelativeLayout>

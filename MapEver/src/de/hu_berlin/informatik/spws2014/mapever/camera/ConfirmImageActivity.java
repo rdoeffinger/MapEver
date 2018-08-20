@@ -16,10 +16,10 @@
 
 package de.hu_berlin.informatik.spws2014.mapever.camera;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,7 +29,7 @@ import java.io.File;
 
 import de.hu_berlin.informatik.spws2014.mapever.R;
 
-public class ConfirmImageActivity extends Activity {
+public class ConfirmImageActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,13 +77,13 @@ public class ConfirmImageActivity extends Activity {
 
     public void onConfirmPictureClick(View v) {
         Intent intent = new Intent();
-        setResult(Activity.RESULT_OK, intent);
+        setResult(AppCompatActivity.RESULT_OK, intent);
         finish();
     }
 
     public void onCancelPictureClick(View v) {
         Intent intent = new Intent();
-        setResult(Activity.RESULT_CANCELED, intent);
+        setResult(AppCompatActivity.RESULT_CANCELED, intent);
         finish();
     }
 
