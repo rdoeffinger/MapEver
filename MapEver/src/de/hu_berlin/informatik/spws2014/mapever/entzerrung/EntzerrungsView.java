@@ -290,27 +290,22 @@ public class EntzerrungsView extends LargeImageView {
 
             // Bildschirmkoordinaten der Punkte ermitteln
             // (Ecken sind bereits sortiert)
-            PointF[] canvasPoints = new PointF[CORNERS_COUNT];
-
             boolean somethingIsNull = false;
 
-            for (int i = 0; i <= 3; i++) {
-                canvasPoints[i] = corners[i].getScreenPosition();
+            for (int i = 0; i < CORNERS_COUNT; i++) {
+                PointF canvasPoint = corners[i].getScreenPosition();
 
                 // Sollte eigentlich nie passieren...?
-                if (canvasPoints[i] == null) {
+                if (canvasPoint == null) {
                     somethingIsNull = true;
                     Log.w("EntzerrungsView/onDraw", "the " + i + "-th corner screen positions is null!");
                     break;
                 }
+                if (i == 0) wallpath.moveTo(canvasPoint.x, canvasPoint.y);
+                else wallpath.lineTo(canvasPoint.x, canvasPoint.y);
             }
 
             if (!somethingIsNull) {
-                wallpath.moveTo(canvasPoints[0].x, canvasPoints[0].y);
-                wallpath.lineTo(canvasPoints[1].x, canvasPoints[1].y);
-                wallpath.lineTo(canvasPoints[2].x, canvasPoints[2].y);
-                wallpath.lineTo(canvasPoints[3].x, canvasPoints[3].y);
-
                 canvas.drawPath(wallpath, white);
             }
         }
