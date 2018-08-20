@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:gridlayout-v7:25.0.0'
-    compile 'com.android.support:design:25.0.0'
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:gridlayout-v7:25.3.1'
+    implementation 'com.android.support:design:25.3.1'
 }
 
 android {
@@ -11,8 +11,8 @@ android {
         config {
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 26
+    buildToolsVersion "27.0.3"
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -38,9 +38,6 @@ android {
             assets.srcDirs = ['assets']
         }
 
-        // Move the tests to tests/java, tests/res, etc...
-        instrumentTest.setRoot('tests')
-
         // Move the build types to build-types/<type>
         // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
         // This moves them out of them default location under src/<type>/... which would
@@ -52,7 +49,7 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.mapever'
-        targetSdkVersion 25
+        targetSdkVersion 26
         signingConfig signingConfigs.config
         resConfigs "de", "en", "fr", "sv"
     }
