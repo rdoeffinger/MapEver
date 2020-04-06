@@ -16,8 +16,7 @@ android {
         config {
         }
     }
-    compileSdkVersion 26
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 29
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -57,7 +56,9 @@ android {
         targetSdkVersion 26
         signingConfig signingConfigs.config
         resConfigs "de", "en", "fr", "sv"
+        minSdkVersion 10
     }
     productFlavors {
     }
+    buildToolsVersion = '29.0.3'
 }
