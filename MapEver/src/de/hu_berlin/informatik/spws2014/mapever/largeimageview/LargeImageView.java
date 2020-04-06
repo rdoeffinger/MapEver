@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.net.Uri;
@@ -86,6 +87,9 @@ public class LargeImageView extends AppCompatImageView {
     private float panCenterX = Float.NaN;
     private float panCenterY = Float.NaN;
     private float zoomScale = 1f;
+    private Matrix sampledImageToScreenMatrix;
+    private Matrix imageToScreenMatrix;
+    private Matrix screenToImageMatrix;
 
     // Sample-Stufe, wird automatisch aus zoomScale berechnet
     // (sampleSize: größer = geringere Auflösung; zoomScale: kleiner = weiter weg vom Bild)
@@ -146,6 +150,9 @@ public class LargeImageView extends AppCompatImageView {
     private void init() {
         // Erstelle SGD, der fürs Zooming zuständig ist
         SGD = new ScaleGestureDetector(getContext(), new ScaleListener());
+        sampledImageToScreenMatrix = new Matrix();
+        imageToScreenMatrix = new Matrix();
+        screenToImageMatrix = new Matrix();
     }
 
     @Override
@@ -262,13 +269,6 @@ public class LargeImageView extends AppCompatImageView {
         }
     }
 
-    /**
-     * Gibt eine statisch geladene Bitmap (d.h. nicht gecachtes oder zerteiltes Bild) zurück, wenn vorhanden.
-     */
-    public Bitmap getStaticBitmap() {
-        return staticBitmap;
-    }
-
     @Override
     public void setImageResource(int resId) {
         assert false;
@@ -336,16 +336,16 @@ public class LargeImageView extends AppCompatImageView {
     protected void onPostLoadImage(boolean calledByOnSizeChanged) {
         // If called before onLayout() we don't know width and height yet... so we have to call this method later
         // in onSizeChanged again.
-        if (getWidth() != 0 && getHeight() != 0) {
-            // (re-)calculate MIN_ and MAX_ZOOM_SCALE
-            calculateZoomScaleLimits();
-
-            // If no pan has been set yet (just loaded): center image and zoom out until whole image is visible
-            if (Float.isNaN(panCenterX) || Float.isNaN(panCenterY)) {
-                setPanZoomFitImage();
-            }
-        } else {
+        if (getWidth() == 0 || getHeight() == 0) {
             Log.d("LIV/onPostLoadImage", "Couldn't execute onPostLoadImage yet, no width/height known!");
+            return;
+        }
+        // (re-)calculate MIN_ and MAX_ZOOM_SCALE
+        calculateZoomScaleLimits();
+
+        // If no pan has been set yet (just loaded): center image and zoom out until whole image is visible
+        if (Float.isNaN(panCenterX) || Float.isNaN(panCenterY)) {
+            setPanZoomFitImage();
         }
     }
 
@@ -357,9 +357,8 @@ public class LargeImageView extends AppCompatImageView {
     /**
      * Gibt die Breite des Bildes zurück. (Tatsächliche Bildgröße, auch wenn nur kleinere Teile geladen sind.)
      */
-    public int getImageWidth() {
-        return imageWidth;
-    }
+    public int getImageWidth() { return imageWidth; }
+
 
     /**
      * Gibt die Höhe des Bildes zurück. (Tatsächliche Bildgröße, auch wenn nur kleinere Teile geladen sind.)
@@ -368,15 +367,6 @@ public class LargeImageView extends AppCompatImageView {
         return imageHeight;
     }
 
-    /**
-     * Gibt Transparenz des Bildes zurück ("Background" um Verwechslung mit setImageAlpha() zu vermeiden,
-     * im Gegensatz zu Foreground, was dann die OverlayIcons wären).
-     *
-     * @return Wert von 0 (vollkommen transparent) bis 255 (undurchsichtig).
-     */
-    public int getBackgroundAlpha() {
-        return bgAlphaPaint == null ? 255 : bgAlphaPaint.getAlpha();
-    }
 
     /**
      * Setze Transparenz des angezeigten Bildes ("Foreground" um Verwechslung mit setImageAlpha() zu vermeiden,
@@ -396,21 +386,6 @@ public class LargeImageView extends AppCompatImageView {
 
     // ////// GETTERS AND SETTERS
 
-    /** Gibt aktuelle Pan-Center-X-Koordinate (Bildpunkt, der im Sichtfeld zentriert wird) zurück. */
-    public float getPanCenterX() {
-        return panCenterX;
-    }
-
-    /** Gibt aktuelle Pan-Center-Y-Koordinate (Bildpunkt, der im Sichtfeld zentriert wird) zurück. */
-    public float getPanCenterY() {
-        return panCenterY;
-    }
-
-    /** Gibt aktuelle Pan-Center-Koordinaten (Bildpunkt, der im Sichtfeld zentriert wird) als PointF zurück. */
-    public PointF getPanCenter() {
-        return new PointF(panCenterX, panCenterY);
-    }
-
     /** Setzt neue Pan-Center-Koordinaten (Bildpunkt, der im Sichtfeld zentriert wird). */
     protected void setPanCenter(float newX, float newY) {
         panCenterX = newX;
@@ -418,35 +393,12 @@ public class LargeImageView extends AppCompatImageView {
         update();
     }
 
-    /** Setzt neue Pan-Center-Koordinaten (Bildpunkt, der im Sichtfeld zentriert wird). */
-    public void setPanCenter(PointF point) {
-        if (point == null) {
-            panCenterX = panCenterY = 0;
-        } else {
-            panCenterX = point.x;
-            panCenterY = point.y;
-        }
-        update();
-    }
-
-    /** Gibt aktuelles Zoom-Level zurück. (Je kleiner, desto weiter weg ist das Bild.) */
-    public float getZoomScale() {
-        return zoomScale;
-    }
-
-    /** Gibt aktuelle Sample-Stufe zurück. (Je größer, desto geringer ist die Auflösung des Bildes.) */
-    public int getSampleSize() {
-        return sampleSize;
-    }
-
     /** Setzt neues Zoom-Level und berechnet Sample-Stufe neu. */
     private void setZoomScale(float newZoomScale) {
         zoomScale = newZoomScale;
 
         // Zoom-Level darf Minimum und Maximum nicht unter-/überschreiten
-        if (zoomScale < minZoomScale || zoomScale > maxZoomScale) {
-            zoomScale = Math.max(minZoomScale, Math.min(zoomScale, maxZoomScale));
-        }
+        zoomScale = Math.max(minZoomScale, Math.min(zoomScale, maxZoomScale));
 
         // SampleSize neuberechnen
         sampleSize = calculateSampleSize(zoomScale);
@@ -461,13 +413,6 @@ public class LargeImageView extends AppCompatImageView {
         panCenterX = newX;
         panCenterY = newY;
         setZoomScale(newZoomScale); // calls update()
-    }
-
-    /** Zentriert den Bildmittelpunkt, indem das Pan-Center auf diesen gesetzt wird. */
-    public void setPanCenterToImageCenter() {
-        float centerX = imageWidth / 2;
-        float centerY = imageHeight / 2;
-        setPanCenter(centerX, centerY); // calls update()
     }
 
     /**
@@ -502,26 +447,12 @@ public class LargeImageView extends AppCompatImageView {
      * @return Sample-Stufe
      */
     private static int calculateSampleSize(float scale) {
-        int sample = 1;
-
-        // bilde ganzzahligen Kehrwert von scale (kann für scale < 1 null werden)
-        int x = (int) (1.0 / scale);
-
-        // Das Sampling Level ist die größte Zweierpotenz, die <= 1/scale ist.
-        // Wir finden diese, indem wir x durch 2 teilen und samplingLevel verdoppeln, bis x = 0 ist.
-        // z.B. x=9:
-        // x=9, s=1 --> x=4, s=2 --> x=2, s=4 --> x=1, s=8 --> x=0, s=8.
-
-        while ((x /= 2) > 0) {
-            sample *= 2;
-        }
-
         // Begrenze Samplesize auf 32 (sollte ausreichen)
-        if (sample > 32) {
-            sample = 32;
+        for (int sample = 1; sample < 32; sample *= 2) {
+            // Das Sampling Level ist die größte Zweierpotenz, die <= 1/scale ist.
+            if (sample * scale > 0.5f) return sample;
         }
-
-        return sample;
+        return 32;
     }
 
     /**
@@ -558,12 +489,9 @@ public class LargeImageView extends AppCompatImageView {
                   + ") or view dimensions are still zero (getWidth/getHeight: " + getWidth() + "/" + getHeight() + ")");
             return null;
         }
-
-        // Der Offset berechnet sich aus PanCenterPos und halber (scale-gewichteter) Viewgröße.
-        float imageX = panCenterX + (-getWidth() / 2 + screenX) / zoomScale;
-        float imageY = panCenterY + (-getHeight() / 2 + screenY) / zoomScale;
-
-        return new PointF(imageX, imageY);
+        float[] p = {screenX, screenY};
+        screenToImageMatrix.mapPoints(p);
+        return new PointF(p[0], p[1]);
     }
 
     /**
@@ -575,12 +503,9 @@ public class LargeImageView extends AppCompatImageView {
                   + ") or view dimensions are still zero (getWidth/getHeight: " + getWidth() + "/" + getHeight() + ")");
             return null;
         }
-
-        // Umkehrfunktion zu screenToImagePosition()
-        float screenX = (imageX - panCenterX) * zoomScale + getWidth() / 2;
-        float screenY = (imageY - panCenterY) * zoomScale + getHeight() / 2;
-
-        return new PointF(screenX, screenY);
+        float[] p = {imageX, imageY};
+        imageToScreenMatrix.mapPoints(p);
+        return new PointF(p[0], p[1]);
     }
 
 
@@ -1160,22 +1085,8 @@ public class LargeImageView extends AppCompatImageView {
 
         if (imageWidth > 0 && imageHeight > 0) {
             // Panning so begrenzen, dass PanCenter nicht die Bildgrenzen verlassen kann. (Simple, huh?)
-
-            // Linke Begrenzung
-            if (panCenterX < 0)
-                panCenterX = 0;
-            // Rechte Begrenzung
-            else if (panCenterX >= imageWidth)
-                panCenterX = imageWidth;
-
-            // Obere Begrenzung
-            if (panCenterY < 0)
-                panCenterY = 0;
-            // Untere Begrenzung
-            else if (panCenterY >= imageHeight)
-                panCenterY = imageHeight;
-
-            // Log.d("LIV/update", "Pan center: " + panCenterX + "/" + panCenterY + ", zoom: " + zoomScale);
+            panCenterX = Math.min(Math.max(panCenterX, 0), imageWidth);
+            panCenterY = Math.min(Math.max(panCenterY, 0), imageHeight);
         }
 
         // View neu zeichnen lassen (onDraw)
@@ -1208,7 +1119,17 @@ public class LargeImageView extends AppCompatImageView {
             zoomScale = (float) 1.0 / 256; // dürfte klein genug sein :P
         }
 
-        canvas.save();
+        screenToImageMatrix.setTranslate(panCenterX, panCenterY);
+        screenToImageMatrix.preScale(1.0f / zoomScale, 1.0f / zoomScale);
+        screenToImageMatrix.preTranslate(getWidth() / 2, getHeight() / 2);
+
+        imageToScreenMatrix.setTranslate(getWidth() / 2, getHeight() / 2);
+        imageToScreenMatrix.preScale(zoomScale, zoomScale);
+        imageToScreenMatrix.preTranslate(-panCenterX, -panCenterY);
+
+        sampledImageToScreenMatrix.setTranslate(getWidth() / 2, getHeight() / 2);
+        sampledImageToScreenMatrix.preScale(sampleSize * zoomScale, sampleSize * zoomScale);
+        sampledImageToScreenMatrix.preTranslate(-panCenterX / sampleSize, -panCenterY / sampleSize);
 
         // Prüfe, ob wir ein CachedImage oder ein statisches Bitmap verwenden
         if (cachedImage != null) {
@@ -1220,53 +1141,22 @@ public class LargeImageView extends AppCompatImageView {
             }
         }
 
-        canvas.restore();
-
         // Overlay-Icons zeichnen
-        canvas.save();
         onDraw_overlayIcons(canvas);
-        canvas.restore();
     }
 
     /**
      * Übernimmt den Teil von {@link #onDraw(Canvas)}, der ein gecachtes Bild (in Tiles) anzeigt.
      */
     private void onDraw_cachedImage(Canvas canvas) {
-        // Effektive Skalierung berechnen (Skalierung, die nach dem Sampling noch erforderlich ist)
-        float effectiveScale = sampleSize * zoomScale;
-
-        // Viewport berechnen: sichtbarer Bildausschnitt (relativ zum gesampelten Bild; mit Rand)
-        int viewportWidth = (int) (getWidth() / effectiveScale);
-        int viewportHeight = (int) (getHeight() / effectiveScale);
-
-        // Viewportgrenzen: PanCenter bei aktueller SampleSize - 1/2 * Viewport, weil PanCenter
-        int viewportLeft = (int) (panCenterX / sampleSize) - viewportWidth / 2;
-        int viewportTop = (int) (panCenterY / sampleSize) - viewportHeight / 2;
-        int viewportRight = viewportLeft + viewportWidth;
-        int viewportBottom = viewportTop + viewportHeight;
-
-        // Log.d("LIV/onDraw_cachedImage", "sample: " + sampleSize + ", viewport: " + viewportWidth + "x" +
-        // viewportHeight + ", (l,t,r,b) = ("
-        // + viewportLeft + "," + viewportTop + "," + viewportRight + "," + viewportBottom + ")");
-
-        // Startkoordinaten für die Zeichnen-Schleife
-        // (Linksoberstes Tile beginnt i.A. weiter links oben als der Viewport)
-        int startX = viewportLeft - viewportLeft % CachedImage.TILESIZE;
-        int startY = viewportTop - viewportTop % CachedImage.TILESIZE;
-
-        // Nicht versuchen, etwas links/oben vom Bild zu zeichnen
-        if (startX < 0)
-            startX = 0;
-        if (startY < 0)
-            startY = 0;
-
-        // Zeichenbereich skalieren und verschieben (effektive Skalierung nach dem Sampling)
-        canvas.scale(effectiveScale, effectiveScale);
-        canvas.translate(-viewportLeft, -viewportTop);
+        canvas.save();
+        canvas.setMatrix(sampledImageToScreenMatrix);
 
         // Zeilenweise Tiles zeichnen, bis am Viewportrand oder Bildrand angekommen
-        for (int y = startY; y < viewportBottom && y < imageHeight / sampleSize; y += CachedImage.TILESIZE) {
-            for (int x = startX; x < viewportRight && x < imageWidth / sampleSize; x += CachedImage.TILESIZE) {
+        for (int y = 0; y < imageHeight / sampleSize; y += CachedImage.TILESIZE) {
+            if (canvas.quickReject(0, y, imageWidth / sampleSize, y + CachedImage.TILESIZE, Canvas.EdgeType.AA)) continue;
+            for (int x = 0; x < imageWidth / sampleSize; x += CachedImage.TILESIZE) {
+                if (canvas.quickReject(x, y, x + CachedImage.TILESIZE, y + CachedImage.TILESIZE, Canvas.EdgeType.AA)) continue;
                 // Unsere Koordinaten sind abhängig vom Sampling. Das gesuchte Tile beginnt also nicht
                 // bei (x,y) sondern bei samplingLevel*(x,y), wird aber an (x,y) gezeichnet.
                 Bitmap bm = cachedImage.getTileBitmap(sampleSize * x, sampleSize * y, sampleSize);
@@ -1281,6 +1171,7 @@ public class LargeImageView extends AppCompatImageView {
                 }
             }
         }
+        canvas.restore();
     }
 
     /**
@@ -1290,26 +1181,14 @@ public class LargeImageView extends AppCompatImageView {
      * @return False, falls auch kein staticBitmap vorhanden ist... Benutze super.onDraw().
      */
     private boolean onDraw_staticBitmap(Canvas canvas) {
-        // Viewport berechnen: sichtbarer Bildausschnitt (relativ zum Bild)
-        int viewportWidth = (int) (getWidth() / zoomScale);
-        int viewportHeight = (int) (getHeight() / zoomScale);
+        if (staticBitmap == null) return false;
 
-        // Viewportgrenzen: PanCenter - 1/2 * Viewport
-        int viewportLeft = (int) panCenterX - viewportWidth / 2;
-        int viewportTop = (int) panCenterY - viewportHeight / 2;
+        // Bitmap statisch anzeigen
+        canvas.save();
+        canvas.setMatrix(imageToScreenMatrix);
+        canvas.drawBitmap(staticBitmap, 0, 0, bgAlphaPaint);
+        canvas.restore();
 
-        // Log.d("LIV/onDraw_staticBitmap", "width, height: " + getWidth() + "/" + getHeight());
-
-        // Skalieren und verschieben
-        canvas.scale(zoomScale, zoomScale);
-        canvas.translate(-viewportLeft, -viewportTop);
-
-        if (staticBitmap != null) {
-            // Bitmap statisch anzeigen
-            canvas.drawBitmap(staticBitmap, 0, 0, bgAlphaPaint);
-        } else {
-            return false;
-        }
         return true;
     }
 
@@ -1328,9 +1207,6 @@ public class LargeImageView extends AppCompatImageView {
         // Log.d("LIV/onDraw_overlayIcons", "width, height: " + getWidth() + "/" + getHeight() + ", image origin " +
         // imageOriginX + "/" + imageOriginY);
 
-        // das Koordinatensystem des Canvas entspricht nun dem des Bildes
-        canvas.translate(imageOriginX, imageOriginY);
-
         for (OverlayIcon icon : overlayIconList) {
             // save und restore, um alle Icons einzeln zu verschieben
             canvas.save();
@@ -1344,7 +1220,7 @@ public class LargeImageView extends AppCompatImageView {
             // ", translate " + translateX + "/" + translateY);
 
             // Canvas verschieben und Icon zeichnen
-            canvas.translate(translateX, translateY);
+            canvas.translate(imageOriginX + translateX, imageOriginY + translateY);
             icon.draw(canvas);
 
             canvas.restore();
