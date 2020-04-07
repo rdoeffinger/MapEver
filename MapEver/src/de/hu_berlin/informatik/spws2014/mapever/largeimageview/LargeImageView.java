@@ -484,11 +484,6 @@ public class LargeImageView extends AppCompatImageView {
      * Gibt zu einer Bildschirmposition die (aktuelle) Bildposition zurück.
      */
     public PointF screenToImagePosition(float screenX, float screenY) {
-        if (Float.isNaN(panCenterX) || Float.isNaN(panCenterY) || getWidth() == 0 || getHeight() == 0) {
-            Log.w("LIV/screenToImgPosition", "Either panCenter is not initialized (" + panCenterX + ", " + panCenterY
-                  + ") or view dimensions are still zero (getWidth/getHeight: " + getWidth() + "/" + getHeight() + ")");
-            return null;
-        }
         float[] p = {screenX, screenY};
         screenToImageMatrix.mapPoints(p);
         return new PointF(p[0], p[1]);
@@ -498,11 +493,6 @@ public class LargeImageView extends AppCompatImageView {
      * Gibt zu einer Bildposition die (aktuelle) Bildschirmposition zurück.
      */
     public PointF imageToScreenPosition(float imageX, float imageY) {
-        if (Float.isNaN(panCenterX) || Float.isNaN(panCenterY) || getWidth() == 0 || getHeight() == 0) {
-            Log.w("LIV/screenToImgPosition", "Either panCenter is not initialized (" + panCenterX + ", " + panCenterY
-                  + ") or view dimensions are still zero (getWidth/getHeight: " + getWidth() + "/" + getHeight() + ")");
-            return null;
-        }
         float[] p = {imageX, imageY};
         imageToScreenMatrix.mapPoints(p);
         return new PointF(p[0], p[1]);
@@ -1152,7 +1142,9 @@ public class LargeImageView extends AppCompatImageView {
         canvas.save();
         canvas.setMatrix(sampledImageToScreenMatrix);
 
-        // Zeilenweise Tiles zeichnen, bis am Viewportrand oder Bildrand angekommen
+        // Draw whole image, but quickly skip parts not actually visible
+        // Somewhat less efficient than calculating the start and end coordinates
+        // of the visible area, but the simplicity seems preferable.
         for (int y = 0; y < imageHeight / sampleSize; y += CachedImage.TILESIZE) {
             if (canvas.quickReject(0, y, imageWidth / sampleSize, y + CachedImage.TILESIZE, Canvas.EdgeType.AA)) continue;
             for (int x = 0; x < imageWidth / sampleSize; x += CachedImage.TILESIZE) {
@@ -1200,27 +1192,18 @@ public class LargeImageView extends AppCompatImageView {
         if (overlayIconList.isEmpty())
             return;
 
-        // Bildursprung relativ zu Bildschirmkoordinaten berechnen
-        float imageOriginX = -panCenterX * zoomScale + getWidth() / 2;
-        float imageOriginY = -panCenterY * zoomScale + getHeight() / 2;
-
-        // Log.d("LIV/onDraw_overlayIcons", "width, height: " + getWidth() + "/" + getHeight() + ", image origin " +
-        // imageOriginX + "/" + imageOriginY);
-
         for (OverlayIcon icon : overlayIconList) {
             // save und restore, um alle Icons einzeln zu verschieben
             canvas.save();
 
             // Translation für Icon berechnen
-            float translateX = icon.getImagePositionX() * zoomScale + icon.getImageOffsetX();
-            float translateY = icon.getImagePositionY() * zoomScale + icon.getImageOffsetY();
-
-            // Log.d("LIV/onDraw_overlayIcons", "image pos " + icon.getImagePositionX() + "/" + icon.getImagePositionY()
-            // + ", offset " + icon.getImageOffsetX() + "/" + icon.getImageOffsetY() + ", zoomscale " + zoomScale +
-            // ", translate " + translateX + "/" + translateY);
+            float pos[] = {icon.getImagePositionX(), icon.getImagePositionY()};
+            imageToScreenMatrix.mapPoints(pos);
+            pos[0] += icon.getImageOffsetX();
+            pos[1] += icon.getImageOffsetY();
 
             // Canvas verschieben und Icon zeichnen
-            canvas.translate(imageOriginX + translateX, imageOriginY + translateY);
+            canvas.translate(pos[0], pos[1]);
             icon.draw(canvas);
 
             canvas.restore();
