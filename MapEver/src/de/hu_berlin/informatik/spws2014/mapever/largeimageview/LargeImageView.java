@@ -87,6 +87,7 @@ public class LargeImageView extends AppCompatImageView {
     private float panCenterX = Float.NaN;
     private float panCenterY = Float.NaN;
     private float zoomScale = 1f;
+    private int rotation = 0;
     private Matrix sampledImageToScreenMatrix;
     private Matrix imageToScreenMatrix;
     private Matrix screenToImageMatrix;
@@ -367,6 +368,9 @@ public class LargeImageView extends AppCompatImageView {
         return imageHeight;
     }
 
+    private boolean flipWH() { return (rotation + 45) % 180 > 90; }
+    private int getRotatedImageWidth() { return flipWH() ? imageHeight : imageWidth; }
+    private int getRotatedImageHeight() { return flipWH() ? imageWidth : imageHeight; }
 
     /**
      * Setze Transparenz des angezeigten Bildes ("Foreground" um Verwechslung mit setImageAlpha() zu vermeiden,
@@ -390,6 +394,14 @@ public class LargeImageView extends AppCompatImageView {
     protected void setPanCenter(float newX, float newY) {
         panCenterX = newX;
         panCenterY = newY;
+        update();
+    }
+
+    //! Set rotation in degrees.
+    //! Only 0, 90, 180 and 270 fully supported.
+    public void setMapRotation(int degrees) {
+        rotation = degrees;
+        setPanZoomFitImage();
         update();
     }
 
@@ -429,9 +441,9 @@ public class LargeImageView extends AppCompatImageView {
 
         // Bild zentrieren und so weit rauszoomen, dass das ganze Bild sichtbar ist (nicht jedoch das Bild abschneiden
         // oder heranzoomen)
-        float centerX = imageWidth / 2;
-        float centerY = imageHeight / 2;
-        float fitZoomScale = Math.min((float) getWidth() / imageWidth, (float) getHeight() / imageHeight);
+        float centerX = getRotatedImageWidth() / 2;
+        float centerY = getRotatedImageHeight() / 2;
+        float fitZoomScale = Math.min((float) getWidth() / getRotatedImageWidth(), (float) getHeight() / getRotatedImageHeight());
         fitZoomScale = Math.min(1, fitZoomScale);
 
         setPanZoom(centerX, centerY, fitZoomScale); // calls update()
@@ -466,8 +478,8 @@ public class LargeImageView extends AppCompatImageView {
         }
 
         // Wie groß ist der Bildschirm relativ zur Karte?
-        double relativeWidth = ((double) getWidth()) / imageWidth;
-        double relativeHeight = ((double) getHeight()) / imageHeight;
+        double relativeWidth = ((double) getWidth()) / getRotatedImageWidth();
+        double relativeHeight = ((double) getHeight()) / getRotatedImageHeight();
 
         // Man kann nur soweit rauszoomen, dass die ganze Karte und noch etwas Rand auf den Bildschirm passt.
         minZoomScale = (float) (0.8 * Math.min(1, Math.min(relativeHeight, relativeWidth)));
@@ -1075,8 +1087,8 @@ public class LargeImageView extends AppCompatImageView {
 
         if (imageWidth > 0 && imageHeight > 0) {
             // Panning so begrenzen, dass PanCenter nicht die Bildgrenzen verlassen kann. (Simple, huh?)
-            panCenterX = Math.min(Math.max(panCenterX, 0), imageWidth);
-            panCenterY = Math.min(Math.max(panCenterY, 0), imageHeight);
+            panCenterX = Math.min(Math.max(panCenterX, 0), getRotatedImageWidth());
+            panCenterY = Math.min(Math.max(panCenterY, 0), getRotatedImageHeight());
         }
 
         // View neu zeichnen lassen (onDraw)
@@ -1109,17 +1121,39 @@ public class LargeImageView extends AppCompatImageView {
             zoomScale = (float) 1.0 / 256; // dürfte klein genug sein :P
         }
 
-        screenToImageMatrix.setTranslate(panCenterX, panCenterY);
+        float translateX = -panCenterX;
+        float translateY = -panCenterY;
+        // adjust position after rotation
+        switch ((rotation + 45) % 360 / 90)
+        {
+        case 0:
+            break;
+        case 1:
+            translateX += imageHeight;
+            break;
+        case 2:
+            translateX += imageWidth;
+            translateY += imageHeight;
+            break;
+        case 3:
+            translateY += imageWidth;
+            break;
+        }
+
+        screenToImageMatrix.setRotate(-rotation);
+        screenToImageMatrix.preTranslate(-translateX, -translateY);
         screenToImageMatrix.preScale(1.0f / zoomScale, 1.0f / zoomScale);
-        screenToImageMatrix.preTranslate(getWidth() / 2, getHeight() / 2);
+        screenToImageMatrix.preTranslate(-getWidth() / 2, -getHeight() / 2);
 
         imageToScreenMatrix.setTranslate(getWidth() / 2, getHeight() / 2);
         imageToScreenMatrix.preScale(zoomScale, zoomScale);
-        imageToScreenMatrix.preTranslate(-panCenterX, -panCenterY);
+        imageToScreenMatrix.preTranslate(translateX, translateY);
+        imageToScreenMatrix.preRotate(rotation);
 
         sampledImageToScreenMatrix.setTranslate(getWidth() / 2, getHeight() / 2);
         sampledImageToScreenMatrix.preScale(sampleSize * zoomScale, sampleSize * zoomScale);
-        sampledImageToScreenMatrix.preTranslate(-panCenterX / sampleSize, -panCenterY / sampleSize);
+        sampledImageToScreenMatrix.preTranslate(translateX / sampleSize, translateY / sampleSize);
+        sampledImageToScreenMatrix.preRotate(rotation);
 
         // Prüfe, ob wir ein CachedImage oder ein statisches Bitmap verwenden
         if (cachedImage != null) {
