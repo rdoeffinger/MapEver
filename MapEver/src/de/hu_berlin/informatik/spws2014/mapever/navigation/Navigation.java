@@ -841,9 +841,11 @@ public class Navigation extends BaseActivity implements LocationListener {
     /**
      * Aktiviere Zentrierung des Locationmarkers.
      *
+     * Needs to be public because it is referred to from XML!!
+     *
      * @param view
      */
-    private void trackPosition(View view) {
+    public void trackPosition(View view) {
         if (!isUserPositionKnown()) {
             if (!toastMissingRefpoints()) {
                 Toast.makeText(this, getString(R.string.navigation_toast_no_gpsfix_yet), Toast.LENGTH_SHORT).show();
