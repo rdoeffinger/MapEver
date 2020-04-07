@@ -13,6 +13,7 @@
     <string name="action_load_testmap">Testkarte laden</string>
     <string name="action_load_testmap_short">Testkarte</string>
     <string name="action_rename_map">Karte umbenennen</string>
+    <string name="action_rotate_map">Karte rotieren</string>
     <string name="action_show_corners">Mit/ohne Entzerrung</string>
 
     <!-- Activity titles -->

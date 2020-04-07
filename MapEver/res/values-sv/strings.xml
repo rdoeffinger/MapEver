@@ -13,6 +13,7 @@
     <string name="action_load_testmap">Ladda karta för testning</string>
     <string name="action_load_testmap_short">Test karta</string>
     <string name="action_rename_map">Ändra kartnamn</string>
+    <string name="action_rotate_map">Rotera karta</string>
     <string name="action_show_corners">Med/utan utjämning</string>
 
     <!-- Activity titles -->

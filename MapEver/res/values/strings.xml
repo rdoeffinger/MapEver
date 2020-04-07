@@ -13,6 +13,7 @@
     <string name="action_load_testmap">Load test map</string>
     <string name="action_load_testmap_short">Test map</string>
     <string name="action_rename_map">Rename map</string>
+    <string name="action_rotate_map">Rotate map</string>
     <string name="action_show_corners">With/without deskewing</string>
 
     <!-- Activity titles -->

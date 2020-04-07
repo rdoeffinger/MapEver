@@ -32,5 +32,11 @@
         android:orderInCategory="1"
         android:title="@string/action_rename_map"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_rotate_map"
+        android:icon="@drawable/baseline_rotate_90_degrees_ccw_white_24"
+        android:orderInCategory="10"
+        android:title="@string/action_rotate_map"
+        app:showAsAction="ifRoom"/>
 
 </menu>

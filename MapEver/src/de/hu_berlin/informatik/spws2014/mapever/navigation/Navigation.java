@@ -473,6 +473,12 @@ public class Navigation extends BaseActivity implements LocationListener {
             changeState(NavigationStates.RENAME_MAP);
             return true;
 
+        case R.id.action_rotate_map:
+            int deg = (thisMap.getRotation() + 270) % 360;
+            mapView.setMapRotation(deg);
+            thisMap.setRotation(deg);
+            return true;
+
         case R.id.action_quick_help:
             // Schnellhilfe-Button
             startQuickHelp();
@@ -617,6 +623,8 @@ public class Navigation extends BaseActivity implements LocationListener {
             return;
         }
 
+        mapView.setMapRotation(thisMap.getRotation());
+
         // ////// LOCATIONDATAMANAGER INITIALISIEREN
 
         // Listener f�r neue Userkoordinaten erstellen
@@ -639,11 +647,17 @@ public class Navigation extends BaseActivity implements LocationListener {
 
         if (loadedMarkers != null) {
             Log.d("Navigation/initLoadMap", "Lade " + loadedMarkers.size() + " Referenzpunkte...");
+            double minlat = 1000, minlon = 1000, maxlat = -1000, maxlon = -1000;
 
             // Erstelle alle geladenen Referenzpunkte
             for (Marker marker : loadedMarkers) {
                 mapView.createLoadedReferencePoint(marker.imgpoint, marker.time);
+                minlat = Math.min(minlat, marker.realpoint.latitude);
+                minlon = Math.min(minlon, marker.realpoint.longitude);
+                maxlat = Math.min(maxlat, marker.realpoint.latitude);
+                maxlon = Math.min(maxlon, marker.realpoint.longitude);
             }
+            thisMap.setMinMaxLatLon(minlat, minlon, maxlat, maxlon);
         }
     }
 
