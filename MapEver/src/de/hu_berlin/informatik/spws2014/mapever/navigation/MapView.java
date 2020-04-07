@@ -272,8 +272,15 @@ public class MapView extends LargeImageView {
             // Aktuelle Userposition abfragen
             Point2D pos = navigation.getUserPosition();
 
+            // Limit how much outside the image we will show the marker
+            // The user should still be able to scroll there!
+            int limitX = getImageWidth() / 4;
+            int limitY = getImageHeight() / 4;
+            int newx = Math.min(Math.max(pos.x, -limitX), getImageWidth() + limitX);
+            int newy = Math.min(Math.max(pos.y, -limitY), getImageHeight() + limitY);
+
             // Locationmarker updaten
-            locationIcon.setPosition(pos);
+            locationIcon.setPosition(new Point2D(newx, newy));
         } else {
             // Locationmarker verstecken, bis wieder neue Koordinaten bekannt sind
             locationIcon.hide();
