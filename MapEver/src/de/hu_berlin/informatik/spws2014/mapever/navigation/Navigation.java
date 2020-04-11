@@ -654,8 +654,8 @@ public class Navigation extends BaseActivity implements LocationListener {
                 mapView.createLoadedReferencePoint(marker.imgpoint, marker.time);
                 minlat = Math.min(minlat, marker.realpoint.latitude);
                 minlon = Math.min(minlon, marker.realpoint.longitude);
-                maxlat = Math.min(maxlat, marker.realpoint.latitude);
-                maxlon = Math.min(maxlon, marker.realpoint.longitude);
+                maxlat = Math.max(maxlat, marker.realpoint.latitude);
+                maxlon = Math.max(maxlon, marker.realpoint.longitude);
             }
             thisMap.setMinMaxLatLon(minlat, minlon, maxlat, maxlon);
         }
@@ -884,8 +884,9 @@ public class Navigation extends BaseActivity implements LocationListener {
 
             // wenn ein neuer Name eingegeben wurde, so ist er in newMapName gespeichert
             // thisMap == null really only happens for the test map
-            if (newMapName.isEmpty() && thisMap != null) {
-                this.getSupportActionBar().setTitle(newMapName);
+            if (!newMapName.isEmpty() && thisMap != null) {
+                setTitle(newMapName);
+                getSupportActionBar().setTitle(newMapName);
                 thisMap.setMapname(newMapName);
 
                 newMapName = "";
