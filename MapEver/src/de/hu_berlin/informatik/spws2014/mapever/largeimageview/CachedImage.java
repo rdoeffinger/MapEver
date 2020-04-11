@@ -21,13 +21,19 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 // Der LruCache-bezogene Code wurde in Anlehnung an folgendes Tutorial erstellt:
 // http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html
@@ -48,9 +54,14 @@ class CachedImage extends LruCache<String, Bitmap> {
 
     // BitmapRegionDecoder (liest Bildausschnitte aus InputStreams)
     private BitmapRegionDecoder regionDecoder;
+    private final List<BitmapRegionDecoder> perThreadRegionDecoders = new ArrayList<>();
+    private final int maxTasks = Math.max(2, Runtime.getRuntime().availableProcessors());
+    private final String file;
 
     // Liste für Keys der Tiles, die aktuell von TileWorkerTasks generiert werden
-    private final ArrayList<String> workingTileTasks = new ArrayList<>();
+    private final List<String> workingTileTasks = new ArrayList<String>();
+
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
     // Callback, wenn nach einem Cache-Miss das gesuchte Tile erzeugt und gecachet wurde.
     private final CacheMissResolvedCallback cacheMissResolvedCallback;
@@ -68,12 +79,17 @@ class CachedImage extends LruCache<String, Bitmap> {
      * @throws IOException Wird geworfen, wenn BitmapRegionDecoder nicht instanziiert werden kann (falls das Bild
      *             weder JPEG noch PNG ist, oder bei einem anderen IO-Fehler)
      */
-    public CachedImage(InputStream inputStream, CachedImage.CacheMissResolvedCallback cacheCallback) throws IOException {
+    public CachedImage(InputStream inputStream, String file, CachedImage.CacheMissResolvedCallback cacheCallback) throws IOException {
         // Tilecache erzeugen durch Aufruf des LruCache<String, Bitmap>-Konstruktors
         super(calculateCacheSize());
 
         // Callback setzen
         cacheMissResolvedCallback = cacheCallback;
+
+        // Prefer to use file name, as that allows additional
+        // regionDecoder instances for better parallelism.
+        this.file = file;
+        if (file != null) inputStream = new FileInputStream(file);
 
         // BitmapRegionDecoder instanziieren. Wirft bei nicht unterstütztem Format (andere als JPEG und PNG)
         // eine IOException.
@@ -201,7 +217,7 @@ class CachedImage extends LruCache<String, Bitmap> {
      * @param sampleSize Samplesize (n ist 1/n mal so groß wie das Original)
      * @return Bitmap des Tiles (maximal TILESIZE*TILESIZE Pixel groß)
      */
-    private Bitmap generateTileBitmap(int left, int top, int sampleSize) {
+    private Bitmap generateTileBitmap(BitmapRegionDecoder decoder, int left, int top, int sampleSize) {
         // Key erzeugen
         String key = getCacheKey(left, top, sampleSize);
 
@@ -234,48 +250,69 @@ class CachedImage extends LruCache<String, Bitmap> {
         opts.inSampleSize = sampleSize;
 
         // Tile generieren und zurückgeben
-        return regionDecoder.decodeRegion(new Rect(left, top, right, bottom), opts);
+        return decoder.decodeRegion(new Rect(left, top, right, bottom), opts);
     }
 
     /**
      * Asynchroner Task, der ein Tile generiert und es anschließend im Cache speichert.
      */
-    static class TileWorkerTask extends AsyncTask<Void, Void, Bitmap> {
+    static class TileWorkerTask implements Runnable {
+        private final Handler handler;
         private final WeakReference<CachedImage> parent;
         private final int x;
         private final int y;
         private final int sampleSize;
+        private BitmapRegionDecoder decoder;
+        private boolean isDecoderPerThread;
 
         TileWorkerTask(CachedImage parent, int x, int y, int sampleSize) {
+            handler = new Handler();
             this.parent = new WeakReference<>(parent);
             this.x = x;
             this.y = y;
             this.sampleSize = sampleSize;
+
+            // select decoder to use
+            decoder = null;
+            isDecoderPerThread = true;
+            if (!parent.perThreadRegionDecoders.isEmpty()) {
+                // pick a cached one
+                decoder = parent.perThreadRegionDecoders.remove(0);
+            } else if (parent.file != null) {
+                // try creating a new one
+                try {
+                    decoder = BitmapRegionDecoder.newInstance(new FileInputStream(parent.file), false);
+                } catch (IOException e)
+                {}
+            }
+            if (decoder == null) {
+                // use shared one
+                decoder = parent.regionDecoder;
+                isDecoderPerThread = false;
+            }
         }
 
         @Override
-        protected Bitmap doInBackground(Void... params) {
+        public void run() {
             // Tile generieren
-            return parent.get().generateTileBitmap(x, y, sampleSize);
-        }
+            final Bitmap result = parent.get().generateTileBitmap(decoder, x, y, sampleSize);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (isDecoderPerThread) parent.get().perThreadRegionDecoders.add(decoder);
 
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (result == null) {
-                Log.e("TileWorkerTask/onPostExecute", "Generated tile, but it's == null! What?");
-                return;
-            }
+                    // Tile in Cache speichern falls ungleich null
+                    parent.get().putTileInCache(x, y, sampleSize, result);
 
-            // Tile in Cache speichern falls ungleich null
-            parent.get().putTileInCache(x, y, sampleSize, result);
+                    // bei Fertigstellung wird der Eintrag in workingTileTasks entfernt
+                    parent.get().workingTileTasks.remove(getCacheKey(x, y, sampleSize));
 
-            // bei Fertigstellung wird der Eintrag in workingTileTasks entfernt
-            parent.get().workingTileTasks.remove(getCacheKey(x, y, sampleSize));
-
-            // Callback aufrufen, das in der LargeImageView dann this.invalidated.
-            if (parent.get().cacheMissResolvedCallback != null) {
-                parent.get().cacheMissResolvedCallback.onCacheMissResolved();
-            }
+                    // Callback aufrufen, das in der LargeImageView dann this.invalidated.
+                    if (parent.get().cacheMissResolvedCallback != null) {
+                        parent.get().cacheMissResolvedCallback.onCacheMissResolved();
+                    }
+                }
+            });
         }
     }
 
@@ -299,20 +336,20 @@ class CachedImage extends LruCache<String, Bitmap> {
 
             // Prüfe zunächst, ob dieser Tile bereits einen laufenden TileWorkerTask hat
             if (workingTileTasks.contains(key)) {
-                Log.d("CachedImage/getTileBitmap", "Tile " + key + " is already being generated...");
+                //Log.d("CachedImage/getTileBitmap", "Tile " + key + " is already being generated...");
 
                 // Ja, also kein Bild zurückgeben
                 return null;
-            } else if (!workingTileTasks.isEmpty()) {
-                // Wir generieren immer nur ein Tile zur selben Zeit (siehe #234)
-                Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache, but we're already generating a tile... Wait...");
+            } else if (workingTileTasks.size() >= maxTasks) {
+                // Generate multiple tiles to take advantage of multicore, but limit to CPU count
+                // to reduce memory usage and other possible issues (but minimum 2 for some parallelism).
+                //Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache, but we're already generating a tile... Wait...");
                 return null;
             } else {
-                Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache -> generating (async)...");
-
+                //Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache -> generating (async)...");
                 // Starte Task
                 TileWorkerTask task = new TileWorkerTask(this, x, y, sampleSize);
-                task.execute();
+                threadPool.execute(task);
 
                 // Wir merken uns, dass dieses Tile jetzt generiert wird, damit bei einem nächsten Aufruf vor der
                 // Fertigstellung des Tiles nicht noch ein gleicher Task erzeugt wird.

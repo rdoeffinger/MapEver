@@ -222,7 +222,7 @@ public class LargeImageView extends AppCompatImageView {
      * @param inputStream
      * @throws IOException
      */
-    private void setImageStream(InputStream inputStream) throws IOException {
+    private void setImageStreamOrFile(InputStream inputStream, String file) throws IOException {
         // reset image references
         cachedImage = null;
         staticBitmap = null;
@@ -232,7 +232,7 @@ public class LargeImageView extends AppCompatImageView {
 
         // Instanziiere ein CachedImage über den gegebenen InputStream.
         // Wirft eine IOException, falls das Bild kein JPEG oder PNG ist, oder ein unerwarteter IO-Fehler auftrat.
-        cachedImage = new CachedImage(inputStream, new CacheMissResolvedCallback() {
+        cachedImage = new CachedImage(inputStream, file, new CacheMissResolvedCallback() {
             @Override
             public void onCacheMissResolved() {
                 // Wenn nach einem Cache-Miss ein gesuchtes Tile generiert wurde, aktualisiere Ansicht
@@ -282,7 +282,7 @@ public class LargeImageView extends AppCompatImageView {
         try {
             // Lade die Resource per Stream
             InputStream stream = getResources().openRawResource(+resId);
-            setImageStream(stream);
+            setImageStreamOrFile(stream, null);
         } catch (IOException e) {
             // Vermutlich schlägt dies fehl, weil die Resource weder JPEG noch PNG ist...
             Log.w("LIV/setImageStream", "Can't instantiate CachedImage:");
@@ -301,8 +301,7 @@ public class LargeImageView extends AppCompatImageView {
     protected void setImageFilename(String filename) throws FileNotFoundException {
         try {
             // Lade das Bild per Stream
-            InputStream stream = new FileInputStream(filename);
-            setImageStream(stream);
+            setImageStreamOrFile(null, filename);
         } catch (IOException e) {
             // Vermutlich schlägt dies fehl, weil die Resource weder JPEG noch PNG ist...
             Log.w("LIV/setImageStream", "Can't instantiate CachedImage:");
