@@ -91,6 +91,7 @@ public class LargeImageView extends AppCompatImageView {
     private Matrix sampledImageToScreenMatrix;
     private Matrix imageToScreenMatrix;
     private Matrix screenToImageMatrix;
+    private Matrix panCenterMatrix;
 
     // Sample-Stufe, wird automatisch aus zoomScale berechnet
     // (sampleSize: größer = geringere Auflösung; zoomScale: kleiner = weiter weg vom Bild)
@@ -154,6 +155,7 @@ public class LargeImageView extends AppCompatImageView {
         sampledImageToScreenMatrix = new Matrix();
         imageToScreenMatrix = new Matrix();
         screenToImageMatrix = new Matrix();
+        panCenterMatrix = new Matrix();
     }
 
     @Override
@@ -391,8 +393,10 @@ public class LargeImageView extends AppCompatImageView {
 
     /** Setzt neue Pan-Center-Koordinaten (Bildpunkt, der im Sichtfeld zentriert wird). */
     protected void setPanCenter(float newX, float newY) {
-        panCenterX = newX;
-        panCenterY = newY;
+        float newcenter[] = {newX, newY};
+        panCenterMatrix.mapPoints(newcenter);
+        panCenterX = newcenter[0];
+        panCenterY = newcenter[1];
         update();
     }
 
@@ -1153,6 +1157,9 @@ public class LargeImageView extends AppCompatImageView {
         sampledImageToScreenMatrix.preScale(sampleSize * zoomScale, sampleSize * zoomScale);
         sampledImageToScreenMatrix.preTranslate(translateX / sampleSize, translateY / sampleSize);
         sampledImageToScreenMatrix.preRotate(rotation);
+
+        panCenterMatrix.setTranslate(translateX + panCenterX, translateY + panCenterY);
+        panCenterMatrix.preRotate(rotation);
 
         // Prüfe, ob wir ein CachedImage oder ein statisches Bitmap verwenden
         if (cachedImage != null) {

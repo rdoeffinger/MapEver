@@ -477,6 +477,7 @@ public class Navigation extends BaseActivity implements LocationListener {
             int deg = (thisMap.getRotation() + 270) % 360;
             mapView.setMapRotation(deg);
             thisMap.setRotation(deg);
+            stopTrackingPosition();
             return true;
 
         case R.id.action_quick_help:
