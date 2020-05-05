@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:inputType="text" />
+        android:inputType="text"
+        android:importantForAutofill="no" />
     
     
 
