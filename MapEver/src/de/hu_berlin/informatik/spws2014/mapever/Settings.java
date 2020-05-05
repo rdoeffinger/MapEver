@@ -28,7 +28,6 @@ public class Settings extends AppCompatActivity {
     private static final String key_debugMode = "pref_debugmode";
 
     // Ignore deprecation warnings (there are no API 10 compatible alternatives)
-    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -75,12 +75,14 @@ public class ConfirmImageActivity extends AppCompatActivity {
         image_view.scrollTo(0, 0);
     }
 
+    @SuppressWarnings("unused")
     public void onConfirmPictureClick(View v) {
         Intent intent = new Intent();
         setResult(AppCompatActivity.RESULT_OK, intent);
         finish();
     }
 
+    @SuppressWarnings("unused")
     public void onCancelPictureClick(View v) {
         Intent intent = new Intent();
         setResult(AppCompatActivity.RESULT_CANCELED, intent);

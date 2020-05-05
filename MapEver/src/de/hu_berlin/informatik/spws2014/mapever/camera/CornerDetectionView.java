@@ -33,7 +33,6 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 class CornerDetectionView extends JavaCameraView implements PictureCallback {
     interface PictureCallback {
         void onPictureTaken();

@@ -37,7 +37,6 @@ import java.util.List;
 import de.hu_berlin.informatik.spws2014.mapever.R;
 import de.hu_berlin.informatik.spws2014.mapever.entzerrung.CornerDetector;
 
-@SuppressWarnings("deprecation")
 public class CornerDetectionCamera extends AppCompatActivity implements CvCameraViewListener2 {
     private static class AsyncCornerDetection extends AsyncTask<Void, Void, Void> {
         AsyncCornerDetection(CornerDetectionCamera parent) {
@@ -118,6 +117,7 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
         run_detection = false;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -135,6 +135,7 @@ public class CornerDetectionCamera extends AppCompatActivity implements CvCamera
         }
     }
 
+    @SuppressWarnings("unused")
     public void onTakePictureClick(View v) {
         // Dateinamen aus Intent lesen, oder Default verwenden
         final String filename = this.getIntent().hasExtra(MediaStore.EXTRA_OUTPUT)

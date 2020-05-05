@@ -770,6 +770,7 @@ public class Navigation extends BaseActivity implements LocationListener {
      *
      * @param view
      */
+    @SuppressWarnings("unused")
     public void setRefPoint(View view) {
         if (state != NavigationStates.RUNNING) {
             Log.w("setRefPoint", "Inkonsistenter Zustand: state != RUNNING");
@@ -795,6 +796,7 @@ public class Navigation extends BaseActivity implements LocationListener {
      *
      * @param view
      */
+    @SuppressWarnings("unused")
     public void acceptReferencePoint(View view) {
         mapView.acceptReferencePoint();
 
@@ -816,6 +818,7 @@ public class Navigation extends BaseActivity implements LocationListener {
         changeState(NavigationStates.RUNNING);
     }
 
+    @SuppressWarnings("unused")
     public void cancelReferencePoint(View v) {
         cancelReferencePoint();
     }
@@ -824,6 +827,7 @@ public class Navigation extends BaseActivity implements LocationListener {
      *
      * @param view
      */
+    @SuppressWarnings("unused")
     public void deleteReferencePoint(View view) {
         mapView.deleteReferencePoint();
 
@@ -836,6 +840,7 @@ public class Navigation extends BaseActivity implements LocationListener {
      *
      * @param view
      */
+    @SuppressWarnings("unused")
     public void refPointDeleteBack(View view) {
         mapView.dontDeleteReferencePoint();
 

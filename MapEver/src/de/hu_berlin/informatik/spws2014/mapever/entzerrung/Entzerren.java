@@ -204,6 +204,7 @@ public class Entzerren extends BaseActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     public void onClick_EntzerrungOk(View v) {
         if (loading_active)
             return;

@@ -413,6 +413,7 @@ public class Start extends BaseActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     public void onHelpLayoutClick(View dummy) {
         hideHelp();
     }
@@ -488,10 +489,12 @@ public class Start extends BaseActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     public void onNewMapClick(View dummy) {
         showNewMapPopup();
     }
 
+    @SuppressWarnings("unused")
     public void onCameraClick(View dummy) {
         Intent photoIntent;
         // Intent erzeugen, der Standard-Android-Kamera startet
@@ -526,6 +529,7 @@ public class Start extends BaseActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     public void onFilechooserClick(View dummy) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
