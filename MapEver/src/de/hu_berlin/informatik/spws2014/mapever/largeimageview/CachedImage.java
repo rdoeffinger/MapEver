@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Rect;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.util.LruCache;
 import android.util.Log;
@@ -31,7 +30,6 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -59,7 +57,7 @@ class CachedImage extends LruCache<String, Bitmap> {
     private final String file;
 
     // Liste für Keys der Tiles, die aktuell von TileWorkerTasks generiert werden
-    private final List<String> workingTileTasks = new ArrayList<String>();
+    private final List<String> workingTileTasks = new ArrayList<>();
 
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
 

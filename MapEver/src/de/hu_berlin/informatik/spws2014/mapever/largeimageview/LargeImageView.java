@@ -393,7 +393,7 @@ public class LargeImageView extends AppCompatImageView {
 
     /** Setzt neue Pan-Center-Koordinaten (Bildpunkt, der im Sichtfeld zentriert wird). */
     protected void setPanCenter(float newX, float newY) {
-        float newcenter[] = {newX, newY};
+        float[] newcenter = {newX, newY};
         panCenterMatrix.mapPoints(newcenter);
         panCenterX = newcenter[0];
         panCenterY = newcenter[1];
@@ -1237,7 +1237,7 @@ public class LargeImageView extends AppCompatImageView {
             canvas.save();
 
             // Translation für Icon berechnen
-            float pos[] = {icon.getImagePositionX(), icon.getImagePositionY()};
+            float[] pos = {icon.getImagePositionX(), icon.getImagePositionY()};
             imageToScreenMatrix.mapPoints(pos);
             pos[0] += icon.getImageOffsetX();
             pos[1] += icon.getImageOffsetY();

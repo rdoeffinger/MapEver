@@ -20,7 +20,6 @@ import android.graphics.Rect;
 
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.Point2D;
 import de.hu_berlin.informatik.spws2014.mapever.R;
-import de.hu_berlin.informatik.spws2014.mapever.largeimageview.LargeImageView;
 import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon;
 
 public class LocationIcon extends OverlayIcon {

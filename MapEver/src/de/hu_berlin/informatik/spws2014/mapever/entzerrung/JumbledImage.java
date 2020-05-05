@@ -43,7 +43,7 @@ public class JumbledImage {
      * @return A Bitmap containing the corrected segment
      **/
 
-    public static Bitmap transform(Bitmap jumbled, float corners[]) {
+    public static Bitmap transform(Bitmap jumbled, float[] corners) {
         Log.d("BITMAP", "" + jumbled.getWidth() + " " + jumbled.getHeight());
 
         Log.d("FLOAT", "pre sort: " + corners[0] + " " + corners[1] + " " + corners[2] + " " + corners[3] + " " + corners[4] + " " + corners[5] + " " + corners[6] + " " + corners[7]);
@@ -64,7 +64,7 @@ public class JumbledImage {
                               Math.sqrt((corners[2]-corners[4])*(corners[2]-corners[4]) + (corners[3]-corners[5])*(corners[3]-corners[5])) //right length
                           )/2;
 
-        float mapped_corners[] = {
+        float[] mapped_corners = {
             0, 0,
             dest_width, 0,
             dest_width, dest_height,
@@ -75,14 +75,14 @@ public class JumbledImage {
         m.setPolyToPoly(mapped_corners, 0, corners, 0, 4);
 
         // get the image pixels as an array for faster processing
-        int src_pixels[] = new int[jumbled.getWidth() * jumbled.getHeight()];
+        int[] src_pixels = new int[jumbled.getWidth() * jumbled.getHeight()];
         int src_width = jumbled.getWidth();
         jumbled.getPixels(src_pixels, 0, jumbled.getWidth(), 0, 0, jumbled.getWidth(), jumbled.getHeight());
         Bitmap.Config conf = jumbled.getConfig();
         jumbled = null;
 
-        int pixels[] = new int[dest_width * dest_height];
-        float point[] = new float[2];
+        int[] pixels = new int[dest_width * dest_height];
+        float[] point = new float[2];
 
         for (int y = 0; y < dest_height; ++y) {
             for (int x = 0; x < dest_width; ++x) {
@@ -99,15 +99,15 @@ public class JumbledImage {
         // return null;
     }
 
-    private static int computeColor(int src[], int stride, float pos[]) {
+    private static int computeColor(int[] src, int stride, float[] pos) {
         // trivial, not-interpolated one:
         return src[(int) pos[0] + stride * (int) pos[1]];
     }
 
-    private static void sort_corners(float unsorted[]) {
+    private static void sort_corners(float[] unsorted) {
         assert (unsorted.length == 8);
 
-        float center[] = new float[2];
+        float[] center = new float[2];
         center[0] = (unsorted[0] + unsorted[2] + unsorted[4] + unsorted[6]) / 4;
         center[1] = (unsorted[1] + unsorted[3] + unsorted[5] + unsorted[7]) / 4;
 
@@ -135,7 +135,7 @@ public class JumbledImage {
 
     }
 
-    private static boolean is_clockwise_turn(float first[], float second[], float center[]) {
+    private static boolean is_clockwise_turn(float[] first, float[] second, float[] center) {
         assert ((first.length == second.length) && (second.length == center.length) && (center.length == 2));
 
         return (first[0] - center[0]) * (second[1] - center[1]) - (second[0] - center[0]) * (first[1] - center[1]) > 0;

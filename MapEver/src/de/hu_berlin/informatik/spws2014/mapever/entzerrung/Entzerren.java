@@ -408,7 +408,7 @@ public class Entzerren extends BaseActivity {
                 while (sampleSize <= 32) {
                     try {
                         // Punktkoordinaten als float[8] abrufen
-                        float coordinates[] = parent.get().entzerrungsView.getPointOffsets(sampleSize);
+                        float[] coordinates = parent.get().entzerrungsView.getPointOffsets(sampleSize);
 
                         // Bitmap erzeugen
                         Bitmap sampledBitmap = parent.get().entzerrungsView.getSampledBitmap(sampleSize);

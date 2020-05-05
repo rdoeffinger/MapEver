@@ -101,7 +101,7 @@ public class Start extends BaseActivity {
     private static int tileSize = 120 * DisplayMetrics.DENSITY_DEFAULT;
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (TrackDB.main == null &&
                 ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             MapEverApp.initializeBaseDir();

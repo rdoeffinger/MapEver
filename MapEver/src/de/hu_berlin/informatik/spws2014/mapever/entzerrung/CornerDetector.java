@@ -130,7 +130,7 @@ public class CornerDetector {
         double min_x = Double.MAX_VALUE, max_x = Double.MIN_VALUE, min_y = Double.MAX_VALUE, max_y = Double.MIN_VALUE;
 
         for (int l = 0; l < lines.cols(); ++l) {
-            double current_line[] = lines.get(0, l);
+            double[] current_line = lines.get(0, l);
             if (too_close(current_line, image_dimensions))
                 continue;
 
