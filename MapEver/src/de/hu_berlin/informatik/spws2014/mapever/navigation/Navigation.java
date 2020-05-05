@@ -816,6 +816,9 @@ public class Navigation extends BaseActivity implements LocationListener {
         changeState(NavigationStates.RUNNING);
     }
 
+    public void cancelReferencePoint(View v) {
+        cancelReferencePoint();
+    }
     /**
      * Der Button zum L�schen des Referenzpunkts wurde bet�tigt.
      *
