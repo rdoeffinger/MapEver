@@ -545,6 +545,7 @@ public class Navigation extends BaseActivity implements LocationListener {
             if (!TrackDB.loadDB(new File(MapEverApp.getAbsoluteFilePath("")))) {
                 Log.e("Nav", "Could not load DB");
                 finish();
+                return;
             }
 
             // Haben wir eine neue Karte erstellt?
@@ -1152,9 +1153,7 @@ public class Navigation extends BaseActivity implements LocationListener {
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.d("Navigation", "Status changed: " + provider + ", status = " + status);
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
 
 
     // //////// POSITION TRACKING (AUTO CENTER)
