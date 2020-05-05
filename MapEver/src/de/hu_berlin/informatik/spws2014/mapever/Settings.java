@@ -18,10 +18,10 @@ package de.hu_berlin.informatik.spws2014.mapever;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 
-public class Settings extends PreferenceActivity {
+public class Settings extends AppCompatActivity {
 
     private static final String key_quickHelp = "pref_quick_help";
     private static final String key_livMultitouch = "pref_liv_multitouch";
@@ -30,10 +30,9 @@ public class Settings extends PreferenceActivity {
     // Ignore deprecation warnings (there are no API 10 compatible alternatives)
     @SuppressWarnings("deprecation")
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        addPreferencesFromResource(R.xml.pref_general);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.settings);
     }
 
     // Preference getters
