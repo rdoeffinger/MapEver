@@ -202,8 +202,8 @@ public class Start extends BaseActivity {
                 Matcher m = p.matcher(pos);
                 if (m.find()) {
                     intentPos = new double[2];
-                    intentPos[0] = Double.valueOf(m.group(1));
-                    intentPos[1] = Double.valueOf(m.group(2));
+                    intentPos[0] = Double.parseDouble(m.group(1));
+                    intentPos[1] = Double.parseDouble(m.group(2));
                 }
             }
         }
