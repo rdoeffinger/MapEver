@@ -29,7 +29,7 @@ import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon
  * @param parentEView die EntzerrungsView
  * @param positionArg Bildkoordinaten des Punktes
  */
-class CornerIcon(parentEView: EntzerrungsView, positionArg: Point) : OverlayIcon(parentEView) {
+class CornerIcon(parentEView: EntzerrungsView) : OverlayIcon(parentEView) {
     // Context der Activity
     private val context: Context = parentEView.context
 
@@ -59,7 +59,7 @@ class CornerIcon(parentEView: EntzerrungsView, positionArg: Point) : OverlayIcon
     // //////////// PROPERTIES
     // ////////////////////////////////////////////////////////////////////////
     // Bildkoordinaten des Eckpunktes
-    var position: Point = positionArg
+    var position = Point(0,0)
         set(position) {
             // Koordinaten auf Bildgröße beschränken
             position.x = position.x.coerceIn(0, parentLIV.imageWidth - 1)
@@ -152,8 +152,5 @@ class CornerIcon(parentEView: EntzerrungsView, positionArg: Point) : OverlayIcon
 
         // Appresource als Bild setzen
         drawable = ResourcesCompat.getDrawable(parentEView.resources, cornerImageResource, null)
-
-        // Setze Position
-        position = positionArg
     }
 }

@@ -37,8 +37,8 @@ import java.lang.ref.WeakReference
 
 class Entzerren : BaseActivity() {
     // other constants
-    private val INPUTFILENAME = cacheDir.toString() + "/" + MapEverApp.TEMP_IMAGE_FILENAME
-    private val INPUTFILENAMEBAK = INPUTFILENAME + "_bak"
+    private var INPUTFILENAME: String? = null
+    private var INPUTFILENAMEBAK: String? = null;
 
     // View references
     private var entzerrungsView: EntzerrungsView? = null
@@ -54,6 +54,9 @@ class Entzerren : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_entzerren)
+
+        INPUTFILENAME = cacheDir.toString() + "/" + MapEverApp.TEMP_IMAGE_FILENAME
+        INPUTFILENAMEBAK = INPUTFILENAME + "_bak"
 
         // Layout aufbauen
         layoutFrame = FrameLayout(baseContext)
@@ -72,8 +75,8 @@ class Entzerren : BaseActivity() {
             // Verwende statischen Dateinamen als Eingabe
             // assert fails when coming from Camera
             //assert(intent.getStringExtra(Start.INTENT_IMAGEPATH) === INPUTFILENAME)
-            val imageFile = File(INPUTFILENAME)
-            val imageFile_bak = File(INPUTFILENAMEBAK)
+            val imageFile = File(INPUTFILENAME!!)
+            val imageFile_bak = File(INPUTFILENAMEBAK!!)
 
             // Backup von der Datei erstellen, um ein Rückgängigmachen zu ermöglichen
             copy(imageFile, imageFile_bak)
@@ -142,8 +145,8 @@ class Entzerren : BaseActivity() {
         if (isLoadingActive) return
         if (entzerrt) {
             // ersetze das Bild mit dem Backup
-            val imageFile_bak = File(INPUTFILENAMEBAK)
-            val imageFile = File(INPUTFILENAME)
+            val imageFile_bak = File(INPUTFILENAMEBAK!!)
+            val imageFile = File(INPUTFILENAME!!)
             copy(imageFile_bak, imageFile)
 
             // Bild in die View laden
@@ -184,10 +187,10 @@ class Entzerren : BaseActivity() {
             startLoadingScreen()
 
             // Entzerrung in AsyncTask starten
-            EntzerrenTask(this, INPUTFILENAME).execute()
+            EntzerrenTask(this, INPUTFILENAME!!).execute()
         } else {
             // temp_bak löschen
-            val imageFile_bak = File(INPUTFILENAMEBAK)
+            val imageFile_bak = File(INPUTFILENAMEBAK!!)
             if (imageFile_bak.exists()) {
                 imageFile_bak.delete()
             }
@@ -270,7 +273,7 @@ class Entzerren : BaseActivity() {
 
     private fun loadImageFile() {
         // Verwende statischen Dateinamen als Eingabe
-        val imageFile = File(INPUTFILENAME)
+        val imageFile = File(INPUTFILENAME!!)
         try {
             // Bild in die View laden
             entzerrungsView!!.loadImage(imageFile)

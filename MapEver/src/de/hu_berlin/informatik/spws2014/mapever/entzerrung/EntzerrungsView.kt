@@ -49,7 +49,7 @@ class EntzerrungsView : LargeImageView {
         private set
 
     // Eckpunkte als OverlayIcons
-    private val corners = Array(CORNERS_COUNT) { CornerIcon(this, Point(0, 0)) }
+    private val corners = Array(CORNERS_COUNT) { CornerIcon(this) }
 
     /**
      * Returns true if corners are shown. (Image shall not be rectified if corners are hidden.)
