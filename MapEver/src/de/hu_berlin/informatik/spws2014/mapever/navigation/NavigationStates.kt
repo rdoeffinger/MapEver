@@ -13,14 +13,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-
-
-package de.hu_berlin.informatik.spws2014.mapever.navigation;
+package de.hu_berlin.informatik.spws2014.mapever.navigation
 
 /**
  * Enum zur einfacheren Beschreibung des aktuellen Zustands der Navigation
  */
-public enum NavigationStates {
+enum class NavigationStates {
     /**
      * normaler Betrieb, angezeigte Buttons: RefPoint Setzen
      */
@@ -72,16 +70,9 @@ public enum NavigationStates {
      *
      * @return
      */
-    public boolean isHelpState() {
-        switch (this) {
-        case HELP_ACCEPT_REFPOINT:
-        case HELP_DELETE_REFPOINT:
-        case HELP_MARK_REFPOINT:
-        case HELP_RUNNING:
-            return true;
-
-        default:
-            return false;
+    val isHelpState: Boolean
+        get() = when (this) {
+            HELP_ACCEPT_REFPOINT, HELP_DELETE_REFPOINT, HELP_MARK_REFPOINT, HELP_RUNNING -> true
+            else -> false
         }
-    }
 }

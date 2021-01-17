@@ -13,31 +13,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
+package de.hu_berlin.informatik.spws2014.mapever.navigation
 
-package de.hu_berlin.informatik.spws2014.mapever.navigation;
-
-import java.util.concurrent.Callable;
+import java.util.concurrent.Callable
 
 /**
  * Dient dazu, die Mitteilung der Lokalisierung, dass eine neue Position für den
  * Nutzer vorliegt zu behandeln.
  */
-class LocationDataManagerListener implements Callable<Void> {
-    // Context der Activity
-    private final Navigation navigationContext;
-
-    public LocationDataManagerListener(Navigation context) {
-        this.navigationContext = context;
-    }
-
+internal class LocationDataManagerListener(  // Context der Activity
+        private val navigationContext: Navigation) : Callable<Void?> {
     /**
      * Wird vom LocationDataManager aufgerufen, wenn er eine neue Position für
      * den Nutzer ermittelt hat
      */
-    @Override
-    public Void call() {
+    override fun call(): Void? {
         // An Navigation übergeben
-        navigationContext.onNewUserPosition();
-        return null;
+        navigationContext.onNewUserPosition()
+        return null
     }
 }

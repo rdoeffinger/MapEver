@@ -34,17 +34,6 @@ public class FileUtils {
         }
     }
 
-    public static void copyStreamToFile(InputStream srcStream, File destFile) throws IOException {
-        // OutputStream für Zieldatei erzeugen
-        OutputStream destStream = new FileOutputStream(destFile);
-
-        // Kopiere Daten von InputStream zu OutputStream
-        copyStreamToStream(srcStream, destStream);
-
-        // OutputStream schließen
-        destStream.close();
-    }
-
     public static void copyFileToFile(File srcFile, File destFile) throws IOException {
         // Streams für Quell- und für Zieldatei erzeugen
         InputStream srcStream = new FileInputStream(srcFile);

@@ -13,192 +13,138 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
+package de.hu_berlin.informatik.spws2014.mapever.largeimageview
 
-package de.hu_berlin.informatik.spws2014.mapever.largeimageview;
+import android.graphics.Canvas
+import android.graphics.PointF
+import android.graphics.Rect
+import android.graphics.drawable.Drawable
 
-import android.graphics.Canvas;
-import android.graphics.PointF;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-
-public abstract class OverlayIcon {
-
-    // LargeImageView, an die das Overlay gebunden ist
-    private final LargeImageView parentLIV;
-
+abstract class OverlayIcon protected constructor(
+        // LargeImageView, an die das Overlay gebunden ist
+        protected val parentLIV: LargeImageView) {
     // das Bild des Icons als Drawable
-    private Drawable drawable;
+    protected var drawable: Drawable? = null
+        set(_drawable) {
+            field = _drawable
 
-    // ist das Icon gerade sichtbar?
-    private boolean visible = true;
-
-    // Transparenz: Alpha-Wert
-    private int overlayAlpha = 255;
-
-    // Drag and Drop: ID des Pointers (Fingers), mit dem das Icon gedraggt wird. -1 wenn nicht gedraggt.
-    private int dragPointerID = -1;
-
-
-    // ////////////////////////////////////////////////////////////////////////
-    // //////////// CONSTRUCTORS AND LAYOUT STUFF
-    // ////////////////////////////////////////////////////////////////////////
-
-    protected OverlayIcon(LargeImageView liv) {
-        // Referenz auf die LargeImageView merken, zu der das Icon gehört
-        this.parentLIV = liv;
-
-        // Icon bei der LIV registrieren
-        liv.attachOverlayIcon(this);
-    }
-
-
-    // ////// LAYOUT STUFF
+            // Boundaries/Bildgröße setzen
+            drawable!!.setBounds(0, 0, drawable!!.minimumWidth, drawable!!.minimumHeight)
+        }
 
     /**
-     * Gibt die LargeImageView zurück, zu der das Icon gehört.
+     * True, wenn Icon gerade angezeigt wird (siehe [.hide] und [.show]).
      */
-    protected LargeImageView getParentLIV() {
-        return parentLIV;
-    }
+    // ist das Icon gerade sichtbar?
+    var isVisible = true
+        private set
 
+    // Transparenz: Alpha-Wert
+    private var overlayAlpha = 255
+
+    /**
+     * Wenn das Icon gerade gedraggt wird, dann gibt diese Funktion die PointerID des draggenden Fingers zurück.
+     * Ansonsten -1, wenn das Icon nicht gedraggt wird.
+     */
+    // Drag and Drop: ID des Pointers (Fingers), mit dem das Icon gedraggt wird. -1 wenn nicht gedraggt.
+    var dragPointerID = -1
+        private set
+    // ////// LAYOUT STUFF
     /**
      * Deregistriert das Icon von der LargeImageView (löscht es aus der OverlayIconList). Sollte nach dem Löschen eines
      * Icons aufgerufen werden.
      */
-    public void detach() {
-        parentLIV.detachOverlayIcon(this);
+    fun detach() {
+        parentLIV.detachOverlayIcon(this)
     }
-
-
     // ////////////////////////////////////////////////////////////////////////
     // //////////// PROPERTIES
     // ////////////////////////////////////////////////////////////////////////
-
     // ////// DIMENSIONEN
-
     /**
      * Gibt die Breite des Icons zurück.
      */
-    protected int getWidth() {
-        return getDrawable() == null ? 0 : getDrawable().getIntrinsicWidth();
-    }
+    protected val width: Int
+        get() = drawable?.intrinsicWidth ?: 0
 
     /**
      * Gibt die Höhe des Icons zurück.
      */
-    protected int getHeight() {
-        return getDrawable() == null ? 0 : getDrawable().getIntrinsicHeight();
-    }
-
-
+    protected val height: Int
+        get() = drawable?.intrinsicHeight ?: 0
     // ////// POSITION AND OFFSET
-
     /**
      * X-Koordinate der Bildposition. Muss von Subklassen überschrieben werden, um die Position zu setzen.
      *
      * @return 0, wenn nicht überschrieben.
      */
-    protected int getImagePositionX() {
-        return 0;
-    }
+    public open val imagePositionX: Int
+        get() = 0
 
     /**
      * Y-Koordinate der Bildposition. Muss von Subklassen überschrieben werden, um die Position zu setzen.
      *
      * @return 0, wenn nicht überschrieben.
      */
-    protected int getImagePositionY() {
-        return 0;
-    }
+    public open val imagePositionY: Int
+        get() = 0
 
     /**
      * Bildoffset in X-Richtung. Muss von Subklassen überschrieben werden, wenn ein Offset erwünscht ist.
      *
      * @return 0, wenn nicht überschrieben.
      */
-    protected int getImageOffsetX() {
-        return 0;
-    }
+    public open val imageOffsetX: Int
+        get() = 0
 
     /**
      * Bildoffset in Y-Richtung. Muss von Subklassen überschrieben werden, wenn ein Offset erwünscht ist.
      *
      * @return 0, wenn nicht überschrieben.
      */
-    protected int getImageOffsetY() {
-        return 0;
-    }
+    public open val imageOffsetY: Int
+        get() = 0
 
     /**
      * Gibt ein Rechteck zurück, das relativ zur Bildposition angibt, welcher Bereich des Icons anklickbar ist.
      * Default-Implementation gibt die Dimensionen des Bildes verschoben um den ImageOffset zurück.
      * Kann überschrieben werden und darf null zurückgeben. null wird als "Icon ist nicht klickbar" interpretiert.
      */
-    public Rect getTouchHitbox() {
-        return new Rect(
-                   getImageOffsetX(),
-                   getImageOffsetY(),
-                   getWidth() + getImageOffsetX(),
-                   getHeight() + getImageOffsetY());
-    }
+    open val touchHitbox: Rect?
+        get() = Rect(
+                imageOffsetX,
+                imageOffsetY,
+                width + imageOffsetX,
+                height + imageOffsetY)
 
     /**
      * Gibt mittels LargeImageView.imageToScreenPosition() die momentane Bildschirmposition (statt Bildposition) des
      * Icons zurück.
      */
-    public PointF getScreenPosition() {
-        return parentLIV.imageToScreenPosition(getImagePositionX(), getImagePositionY());
-    }
-
+    val screenPosition: PointF
+        get() = parentLIV.imageToScreenPosition(imagePositionX.toFloat(), imagePositionY.toFloat())
     // ////// ICON DRAWABLE
-
-    /**
-     * Setze das Iconbild in Form eines Drawables.
-     */
-    protected void setDrawable(Drawable _drawable) {
-        drawable = _drawable;
-
-        // Boundaries/Bildgröße setzen
-        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-    }
-
-    /**
-     * Gibt das Iconbild-Drawable zurück.
-     */
-    private Drawable getDrawable() {
-        return drawable;
-    }
-
-
     // ////// APPEARANCE
-
-    /**
-     * True, wenn Icon gerade angezeigt wird (siehe {@link #hide()} und {@link #show()}).
-     */
-    public boolean isVisible() {
-        return visible;
-    }
-
     /**
      * Setzt Sichtbarkeit des Icons.
      */
-    public void setVisibility(boolean vis) {
-        visible = vis;
-        update();
+    fun setVisibility(vis: Boolean) {
+        isVisible = vis
+        update()
     }
 
     /**
-     * Versteckt das Icon. Kann mit {@link #show()} wieder angezeigt werden.
+     * Versteckt das Icon. Kann mit [.show] wieder angezeigt werden.
      */
-    public void hide() {
-        setVisibility(false);
+    fun hide() {
+        setVisibility(false)
     }
 
     /**
-     * Zeigt ein vorher mit {@link #hide()} verstecktes Icon wieder an.
+     * Zeigt ein vorher mit [.hide] verstecktes Icon wieder an.
      */
-    public void show() {
-        setVisibility(true);
+    fun show() {
+        setVisibility(true)
     }
 
     /**
@@ -206,11 +152,11 @@ public abstract class OverlayIcon {
      *
      * @param newAlpha Wert von 0 (vollkommen transparent) bis 255 (undurchsichtig).
      */
-    private void setOverlayAlpha(int newAlpha) {
-        overlayAlpha = newAlpha;
+    private fun setOverlayAlpha(newAlpha: Int) {
+        overlayAlpha = newAlpha
 
         // Darstellung aktualisieren
-        update();
+        update()
     }
 
     /**
@@ -218,17 +164,13 @@ public abstract class OverlayIcon {
      *
      * @return Wert von 0 (vollkommen transparent) bis 255 (undurchsichtig).
      */
-    public int getOverlayAlpha() {
-        return overlayAlpha;
+    fun getOverlayAlpha(): Int {
+        return overlayAlpha
     }
-
-
     // ////////////////////////////////////////////////////////////////////////
     // //////////// EVENT HANDLERS
     // ////////////////////////////////////////////////////////////////////////
-
     // ////// CLICKS
-
     /**
      * Führt einen Klick auf das Icon aus. Macht normalerweise nichts, kann überschrieben werden. Wurde das Event
      * behandelt muss false zurückgegeben werden, damit keine andere View das Event erhält.
@@ -237,37 +179,26 @@ public abstract class OverlayIcon {
      * @param screenY Y-Koordinate des Klicks relativ zum Bildschirm
      * @return Immer false, falls nicht überschrieben.
      */
-    public boolean onClick(float screenX, float screenY) {
+    open fun onClick(screenX: Float, screenY: Float): Boolean {
         // return false: Event wurde nicht behandelt.
-        return false;
+        return false
     }
-
-
     // ////// DRAG AND DROP
-
     /**
      * Markiere Icon als "wird jetzt mit Pointer pointerID gedraggt". Muss von onDragDown() aufgerufen werden, damit
      * onDragMove() getriggert wird. getDragPointerID() gibt dann (bis stopDrag()) pointerID zurück.
      *
      * @param pointerID Pointer-ID von 0 bis n
      */
-    protected void startDrag(int pointerID) {
-        dragPointerID = pointerID;
+    protected fun startDrag(pointerID: Int) {
+        dragPointerID = pointerID
     }
 
     /**
      * Beende Drag-Aktion. Muss von onDragUp() aufgerufen werden, damit onDragMove() nicht mehr getriggert wird.
      */
-    protected void stopDrag() {
-        dragPointerID = -1;
-    }
-
-    /**
-     * Wenn das Icon gerade gedraggt wird, dann gibt diese Funktion die PointerID des draggenden Fingers zurück.
-     * Ansonsten -1, wenn das Icon nicht gedraggt wird.
-     */
-    public int getDragPointerID() {
-        return dragPointerID;
+    protected fun stopDrag() {
+        dragPointerID = -1
     }
 
     /**
@@ -282,9 +213,9 @@ public abstract class OverlayIcon {
      * @param screenY Y-Koordinate des Klicks relativ zum Bildschirm
      * @return Immer false, falls nicht überschrieben.
      */
-    public boolean onDragDown(int pointerID, float screenX, float screenY) {
+    open fun onDragDown(pointerID: Int, screenX: Float, screenY: Float): Boolean {
         // return false: Event wurde nicht behandelt.
-        return false;
+        return false
     }
 
     /**
@@ -297,9 +228,9 @@ public abstract class OverlayIcon {
      * @param screenY Y-Koordinate des Klicks relativ zum Bildschirm
      * @return Immer false, falls nicht überschrieben.
      */
-    public boolean onDragMove(float screenX, float screenY) {
+    open fun onDragMove(screenX: Float, screenY: Float): Boolean {
         // return false: Event wurde nicht behandelt.
-        return false;
+        return false
     }
 
     /**
@@ -313,27 +244,23 @@ public abstract class OverlayIcon {
      * @param screenY Y-Koordinate des Klicks relativ zum Bildschirm
      * @return Immer false, falls nicht überschrieben.
      */
-    public void onDragUp(float screenX, float screenY) {
+    open fun onDragUp(screenX: Float, screenY: Float) {
         // (Ein Rückgabewert macht hier wenig Sinn. Wenn das Icon gedraggt wurde und der Dragvorgang beendet werden
         // soll, MUSS dieses Event behandelt werden. Andernfalls wird es gar nicht getriggert.)
-        stopDrag();
+        stopDrag()
     }
-
-
     // ////////////////////////////////////////////////////////////////////////
     // //////////// DARSTELLUNG
     // ////////////////////////////////////////////////////////////////////////
-
     /**
      * Zeichnet das Drawable (mit Alpha-Wert, und nur falls nicht hidden) auf einem (vorher translatierten) Canvas.
      */
-    public void draw(Canvas canvas) {
+    fun draw(canvas: Canvas) {
         // Canvas wurde schon entsprechend verschoben, sodass (0,0) nun der Iconposition (inkl. Offset) entspricht
-
-        if (getDrawable() != null && visible) {
+        if (drawable != null && isVisible) {
             // Transparenz anwenden und Drawable zeichnen
-            getDrawable().setAlpha(overlayAlpha);
-            getDrawable().draw(canvas);
+            drawable!!.alpha = overlayAlpha
+            drawable!!.draw(canvas)
         }
     }
 
@@ -341,13 +268,10 @@ public abstract class OverlayIcon {
      * Aktualisiert die Darstellung des Icons (ruft invalidate() auf).
      * Sollte immer aufgerufen werden, wenn z.B. die Position oder die Transparenz verändert wurde.
      */
-    protected void update() {
-        parentLIV.invalidate();
+    protected fun update() {
+        parentLIV.invalidate()
     }
-
-
     // ////// ANIMATIONS
-
     /**
      * Starte Fade-Animation.
      *
@@ -355,7 +279,7 @@ public abstract class OverlayIcon {
      * @param to End-Alphawert
      * @param duration Dauer der Animation
      */
-    protected void startFading(float from, float to, long duration) {
+    protected fun startFading(from: Float, to: Float, duration: Long) {
         // Erstelle Animation... selbsterklärende Parameter
         // Animation fadeAnim = new AlphaAnimation(from, to);
         // fadeAnim.setInterpolator(new AccelerateInterpolator());
@@ -366,8 +290,16 @@ public abstract class OverlayIcon {
         // this.startAnimation(fadeAnim);
 
         // TODO Animationen reimplementieren!
-
-        setOverlayAlpha((int) (to * 255));
+        setOverlayAlpha((to * 255).toInt())
     }
 
+    // ////////////////////////////////////////////////////////////////////////
+    // //////////// CONSTRUCTORS AND LAYOUT STUFF
+    // ////////////////////////////////////////////////////////////////////////
+    init {
+        // Referenz auf die LargeImageView merken, zu der das Icon gehört
+
+        // Icon bei der LIV registrieren
+        parentLIV.attachOverlayIcon(this)
+    }
 }
