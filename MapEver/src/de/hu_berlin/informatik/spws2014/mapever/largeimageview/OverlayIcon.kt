@@ -279,6 +279,7 @@ abstract class OverlayIcon protected constructor(
      * @param to End-Alphawert
      * @param duration Dauer der Animation
      */
+    @Suppress("UNUSED_PARAMETER")
     protected fun startFading(from: Float, to: Float, duration: Long) {
         // Erstelle Animation... selbsterklärende Parameter
         // Animation fadeAnim = new AlphaAnimation(from, to);

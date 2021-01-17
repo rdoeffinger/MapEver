@@ -355,6 +355,7 @@ class Start : BaseActivity() {
 
     // ////// for getting the images
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CHOOSE_FILE_REQUESTCODE && resultCode == RESULT_OK) {
             val EntzerrenActivity = Intent(applicationContext, Entzerren::class.java)
 

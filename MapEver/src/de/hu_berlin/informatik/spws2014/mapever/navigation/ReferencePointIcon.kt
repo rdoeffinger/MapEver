@@ -16,6 +16,7 @@
 package de.hu_berlin.informatik.spws2014.mapever.navigation
 
 import android.graphics.Rect
+import androidx.core.content.res.ResourcesCompat
 import de.hu_berlin.informatik.spws2014.ImagePositionLocator.Point2D
 import de.hu_berlin.informatik.spws2014.mapever.R
 import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon
@@ -125,7 +126,7 @@ class ReferencePointIcon(parentMapView: MapView, position: Point2D, time: Long, 
         // Superkonstruktor, registriert Icon bei der LIV
 
         // Appresource als Bild setzen
-        drawable = parentMapView.resources.getDrawable(refPointImageResource)
+        drawable = ResourcesCompat.getDrawable(parentMapView.resources, refPointImageResource, null)
 
         timestamp = time
 

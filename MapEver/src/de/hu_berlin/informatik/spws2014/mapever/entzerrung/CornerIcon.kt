@@ -18,6 +18,7 @@ package de.hu_berlin.informatik.spws2014.mapever.entzerrung
 import android.content.Context
 import android.graphics.Point
 import android.util.Log
+import androidx.core.content.res.ResourcesCompat
 import de.hu_berlin.informatik.spws2014.mapever.R
 import de.hu_berlin.informatik.spws2014.mapever.Settings.Companion.getPreference_livMultitouch
 import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon
@@ -153,7 +154,7 @@ class CornerIcon(parentEView: EntzerrungsView, positionArg: Point) : OverlayIcon
         context = parentEView.context
 
         // Appresource als Bild setzen
-        drawable = parentEView.resources.getDrawable(cornerImageResource)
+        drawable = ResourcesCompat.getDrawable(parentEView.resources, cornerImageResource, null)
 
         // Setze Position
         position = positionArg
