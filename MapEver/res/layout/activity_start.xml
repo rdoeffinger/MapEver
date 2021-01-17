@@ -14,7 +14,7 @@
     android:verticalSpacing="10dp"
     android:background="#CCCCCC" />
 
-     <android.support.design.widget.FloatingActionButton
+     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatNewMapButton"
         app:useCompatPadding="true"
         android:layout_alignParentBottom="true"

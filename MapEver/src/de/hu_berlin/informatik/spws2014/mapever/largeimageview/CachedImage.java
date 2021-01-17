@@ -21,7 +21,7 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Rect;
 import android.os.Handler;
-import android.support.v4.util.LruCache;
+import androidx.collection.LruCache;
 import android.util.Log;
 
 import java.io.FileInputStream;

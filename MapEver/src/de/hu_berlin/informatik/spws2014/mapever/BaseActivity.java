@@ -18,9 +18,9 @@ package de.hu_berlin.informatik.spws2014.mapever;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AlertDialog;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -46,9 +46,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         if (item != null) {
             if (Settings.getPreference_quickHelp(this)) {
-                MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
             } else {
-                MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_NEVER);
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             }
         }
 

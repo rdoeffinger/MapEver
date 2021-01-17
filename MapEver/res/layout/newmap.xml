@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.gridlayout.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
@@ -62,4 +62,4 @@
         android:textColor="#C5EFE8"
         android:textSize="15sp" />
 
-</android.support.v7.widget.GridLayout>
+</androidx.gridlayout.widget.GridLayout>

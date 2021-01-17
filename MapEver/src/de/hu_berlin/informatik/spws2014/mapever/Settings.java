@@ -18,8 +18,8 @@ package de.hu_berlin.informatik.spws2014.mapever;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 public class Settings extends AppCompatActivity {
 

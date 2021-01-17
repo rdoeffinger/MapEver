@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp" >
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/new_map_help_button"
             app:useCompatPadding="true"
             android:layout_alignParentBottom="true"
