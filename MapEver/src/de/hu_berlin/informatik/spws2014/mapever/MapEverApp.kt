@@ -44,7 +44,7 @@ class MapEverApp : Application() {
 
             // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
             if (!baseDir.exists()) {
-                Log.d("MapEverApp", "Base directory does not exist, creating new one at '" + BASE_DIR + "'")
+                Log.d("MapEverApp", "Base directory does not exist, creating new one at '$BASE_DIR'")
                 if (!baseDir.mkdirs()) {
                     Log.e("MapEverApp", "Failed to initialize base directory, mkdirs returned false!")
                     return

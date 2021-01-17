@@ -21,6 +21,16 @@ import de.hu_berlin.informatik.spws2014.ImagePositionLocator.Point2D
 import de.hu_berlin.informatik.spws2014.mapever.R
 import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon
 
+/**
+ * Erstelle Referenzpunkt an bestimmter Position. Verwende isFadedOut=false für neue Punkte, und true für das Laden
+ * bestehender Punkte. Bitte darauf achten, time nur dann zu setzen, wenn der Punkt akzeptiert wurde (ggf. später
+ * mit setTimestamp()).
+ *
+ * @param parentMapView die MapView
+ * @param position Bildkoordinaten des Punktes
+ * @param time Zeitpunkt der Erstellung des Punktes
+ * @param isFadedOut Punkt ist bereits transparent
+ */
 class ReferencePointIcon(parentMapView: MapView, position: Point2D, time: Long, isFadedOut: Boolean) : OverlayIcon(parentMapView) {
     /**
      * Gibt Bildkoordinaten des Referenzpunkts relativ zum Koordinatenursprung der Karte als Point2D zurück.
@@ -112,16 +122,6 @@ class ReferencePointIcon(parentMapView: MapView, position: Point2D, time: Long, 
     // ////////////////////////////////////////////////////////////////////////
     // //////////// CONSTRUCTORS
     // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Erstelle Referenzpunkt an bestimmter Position. Verwende isFadedOut=false für neue Punkte, und true für das Laden
-     * bestehender Punkte. Bitte darauf achten, time nur dann zu setzen, wenn der Punkt akzeptiert wurde (ggf. später
-     * mit setTimestamp()).
-     *
-     * @param parentMapView die MapView
-     * @param position Bildkoordinaten des Punktes
-     * @param time Zeitpunkt der Erstellung des Punktes
-     * @param isFadedOut Punkt ist bereits transparent
-     */
     init {
         // Superkonstruktor, registriert Icon bei der LIV
 

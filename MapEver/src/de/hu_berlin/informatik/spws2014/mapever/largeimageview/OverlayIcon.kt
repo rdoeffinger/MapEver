@@ -78,7 +78,7 @@ abstract class OverlayIcon protected constructor(
      *
      * @return 0, wenn nicht überschrieben.
      */
-    public open val imagePositionX: Int
+    open val imagePositionX: Int
         get() = 0
 
     /**
@@ -86,7 +86,7 @@ abstract class OverlayIcon protected constructor(
      *
      * @return 0, wenn nicht überschrieben.
      */
-    public open val imagePositionY: Int
+    open val imagePositionY: Int
         get() = 0
 
     /**
@@ -94,7 +94,7 @@ abstract class OverlayIcon protected constructor(
      *
      * @return 0, wenn nicht überschrieben.
      */
-    public open val imageOffsetX: Int
+    open val imageOffsetX: Int
         get() = 0
 
     /**
@@ -102,7 +102,7 @@ abstract class OverlayIcon protected constructor(
      *
      * @return 0, wenn nicht überschrieben.
      */
-    public open val imageOffsetY: Int
+    open val imageOffsetY: Int
         get() = 0
 
     /**
@@ -159,14 +159,6 @@ abstract class OverlayIcon protected constructor(
         update()
     }
 
-    /**
-     * Gibt Transparenz des Icons zurück.
-     *
-     * @return Wert von 0 (vollkommen transparent) bis 255 (undurchsichtig).
-     */
-    fun getOverlayAlpha(): Int {
-        return overlayAlpha
-    }
     // ////////////////////////////////////////////////////////////////////////
     // //////////// EVENT HANDLERS
     // ////////////////////////////////////////////////////////////////////////

@@ -20,6 +20,7 @@ import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
 import java.io.FileOutputStream
 import java.io.IOException
+import kotlin.math.max
 
 object Thumbnail {
     /**
@@ -55,8 +56,8 @@ object Thumbnail {
 
     private fun get_best_sample_size(filename: String, _thumb_width: Int, _thumb_height: Int): Int {
         //Decode to get image width/height.
-        val thumb_width = Math.max(_thumb_width, 16)
-        val thumb_height = Math.max(_thumb_height, 16)
+        val thumb_width = max(_thumb_width, 16)
+        val thumb_height = max(_thumb_height, 16)
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
         BitmapFactory.decodeFile(filename, options)

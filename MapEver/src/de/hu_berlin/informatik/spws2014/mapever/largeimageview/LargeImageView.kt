@@ -33,6 +33,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
+import kotlin.math.abs
 
 open class LargeImageView : AppCompatImageView {
     // ////// BITMAP, TILE AND CACHE STUFF
@@ -109,14 +110,11 @@ open class LargeImageView : AppCompatImageView {
     // ////////////////////////////////////////////////////////////////////////
     // //////////// CONSTRUCTORS AND INITIALIZATION
     // ////////////////////////////////////////////////////////////////////////
-    protected constructor(context: Context) : super(context) {
-    }
+    protected constructor(context: Context) : super(context)
 
-    protected constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-    }
+    protected constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    protected constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-    }
+    protected constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     override fun onSaveInstanceState(): Parcelable? {
         // Ich weiß nicht, was in dem Parcelable von View drinsteckt, aber ich wills auch nicht einfach wegwerfen...
@@ -346,10 +344,8 @@ open class LargeImageView : AppCompatImageView {
 
     /** Setzt neues Zoom-Level und berechnet Sample-Stufe neu.  */
     private fun setZoomScale(newZoomScale: Float) {
-        zoomScale = newZoomScale
-
         // Zoom-Level darf Minimum und Maximum nicht unter-/überschreiten
-        zoomScale = Math.max(minZoomScale, Math.min(zoomScale, maxZoomScale))
+        zoomScale = newZoomScale.coerceIn(minZoomScale, maxZoomScale)
 
         // SampleSize neuberechnen
         sampleSize = calculateSampleSize(zoomScale)
@@ -382,8 +378,7 @@ open class LargeImageView : AppCompatImageView {
         // oder heranzoomen)
         val centerX = (rotatedImageWidth / 2).toFloat()
         val centerY = (rotatedImageHeight / 2).toFloat()
-        var fitZoomScale = Math.min(width.toFloat() / rotatedImageWidth, height.toFloat() / rotatedImageHeight)
-        fitZoomScale = Math.min(1f, fitZoomScale)
+        val fitZoomScale = minOf(1f, width.toFloat() / rotatedImageWidth, height.toFloat() / rotatedImageHeight)
         setPanZoom(centerX, centerY, fitZoomScale) // calls update()
     }
 
@@ -398,15 +393,15 @@ open class LargeImageView : AppCompatImageView {
         }
 
         // Wie groß ist der Bildschirm relativ zur Karte?
-        val relativeWidth = width.toDouble() / rotatedImageWidth
-        val relativeHeight = height.toDouble() / rotatedImageHeight
+        val relativeWidth = width.toFloat() / rotatedImageWidth
+        val relativeHeight = height.toFloat() / rotatedImageHeight
 
         // Man kann nur soweit rauszoomen, dass die ganze Karte und noch etwas Rand auf den Bildschirm passt.
-        minZoomScale = (0.8 * Math.min(1.0, Math.min(relativeHeight, relativeWidth))).toFloat()
+        minZoomScale = 0.8f * minOf(1.0f, relativeHeight, relativeWidth)
 
         // Man kann bei hinreichend großen Bildern auf 6x ranzoomen, bei sehr kleinen Bildern maximal so, dass
         // sie den Bildschirm ausfüllen.
-        maxZoomScale = Math.max(6.0, Math.max(relativeHeight, relativeWidth)).toFloat()
+        maxZoomScale = maxOf(6.0f, relativeHeight, relativeWidth)
     }
     // ////// POSITIONSUMRECHNUNGEN
     /**
@@ -533,8 +528,7 @@ open class LargeImageView : AppCompatImageView {
     @Suppress("UNUSED_PARAMETER")
     private fun onTouchEvent_panZoom(event: MotionEvent, dragAndDropHandled: Boolean) {
         // Was für ein MotionEvent wurde detektiert?
-        val action = event.actionMasked
-        when (action) {
+        when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
 
                 // Erste Berührung des Touchscreens (mit einem Finger)
@@ -664,7 +658,7 @@ open class LargeImageView : AppCompatImageView {
 
             // Zoom-Level darf Minimum und Maximum nicht unter-/überschreiten
             if (zoomScale < minZoomScale || zoomScale > maxZoomScale) {
-                zoomScale = Math.max(minZoomScale, Math.min(zoomScale, maxZoomScale))
+                zoomScale = zoomScale.coerceIn(minZoomScale, maxZoomScale)
 
                 // scaleFactor wird unten noch mal benötigt, also anpassen
                 scaleFactor = zoomScale / oldScale
@@ -743,7 +737,7 @@ open class LargeImageView : AppCompatImageView {
             MotionEvent.ACTION_MOVE ->             // Bewegung der Finger während Berührung
                 if (touchCouldBeClick) {
                     // Falls wir uns zu weit vom Startpunkt der Geste wegbewegen, ist es kein Klick mehr.
-                    if (Math.abs(x - touchStartX) > TOUCH_CLICK_TOLERANCE || Math.abs(y - touchStartY) > TOUCH_CLICK_TOLERANCE) {
+                    if (abs(x - touchStartX) > TOUCH_CLICK_TOLERANCE || abs(y - touchStartY) > TOUCH_CLICK_TOLERANCE) {
                         touchCouldBeClick = false
                     }
                 }
@@ -767,7 +761,7 @@ open class LargeImageView : AppCompatImageView {
             val relativeY = (touchStartY - screenPoint.y).toInt()
 
             // war der Klick innerhalb der Icon-Hitbox?
-            if (icon.touchHitbox?.contains(relativeX, relativeY) ?: false) {
+            if (icon.touchHitbox?.contains(relativeX, relativeY) == true) {
                 // Falls eine Drag-Bewegung gestartet wurde, muss diese abgebrochen werden.
                 if (icon.dragPointerID > -1) {
                     icon.onDragUp(touchStartX, touchStartY)
@@ -820,7 +814,7 @@ open class LargeImageView : AppCompatImageView {
                     val relativeY = (y - screenPoint.y).toInt()
 
                     // war der Klick innerhalb der Icon-Hitbox?
-                    if (icon.touchHitbox?.contains(relativeX, relativeY) ?: false) {
+                    if (icon.touchHitbox?.contains(relativeX, relativeY) == true) {
                         // Ja, führe onDragDown-Event aus. Return, falls onClick das Event behandelt hat.
                         if (icon.onDragDown(pointerID, x, y)) {
                             // Merken, dass ein Drag-Vorgang läuft (Extra-Test, da onDragDown() z.B. auch laufende
@@ -928,8 +922,8 @@ open class LargeImageView : AppCompatImageView {
         // Begrenze das Panning, so dass man das Bild nicht beliebig weit aus der Bildfläche schieben kann.
         if (imageWidth > 0 && imageHeight > 0) {
             // Panning so begrenzen, dass PanCenter nicht die Bildgrenzen verlassen kann. (Simple, huh?)
-            panCenterX = Math.min(Math.max(panCenterX, 0f), rotatedImageWidth.toFloat())
-            panCenterY = Math.min(Math.max(panCenterY, 0f), rotatedImageHeight.toFloat())
+            panCenterX = panCenterX.coerceIn(0f, rotatedImageWidth.toFloat())
+            panCenterY = panCenterY.coerceIn(0f, rotatedImageHeight.toFloat())
         }
 
         // View neu zeichnen lassen (onDraw)
@@ -1069,7 +1063,7 @@ open class LargeImageView : AppCompatImageView {
             canvas.save()
 
             // Translation für Icon berechnen
-            var pos = floatArrayOf(icon.imagePositionX.toFloat(), icon.imagePositionY.toFloat())
+            val pos = floatArrayOf(icon.imagePositionX.toFloat(), icon.imagePositionY.toFloat())
             imageToScreenMatrix.mapPoints(pos)
             pos[0] += icon.imageOffsetX.toFloat()
             pos[1] += icon.imageOffsetY.toFloat()

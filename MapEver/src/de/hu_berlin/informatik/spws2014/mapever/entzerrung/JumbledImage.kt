@@ -20,7 +20,7 @@ import android.graphics.Matrix
 import android.util.Log
 
 object JumbledImage {
-    fun dist(x1: Float, y1: Float, x2: Float, y2: Float): Double
+    private fun dist(x1: Float, y1: Float, x2: Float, y2: Float): Double
     {
         val dx = x1.toDouble() - x2.toDouble()
         val dy = y1.toDouble() - y2.toDouble()
@@ -68,7 +68,7 @@ object JumbledImage {
         m.setPolyToPoly(mapped_corners, 0, corners, 0, 4)
 
         // get the image pixels as an array for faster processing
-        var src_pixels = IntArray(jumbled.width * jumbled.height)
+        val src_pixels = IntArray(jumbled.width * jumbled.height)
         val src_width = jumbled.width
         jumbled.getPixels(src_pixels, 0, jumbled.width, 0, 0, jumbled.width, jumbled.height)
         val conf = jumbled.config

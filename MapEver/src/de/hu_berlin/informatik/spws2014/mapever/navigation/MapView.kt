@@ -57,11 +57,11 @@ class MapView : LargeImageView {
     // ////////////////////////////////////////////////////////////////////////
     // //////////// CONSTRUCTORS AND INITIALIZATION
     // ////////////////////////////////////////////////////////////////////////
-    constructor(context: Context) : super(context) {}
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {}
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
-    override fun onSaveInstanceState(): Parcelable? {
+    override fun onSaveInstanceState(): Parcelable {
         // LargeImageView gibt uns ein Bundle, in dem z.B. die Pan-Daten stecken. Verwende dieses als Basis.
         val bundle = super.onSaveInstanceState() as Bundle?
 
@@ -216,14 +216,14 @@ class MapView : LargeImageView {
             locationIcon!!.show()
 
             // Aktuelle Userposition abfragen
-            val pos = navigation!!.userPosition
+            val pos = navigation!!.userPosition!!
 
             // Limit how much outside the image we will show the marker
             // The user should still be able to scroll there!
             val limitX = imageWidth / 4
             val limitY = imageHeight / 4
-            val newx = Math.min(Math.max(pos!!.x, -limitX), imageWidth + limitX)
-            val newy = Math.min(Math.max(pos.y, -limitY), imageHeight + limitY)
+            val newx = pos.x.coerceIn(-limitX, imageWidth + limitX)
+            val newy = pos.y.coerceIn(-limitY, imageHeight + limitY)
 
             // Locationmarker updaten
             locationIcon!!.position = Point2D(newx, newy)

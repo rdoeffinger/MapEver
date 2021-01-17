@@ -22,12 +22,16 @@ import androidx.core.content.res.ResourcesCompat
 import de.hu_berlin.informatik.spws2014.mapever.R
 import de.hu_berlin.informatik.spws2014.mapever.Settings.Companion.getPreference_livMultitouch
 import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon
-import kotlin.math.max
-import kotlin.math.min
 
+/**
+ * Erstelle Eckpunkt an bestimmter Position.
+ *
+ * @param parentEView die EntzerrungsView
+ * @param positionArg Bildkoordinaten des Punktes
+ */
 class CornerIcon(parentEView: EntzerrungsView, positionArg: Point) : OverlayIcon(parentEView) {
     // Context der Activity
-    private val context: Context
+    private val context: Context = parentEView.context
 
     // Bildkoordinaten vor einem Drag-Vorgang (zwecks Drag-Abbruch)
     private var cornerPosition_preDrag: Point? = null
@@ -39,10 +43,10 @@ class CornerIcon(parentEView: EntzerrungsView, positionArg: Point) : OverlayIcon
     // ////////////////////////////////////////////////////////////////////////
     // //////////// OVERLAYICON PROPERTY OVERRIDES
     // ////////////////////////////////////////////////////////////////////////
-    public override val imagePositionX: Int
+    override val imagePositionX: Int
         get() = position.x
 
-    public override val imagePositionY: Int
+    override val imagePositionY: Int
         get() = position.y
 
     override val imageOffsetX: Int
@@ -58,8 +62,8 @@ class CornerIcon(parentEView: EntzerrungsView, positionArg: Point) : OverlayIcon
     var position: Point = positionArg
         set(position) {
             // Koordinaten auf Bildgröße beschränken
-            position.x = min(max(position.x, 0), parentLIV.imageWidth - 1)
-            position.y = min(max(position.y, 0), parentLIV.imageHeight - 1)
+            position.x = position.x.coerceIn(0, parentLIV.imageWidth - 1)
+            position.y = position.y.coerceIn(0, parentLIV.imageHeight - 1)
             field = position
 
             // Darstellung aktualisieren
@@ -141,17 +145,10 @@ class CornerIcon(parentEView: EntzerrungsView, positionArg: Point) : OverlayIcon
     // ////////////////////////////////////////////////////////////////////////
     // //////////// CONSTRUCTORS
     // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Erstelle Eckpunkt an bestimmter Position.
-     *
-     * @param parentEView die EntzerrungsView
-     * @param position Bildkoordinaten des Punktes
-     */
     init {
         // Superkonstruktor, registriert Icon bei der LIV
 
         // Save activity context for later...
-        context = parentEView.context
 
         // Appresource als Bild setzen
         drawable = ResourcesCompat.getDrawable(parentEView.resources, cornerImageResource, null)

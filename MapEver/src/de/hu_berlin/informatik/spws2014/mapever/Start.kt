@@ -18,7 +18,6 @@ package de.hu_berlin.informatik.spws2014.mapever
 import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -108,7 +107,7 @@ class Start : BaseActivity() {
                 positionIdList.add(d)
 
                 // get the ID of the map
-                val id_string = java.lang.Long.toString(d.identifier)
+                val id_string = d.identifier.toString()
                 val thumbFile = File(MapEverApp.getAbsoluteFilePath(id_string + "_thumb"))
                 var thumbBitmap: Bitmap? = null
 
@@ -185,9 +184,7 @@ class Start : BaseActivity() {
         // /////////sobald man irgendwo ausserhalb den bildschirm beruehrt
         // /////////wird das popup geschlossen
         newMapPopup!!.setCanceledOnTouchOutside(true)
-        newMapPopup!!.setOnCancelListener(
-                DialogInterface.OnCancelListener { isPopupOpen = false }
-        )
+        newMapPopup!!.setOnCancelListener { isPopupOpen = false }
         gridview.onItemClickListener = OnItemClickListener { _, _, position, _ -> // clicks auf die Karten ignorieren, wenn das Hilfe-Overlay angezeigt wird
             if (isHelpShown) {
                 return@OnItemClickListener
@@ -368,7 +365,7 @@ class Start : BaseActivity() {
                 val inStream = this.contentResolver.openInputStream(srcUri!!)!!
 
                 // Zieldatei erstellen
-                val destFilename = cacheDir.toString() + "/" + IMAGE_TARGET_FILENAME
+                val destFilename = "$cacheDir/$IMAGE_TARGET_FILENAME"
                 val dest = FileOutputStream(File(destFilename))
 
                 // Kopiere Daten von InputStream zu OutputStream
@@ -385,7 +382,7 @@ class Start : BaseActivity() {
             startActivity(EntzerrenActivity)
         } else if (requestCode == TAKE_PICTURE_REQUESTCODE && resultCode == RESULT_OK) {
             val EntzerrenActivity = Intent(applicationContext, Entzerren::class.java)
-            EntzerrenActivity.putExtra(INTENT_IMAGEPATH, cacheDir.toString() + "/" + IMAGE_TARGET_FILENAME)
+            EntzerrenActivity.putExtra(INTENT_IMAGEPATH, "$cacheDir/$IMAGE_TARGET_FILENAME")
             startActivity(EntzerrenActivity)
         } else if (requestCode == NAVIGATION_REQUESTCODE && resultCode != RESULT_OK) {
             // Die Navigation hat einen Fehler zurückgegeben.
@@ -402,10 +399,9 @@ class Start : BaseActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onCameraClick(dummy: View?) {
-        val photoIntent: Intent
         // Intent erzeugen, der Standard-Android-Kamera startet
-        photoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val destFile = File(cacheDir.toString() + "/" + IMAGE_TARGET_FILENAME)
+        val photoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val destFile = File("$cacheDir/$IMAGE_TARGET_FILENAME")
         try {
             destFile.createNewFile()
         } catch (ex: IOException) {
@@ -469,7 +465,7 @@ class Start : BaseActivity() {
 
     private fun deleteMap(map: TrackDBEntry) {
         TrackDB.main.delete(map)
-        val basefile = MapEverApp.getAbsoluteFilePath(java.lang.Long.toString(map.identifier))
+        val basefile = MapEverApp.getAbsoluteFilePath(map.identifier.toString())
         File(basefile).delete()
         File(basefile + MapEverApp.THUMB_EXT).delete()
     }
@@ -487,37 +483,41 @@ class Start : BaseActivity() {
         if (mapName.isEmpty()) {
             mapName = resources.getString(R.string.navigation_const_name_of_unnamed_maps)
         }
-        if (item.title === rename) {
-            val alert = AlertDialog.Builder(this)
-            alert.setTitle(R.string.navigation_rename_map)
-            val input = EditText(this)
-            input.setText(mapName)
-            alert.setView(input)
-            alert.setPositiveButton(R.string.navigation_rename_map_rename) { _, _ ->
-                val newName = input.editableText.toString()
-                renameMap(positionIdList[info.position], newName)
-                showToast(resources.getString(R.string.start_context_rename_success))
+        when {
+            item.title === rename -> {
+                val alert = AlertDialog.Builder(this)
+                alert.setTitle(R.string.navigation_rename_map)
+                val input = EditText(this)
+                input.setText(mapName)
+                alert.setView(input)
+                alert.setPositiveButton(R.string.navigation_rename_map_rename) { _, _ ->
+                    val newName = input.editableText.toString()
+                    renameMap(positionIdList[info.position], newName)
+                    showToast(resources.getString(R.string.start_context_rename_success))
+                }
+                alert.setNegativeButton(R.string.navigation_rename_map_cancel
+                ) { dialog, _ -> dialog.cancel() }
+                val alertDialog = alert.create()
+                alertDialog.show()
             }
-            alert.setNegativeButton(R.string.navigation_rename_map_cancel
-            ) { dialog, _ -> dialog.cancel() }
-            val alertDialog = alert.create()
-            alertDialog.show()
-        } else if (item.title === delete) {
-            val alert = AlertDialog.Builder(this)
-            alert.setIcon(android.R.drawable.ic_dialog_alert)
-            alert.setTitle(R.string.start_context_delete)
-            alert.setMessage(R.string.start_context_delete_confirmation_msg)
-            alert.setPositiveButton(android.R.string.yes) { _, _ ->
-                deleteMap(positionIdList[info.position])
-                // hack since refreshMapGrid does not work
-                val intent = intent
-                finish()
-                startActivity(intent)
+            item.title === delete -> {
+                val alert = AlertDialog.Builder(this)
+                alert.setIcon(android.R.drawable.ic_dialog_alert)
+                alert.setTitle(R.string.start_context_delete)
+                alert.setMessage(R.string.start_context_delete_confirmation_msg)
+                alert.setPositiveButton(android.R.string.yes) { _, _ ->
+                    deleteMap(positionIdList[info.position])
+                    // hack since refreshMapGrid does not work
+                    val intent = intent
+                    finish()
+                    startActivity(intent)
+                }
+                alert.setNegativeButton(android.R.string.no, null)
+                alert.show()
             }
-            alert.setNegativeButton(android.R.string.no, null)
-            alert.show()
-        } else {
-            return false
+            else -> {
+                return false
+            }
         }
         return true
     }
@@ -560,13 +560,5 @@ class Start : BaseActivity() {
         var thumbnailSize = 120 * DisplayMetrics.DENSITY_DEFAULT
             private set
 
-        fun getStatusBarHeight(context: Context): Int {
-            var result = 0
-            val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                result = context.resources.getDimensionPixelSize(resourceId)
-            }
-            return result
-        }
     }
 }

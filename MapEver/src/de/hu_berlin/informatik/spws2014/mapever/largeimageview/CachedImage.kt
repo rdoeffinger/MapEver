@@ -28,10 +28,21 @@ import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.Executors
+import kotlin.math.max
+import kotlin.math.min
 
 // Der LruCache-bezogene Code wurde in Anlehnung an folgendes Tutorial erstellt:
 // http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html
-internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallback: CacheMissResolvedCallback) : LruCache<String, Bitmap>(calculateCacheSize()) {
+
+/**
+ * Initialisiert und erzeugt einen Tile-Cache als LRU-Cache.
+ *
+ * @param _inputStream Stream zur Bilddatei (nur JPEG und PNG)
+ * @param cacheCallback Callback, wenn ein Tile nach einem Cache-Miss generiert und im Cache gespeichert wurde.
+ * @throws IOException Wird geworfen, wenn BitmapRegionDecoder nicht instanziiert werden kann (falls das Bild
+ * weder JPEG noch PNG ist, oder bei einem anderen IO-Fehler)
+ */
+internal class CachedImage(_inputStream: InputStream?, private val file: String?, cacheCallback: CacheMissResolvedCallback) : LruCache<String, Bitmap>(calculateCacheSize()) {
     internal interface CacheMissResolvedCallback {
         fun onCacheMissResolved()
     }
@@ -40,8 +51,7 @@ internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallb
     // BitmapRegionDecoder (liest Bildausschnitte aus InputStreams)
     private val regionDecoder: BitmapRegionDecoder
     private val perThreadRegionDecoders: MutableList<BitmapRegionDecoder?> = ArrayList()
-    private val maxTasks = Math.max(2, Runtime.getRuntime().availableProcessors())
-    private val file = file
+    private val maxTasks = max(2, Runtime.getRuntime().availableProcessors())
 
     // Liste für Keys der Tiles, die aktuell von TileWorkerTasks generiert werden
     private val workingTileTasks: MutableList<String> = ArrayList()
@@ -54,7 +64,7 @@ internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallb
      * Größe eines Cache-Eintrags (Bitmap) in Kilobyte. Die Größe des Caches insgesamt wird also an der Menge der
      * Bitmapdaten statt an der Anzahl der Einträge gemessen.
      */
-    protected override fun sizeOf(key: String, bitmap: Bitmap): Int {
+    override fun sizeOf(key: String, bitmap: Bitmap): Int {
         // (getByteCount() (API 12) == getRowBytes() * getHeight())
         return bitmap.rowBytes * bitmap.height / 1024
     }
@@ -140,8 +150,8 @@ internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallb
         // Berechne Maße/Eckpunkte des Tiles (gesampelte Tiles sollen dennoch TILESIZE groß sein, aber der gewünschte
         // Bildausschnitt wird dadurch natürlich größer, daher *sampleSize)
         // min(), um Tile am Rand abschneiden, wenn Bildrest nicht groß genug.
-        val right = Math.min(width, left + sampleSize * TILESIZE)
-        val bottom = Math.min(height, top + sampleSize * TILESIZE)
+        val right = min(width, left + sampleSize * TILESIZE)
+        val bottom = min(height, top + sampleSize * TILESIZE)
 
         // SampleSize festlegen, um großes Bild bei geringer Zoomstufe runterzuskalieren
         val opts = BitmapFactory.Options()
@@ -154,12 +164,9 @@ internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallb
     /**
      * Asynchroner Task, der ein Tile generiert und es anschließend im Cache speichert.
      */
-    internal class TileWorkerTask(parent: CachedImage, x: Int, y: Int, sampleSize: Int) : Runnable {
+    internal class TileWorkerTask(parent: CachedImage, private val x: Int, private val y: Int, private val sampleSize: Int) : Runnable {
         private val handler = Handler()
         private val parent = WeakReference(parent)
-        private val x = x
-        private val y = y
-        private val sampleSize = sampleSize
         private val decoder: BitmapRegionDecoder
         private var isDecoderPerThread: Boolean
         override fun run() {
@@ -183,7 +190,7 @@ internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallb
             // select decoder to use
             var d: BitmapRegionDecoder? = null
             isDecoderPerThread = true
-            if (!parent.perThreadRegionDecoders.isEmpty()) {
+            if (parent.perThreadRegionDecoders.isNotEmpty()) {
                 // pick a cached one
                 d = parent.perThreadRegionDecoders.removeAt(0)
             } else if (parent.file != null) {
@@ -222,29 +229,33 @@ internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallb
             val key = getCacheKey(x, y, sampleSize)
 
             // Prüfe zunächst, ob dieser Tile bereits einen laufenden TileWorkerTask hat
-            return if (workingTileTasks.contains(key)) {
-                //Log.d("CachedImage/getTileBitmap", "Tile " + key + " is already being generated...");
+            return when {
+                workingTileTasks.contains(key) -> {
+                    //Log.d("CachedImage/getTileBitmap", "Tile " + key + " is already being generated...");
 
-                // Ja, also kein Bild zurückgeben
-                null
-            } else if (workingTileTasks.size >= maxTasks) {
-                // Generate multiple tiles to take advantage of multicore, but limit to CPU count
-                // to reduce memory usage and other possible issues (but minimum 2 for some parallelism).
-                //Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache, but we're already generating a tile... Wait...");
-                null
-            } else {
-                //Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache -> generating (async)...");
-                // Starte Task
-                val task = TileWorkerTask(this, x, y, sampleSize)
-                threadPool.execute(task)
+                    // Ja, also kein Bild zurückgeben
+                    null
+                }
+                workingTileTasks.size >= maxTasks -> {
+                    // Generate multiple tiles to take advantage of multicore, but limit to CPU count
+                    // to reduce memory usage and other possible issues (but minimum 2 for some parallelism).
+                    //Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache, but we're already generating a tile... Wait...");
+                    null
+                }
+                else -> {
+                    //Log.d("CachedImage/getTileBitmap", "Tile " + key + " not found in cache -> generating (async)...");
+                    // Starte Task
+                    val task = TileWorkerTask(this, x, y, sampleSize)
+                    threadPool.execute(task)
 
-                // Wir merken uns, dass dieses Tile jetzt generiert wird, damit bei einem nächsten Aufruf vor der
-                // Fertigstellung des Tiles nicht noch ein gleicher Task erzeugt wird.
-                workingTileTasks.add(key)
+                    // Wir merken uns, dass dieses Tile jetzt generiert wird, damit bei einem nächsten Aufruf vor der
+                    // Fertigstellung des Tiles nicht noch ein gleicher Task erzeugt wird.
+                    workingTileTasks.add(key)
 
-                // null zurückgeben um zu signalisieren, dass NOCH kein Bild vorhanden ist.
-                // TileWorkerTask veranlasst nach dem Laden ein invalidate();
-                null
+                    // null zurückgeben um zu signalisieren, dass NOCH kein Bild vorhanden ist.
+                    // TileWorkerTask veranlasst nach dem Laden ein invalidate();
+                    null
+                }
             }
         }
         return tile
@@ -294,14 +305,6 @@ internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallb
     // ////////////////////////////////////////////////////////////////////////
     // //////////// CONSTRUCTORS AND INITIALIZATION
     // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Initialisiert und erzeugt einen Tile-Cache als LRU-Cache.
-     *
-     * @param inputStream Stream zur Bilddatei (nur JPEG und PNG)
-     * @param cacheCallback Callback, wenn ein Tile nach einem Cache-Miss generiert und im Cache gespeichert wurde.
-     * @throws IOException Wird geworfen, wenn BitmapRegionDecoder nicht instanziiert werden kann (falls das Bild
-     * weder JPEG noch PNG ist, oder bei einem anderen IO-Fehler)
-     */
     init {
         // Tilecache erzeugen durch Aufruf des LruCache<String, Bitmap>-Konstruktors
         var inputStream = _inputStream
@@ -312,10 +315,7 @@ internal class CachedImage(_inputStream: InputStream?, file: String?, cacheCallb
 
         // BitmapRegionDecoder instanziieren. Wirft bei nicht unterstütztem Format (andere als JPEG und PNG)
         // eine IOException.
-        var d: BitmapRegionDecoder? = BitmapRegionDecoder.newInstance(inputStream, true)
-        if (d == null) {
-            throw IOException("BitmapRegionDecoder could not create instance for unknown reasons")
-        }
-        regionDecoder = d!!
+        regionDecoder = BitmapRegionDecoder.newInstance(inputStream, true)
+                ?: throw IOException("BitmapRegionDecoder could not create instance for unknown reasons")
     }
 }

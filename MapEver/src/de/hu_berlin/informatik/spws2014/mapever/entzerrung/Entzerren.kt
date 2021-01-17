@@ -28,7 +28,6 @@ import android.widget.Toast
 import de.hu_berlin.informatik.spws2014.mapever.BaseActivity
 import de.hu_berlin.informatik.spws2014.mapever.MapEverApp
 import de.hu_berlin.informatik.spws2014.mapever.R
-import de.hu_berlin.informatik.spws2014.mapever.Start
 import de.hu_berlin.informatik.spws2014.mapever.navigation.Navigation
 import java.io.File
 import java.io.FileNotFoundException
@@ -110,13 +109,17 @@ class Entzerren : BaseActivity() {
             }
             R.id.action_show_corners -> {
                 // Toggle showCorners
-                if (entzerrungsView!!.isShowingCorners) {
-                    entzerrungsView!!.showCorners(false)
-                } else if (entzerrungsView!!.isImageTypeSupported) {
-                    entzerrungsView!!.showCorners(true)
-                } else {
-                    // Image type is not supported by deskewing algorithm (GIF?) so don't allow deskewing
-                    showErrorMessage(R.string.deskewing_imagetype_not_supported)
+                when {
+                    entzerrungsView!!.isShowingCorners -> {
+                        entzerrungsView!!.showCorners(false)
+                    }
+                    entzerrungsView!!.isImageTypeSupported -> {
+                        entzerrungsView!!.showCorners(true)
+                    }
+                    else -> {
+                        // Image type is not supported by deskewing algorithm (GIF?) so don't allow deskewing
+                        showErrorMessage(R.string.deskewing_imagetype_not_supported)
+                    }
                 }
                 true
             }
@@ -307,11 +310,10 @@ class Entzerren : BaseActivity() {
         }
     }
 
-    private class EntzerrenTask internal constructor(parent: Entzerren, fileName: String) : AsyncTask<Void?, Void?, String?>() {
+    private class EntzerrenTask(parent: Entzerren, private val fileName: String) : AsyncTask<Void?, Void?, String?>() {
         var entzerrtesBitmap: Bitmap? = null
         private val parent = WeakReference(parent)
-        val fileName = fileName
-        protected override fun doInBackground(vararg params: Void?): String? {
+        override fun doInBackground(vararg params: Void?): String? {
             var result: String? = null
             try {
                 // TODO nach Möglichkeit ohne große Bitmaps (also streambasierte LargeImage-Version für JumbledImage)

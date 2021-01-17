@@ -32,6 +32,7 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.util.*
+import kotlin.math.max
 
 class EntzerrungsView : LargeImageView {
     // ////// PRIVATE MEMBERS
@@ -48,7 +49,7 @@ class EntzerrungsView : LargeImageView {
         private set
 
     // Eckpunkte als OverlayIcons
-    private val corners = Array(CORNERS_COUNT) { _ -> CornerIcon(this, Point(0, 0)) }
+    private val corners = Array(CORNERS_COUNT) { CornerIcon(this, Point(0, 0)) }
 
     /**
      * Returns true if corners are shown. (Image shall not be rectified if corners are hidden.)
@@ -93,7 +94,7 @@ class EntzerrungsView : LargeImageView {
         white.style = Paint.Style.FILL
     }
 
-    override fun onSaveInstanceState(): Parcelable? {
+    override fun onSaveInstanceState(): Parcelable {
         // LargeImageView gibt uns ein Bundle, in dem z.B. die Pan-Daten stecken. Verwende dieses als Basis.
         val bundle = super.onSaveInstanceState() as Bundle?
 
@@ -147,7 +148,7 @@ class EntzerrungsView : LargeImageView {
      */
     fun getSampledBitmap(_sampleSize: Int): Bitmap? {
         // Minimum SampleSize 1
-        val sampleSize = Math.max(1, _sampleSize)
+        val sampleSize = max(1, _sampleSize)
 
         if (imageFile == null) {
             Log.w("EntzerrungsView/getSampledBitmap", "imageStream == null")
@@ -173,35 +174,6 @@ class EntzerrungsView : LargeImageView {
     // TODO sinnvollere Lösung? bessere Konstanten? -> #230
 
     // SampleSize berechnen, maximales Verhältnis zwischen originaler und optimaler Auflösung
-    /**
-     * Erzeugt eine runterskalierte Version des geladenen Bildes, das sich für den Corner Detection-Algorithmus eignet.
-     */
-    private val cDScaledBitmap: Bitmap?
-        get() {
-            if (imageFile == null) {
-                Log.w("EntzerrungsView/getCDScaledBitmap", "imageStream == null")
-                return null
-            }
-
-            // Bestimmte optimale Auflösung... Vorerst: fixes Maximum für Höhe und Breite
-            // TODO sinnvollere Lösung? bessere Konstanten? -> #230
-            val scaledWidth = Math.min(imageWidth, CDALG_MAX_WIDTH)
-            val scaledHeight = Math.min(imageHeight, CDALG_MAX_HEIGHT)
-
-            // SampleSize berechnen, maximales Verhältnis zwischen originaler und optimaler Auflösung
-            val sampleSize = Math.max(imageWidth / scaledWidth, imageHeight / scaledHeight)
-            return try {
-                // Skaliertes Bitmap erzeugen
-                val result = getSampledBitmap(sampleSize)
-                if (result == null) {
-                    Log.e("EntzerrungsView/getCDScaledBitmap", "Decoding resulted in null...")
-                }
-                result
-            } catch (e: OutOfMemoryError) {
-                Log.e("EntzerrungsView/getCDScaledBitmap", "Couldn't decode stream, out of memory!")
-                null
-            }
-        }
 
     /**
      * Nach dem Laden des Bildes werden die Ecken per Corner Detection ermittelt.
@@ -234,14 +206,11 @@ class EntzerrungsView : LargeImageView {
 
             // Bildschirmkoordinaten der Punkte ermitteln
             // (Ecken sind bereits sortiert)
-            var somethingIsNull = false
             for (i in 0 until CORNERS_COUNT) {
                 val canvasPoint = corners[i].screenPosition
                 if (i == 0) wallpath.moveTo(canvasPoint.x, canvasPoint.y) else wallpath.lineTo(canvasPoint.x, canvasPoint.y)
             }
-            if (!somethingIsNull) {
-                canvas.drawPath(wallpath, white)
-            }
+            canvas.drawPath(wallpath, white)
         }
 
         // Bild per LargeImageView anzeigen
@@ -321,7 +290,7 @@ class EntzerrungsView : LargeImageView {
         val my_button = entzerren!!.findViewById<View>(R.id.entzerrung_ok_button) as ImageButton
 
         // OverlayIcons verstecken, falls keine Ecken angezeigt werden sollen
-        corners.forEach() { it.setVisibility(show) }
+        corners.forEach { it.setVisibility(show) }
 
         // Bild des Buttons abhängig von der Aktion machen (mit (Crop) oder ohne (Done) Entzerrung?)
         // und Transparenz des Bildes setzen (Visualisierung des Entzerrungsvierecks)
@@ -367,11 +336,11 @@ class EntzerrungsView : LargeImageView {
     /**
      * Gibt ein float[8] zurück mit x- und y-Koordinaten der Eckpunkte in Reihe (x1, y1, ..., x4, y4).
      *
-     * @param sampleSize Koordinaten werden angepasst (durch sampleSize dividiert), mindestens 1.
+     * @param _sampleSize Koordinaten werden angepasst (durch sampleSize dividiert), mindestens 1.
      * @return float[8] {x1, y1, x2, y2, x3, y3, x4, y4}
      */
     fun getPointOffsets(_sampleSize: Int): FloatArray {
-        val sampleSize = Math.max(1, _sampleSize)
+        val sampleSize = max(1, _sampleSize)
 
         // Array für Koordinaten erzeugen
         val my_f = FloatArray(2 * CORNERS_COUNT)
@@ -394,9 +363,5 @@ class EntzerrungsView : LargeImageView {
 
         // Count of rectangle corners
         private const val CORNERS_COUNT = 4
-
-        // Maximum size for bitmap scaled for corner detection algorithm
-        private const val CDALG_MAX_WIDTH = 300
-        private const val CDALG_MAX_HEIGHT = 300
     }
 }

@@ -47,11 +47,12 @@ import de.hu_berlin.informatik.spws2014.mapever.*
 import de.hu_berlin.informatik.spws2014.mapever.MapEverApp.Companion.getAbsoluteFilePath
 import de.hu_berlin.informatik.spws2014.mapever.MapEverApp.Companion.isDebugModeEnabled
 import de.hu_berlin.informatik.spws2014.mapever.Thumbnail.generate
-import de.hu_berlin.informatik.spws2014.mapever.navigation.Navigation
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 class Navigation : BaseActivity(), LocationListener {
     /**
@@ -461,13 +462,13 @@ class Navigation : BaseActivity(), LocationListener {
                 // Falls ID = -1, wird ein neuer Eintrag f�r eine neue Karte erstellt (ID per auto increment)
                 // pr�fen, ob Karte mit der ID existiert, sonst Fehlermeldung
                 thisMap = TrackDB.main.getMap(currentMapID)
-                currentMapID = thisMap!!.getIdentifier()
+                currentMapID = thisMap!!.identifier
             } else {
                 // ID der neuen Karte anfragen und merken
                 thisMap = TrackDB.main.createMap()
-                currentMapID = thisMap!!.getIdentifier()
-                Log.d("Navigation/initLoadMap", "Neu erstellte Karte mit ID: " + thisMap!!.getIdentifier())
-                val targetFilename = getAbsoluteFilePath(thisMap!!.getIdentifier().toString())
+                currentMapID = thisMap!!.identifier
+                Log.d("Navigation/initLoadMap", "Neu erstellte Karte mit ID: " + thisMap!!.identifier)
+                val targetFilename = getAbsoluteFilePath(thisMap!!.identifier.toString())
                 val targetFilenameThumb = targetFilename + MapEverApp.THUMB_EXT
 
                 // Bilddatei umbenennen
@@ -498,7 +499,7 @@ class Navigation : BaseActivity(), LocationListener {
             }
 
             // wenn ein sinnvoller name vorhanden ist -> diesen anzeigen, sonst default Wert
-            if (thisMap!!.getMapname().isEmpty()) setTitle(R.string.navigation_const_name_of_unnamed_maps) else title = thisMap!!.getMapname()
+            if (thisMap!!.mapname.isEmpty()) setTitle(R.string.navigation_const_name_of_unnamed_maps) else title = thisMap!!.mapname
         }
 
         // ////// BILD IN DIE MAPVIEW LADEN
@@ -554,10 +555,10 @@ class Navigation : BaseActivity(), LocationListener {
             // Erstelle alle geladenen Referenzpunkte
             for (marker in loadedMarkers) {
                 mapView!!.createLoadedReferencePoint(marker.imgpoint, marker.time)
-                minlat = Math.min(minlat, marker.realpoint.latitude)
-                minlon = Math.min(minlon, marker.realpoint.longitude)
-                maxlat = Math.max(maxlat, marker.realpoint.latitude)
-                maxlon = Math.max(maxlon, marker.realpoint.longitude)
+                minlat = min(minlat, marker.realpoint.latitude)
+                minlon = min(minlon, marker.realpoint.longitude)
+                maxlat = max(maxlat, marker.realpoint.latitude)
+                maxlon = max(maxlon, marker.realpoint.longitude)
             }
             thisMap!!.setMinMaxLatLon(minlat, minlon, maxlat, maxlon)
         }
@@ -752,7 +753,7 @@ class Navigation : BaseActivity(), LocationListener {
 
             // wenn ein neuer Name eingegeben wurde, so ist er in newMapName gespeichert
             // thisMap == null really only happens for the test map
-            if (!newMapName.isEmpty() && thisMap != null) {
+            if (newMapName.isNotEmpty() && thisMap != null) {
                 title = newMapName
                 supportActionBar!!.title = newMapName
                 thisMap!!.mapname = newMapName

@@ -21,6 +21,11 @@ import de.hu_berlin.informatik.spws2014.ImagePositionLocator.Point2D
 import de.hu_berlin.informatik.spws2014.mapever.R
 import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon
 
+/**
+ * Erstellt ein Icon für die Anzeige der Benutzerposition.
+ *
+ * @param parentMapView die MapView
+ */
 class LocationIcon(parentMapView: MapView) : OverlayIcon(parentMapView) {
     // ////////////////////////////////////////////////////////////////////////
     // //////////// OVERLAYICON PROPERTY OVERRIDES
@@ -76,11 +81,6 @@ class LocationIcon(parentMapView: MapView) : OverlayIcon(parentMapView) {
     // ////////////////////////////////////////////////////////////////////////
     // //////////// CONSTRUCTORS
     // ////////////////////////////////////////////////////////////////////////
-    /**
-     * Erstellt ein Icon für die Anzeige der Benutzerposition.
-     *
-     * @param parentMapView die MapView
-     */
     init {
         // Superkonstruktor, registriert Icon bei der LIV
 
