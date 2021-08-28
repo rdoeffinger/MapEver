@@ -450,7 +450,7 @@ class Navigation : BaseActivity(), LocationListener {
             // => Lade nichts aus der Datenbank, sondern benutze nichtpersistenten LDM. (Debugging)
             iLDMIOHandler = LDMIOEmpty()
         } else {
-            if (!TrackDB.loadDB(File(getAbsoluteFilePath("")))) {
+            if (!TrackDB.loadDB(File(getAbsoluteFilePath(applicationContext,"")))) {
                 Log.e("Nav", "Could not load DB")
                 finish()
                 return
@@ -468,7 +468,7 @@ class Navigation : BaseActivity(), LocationListener {
                 thisMap = TrackDB.main.createMap()
                 currentMapID = thisMap!!.identifier
                 Log.d("Navigation/initLoadMap", "Neu erstellte Karte mit ID: " + thisMap!!.identifier)
-                val targetFilename = getAbsoluteFilePath(thisMap!!.identifier.toString())
+                val targetFilename = getAbsoluteFilePath(applicationContext, thisMap!!.identifier.toString())
                 val targetFilenameThumb = targetFilename + MapEverApp.THUMB_EXT
 
                 // Bilddatei umbenennen
@@ -920,7 +920,7 @@ class Navigation : BaseActivity(), LocationListener {
     // //////////// LOKALISIERUNG
     // ////////////////////////////////////////////////////////////////////////
     // //////// GPS
-    override fun onLocationChanged(location: Location?) {
+    override fun onLocationChanged(location: Location) {
         if (location == null || locationDataManager == null || intentPos != null) return
 
         // Wenn wir in RUNNING sind und wir bisher keine aktuellen Koordinaten hatten, m�ssen wir den (ausgegrauten)

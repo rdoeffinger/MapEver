@@ -36,11 +36,16 @@ class MapEverApp : Application() {
     companion object {
         // Basisverzeichnis, in dem unsere Dateien zu finden sind
         private const val BASE_DIR_DIRNAME = "mapever"
-        private val BASE_DIR = Environment.getExternalStorageDirectory().absolutePath + File.separator + BASE_DIR_DIRNAME
+        private var BASE_DIR: String? = null
         const val TEMP_IMAGE_FILENAME = "temp"
         const val THUMB_EXT = "_thumb"
-        fun initializeBaseDir() {
+        fun initializeBaseDir(c: Context) {
+            if (BASE_DIR != null) return;
+            BASE_DIR = Environment.getExternalStorageDirectory().absolutePath + File.separator + BASE_DIR_DIRNAME
             val baseDir = File(BASE_DIR)
+            if (!baseDir.exists()) {
+                BASE_DIR = c.getExternalFilesDir(null)!!.absolutePath;
+            }
 
             // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
             if (!baseDir.exists()) {
@@ -67,7 +72,9 @@ class MapEverApp : Application() {
          * @return
          */
         @JvmStatic
-        fun getAbsoluteFilePath(relativeFilename: String): String {
+        fun getAbsoluteFilePath(c: Context, relativeFilename: String): String {
+            // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
+            if (BASE_DIR == null) initializeBaseDir(c)
             return BASE_DIR + File.separator + relativeFilename
         }
 
@@ -82,8 +89,5 @@ class MapEverApp : Application() {
 
     init {
         // ////// INITIALIZE APP
-
-        // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
-        initializeBaseDir()
     }
 }

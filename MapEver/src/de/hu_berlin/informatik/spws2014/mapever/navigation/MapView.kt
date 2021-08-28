@@ -249,7 +249,7 @@ class MapView : LargeImageView {
         // Bild in die View laden mittels LargeImageView-Funktionalität
         if (mapID != 0L) {
             // absoluten Pfad der Bilddatei ermitteln
-            val filename = getAbsoluteFilePath(mapID.toString())
+            val filename = getAbsoluteFilePath(context, mapID.toString())
             try {
                 // Bild der LargeImageView auf diese Datei setzen
                 setImageFilename(filename)

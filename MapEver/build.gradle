@@ -26,7 +26,7 @@ android {
         config {
         }
     }
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -57,12 +57,11 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.mapever'
-        targetSdkVersion 29
+        targetSdkVersion 30
         signingConfig signingConfigs.config
         resConfigs "de", "en", "fr", "sv"
         minSdkVersion 14
     }
     productFlavors {
     }
-    buildToolsVersion = '29.0.3'
 }

@@ -64,8 +64,8 @@ class Start : BaseActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (TrackDB.main == null &&
                 ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            MapEverApp.initializeBaseDir()
-            if (!TrackDB.loadDB(File(MapEverApp.getAbsoluteFilePath("")))) {
+            MapEverApp.initializeBaseDir(applicationContext)
+            if (!TrackDB.loadDB(File(MapEverApp.getAbsoluteFilePath(applicationContext,"")))) {
                 trackDBErrorAlert()
                 return
             }
@@ -108,7 +108,7 @@ class Start : BaseActivity() {
 
                 // get the ID of the map
                 val id_string = d.identifier.toString()
-                val thumbFile = File(MapEverApp.getAbsoluteFilePath(id_string + "_thumb"))
+                val thumbFile = File(MapEverApp.getAbsoluteFilePath(applicationContext, id_string + "_thumb"))
                 var thumbBitmap: Bitmap? = null
 
                 // try to load bitmap of thumbnail if it exists
@@ -164,7 +164,7 @@ class Start : BaseActivity() {
         val column = 3
 
         // get a list of all maps from the databse
-        if (!TrackDB.loadDB(File(MapEverApp.getAbsoluteFilePath("")))) {
+        if (!TrackDB.loadDB(File(MapEverApp.getAbsoluteFilePath(applicationContext,"")))) {
             Log.e("Start", "Could not start DB!")
             if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -465,7 +465,7 @@ class Start : BaseActivity() {
 
     private fun deleteMap(map: TrackDBEntry) {
         TrackDB.main.delete(map)
-        val basefile = MapEverApp.getAbsoluteFilePath(map.identifier.toString())
+        val basefile = MapEverApp.getAbsoluteFilePath(applicationContext, map.identifier.toString())
         File(basefile).delete()
         File(basefile + MapEverApp.THUMB_EXT).delete()
     }
