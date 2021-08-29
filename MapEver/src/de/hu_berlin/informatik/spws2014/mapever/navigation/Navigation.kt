@@ -423,7 +423,7 @@ class Navigation : BaseActivity(), LocationListener {
         }
     }
 
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo) {
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         val share = menu.add("Share this position")
         share.setOnMenuItemClickListener(MenuItem.OnMenuItemClickListener {
