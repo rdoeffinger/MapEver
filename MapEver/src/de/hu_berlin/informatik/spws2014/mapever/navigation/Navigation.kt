@@ -569,7 +569,6 @@ class Navigation : BaseActivity(), LocationListener {
 
         // Initialisiere GPS-Modul
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
-        locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200, 0.2.toFloat(), this)
         Log.d("initGPSModule", "Location provider: " + LocationManager.GPS_PROVIDER)
 
         // Wir machen nichts mit der lastKnownLocation, siehe #169
@@ -579,6 +578,7 @@ class Navigation : BaseActivity(), LocationListener {
         if (locationManager == null &&
                 ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             initGPSModule()
+            locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200, 0.2.toFloat(), this)
         }
     }
     // ////////////////////////////////////////////////////////////////////////
