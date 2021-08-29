@@ -19,9 +19,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import de.hu_berlin.informatik.spws2014.mapever.Settings.Companion.getPreference_quickHelp
+import android.content.pm.PackageInfo
+
+import android.content.pm.PackageManager
+import java.lang.Exception
+
 
 abstract class BaseActivity : AppCompatActivity() {
     // ÜberUns popup
@@ -67,7 +73,18 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun showAboutUsPopup() {
         aboutUsPopup!!.show()
-        val win = aboutUsPopup!!.window
-        win!!.setContentView(R.layout.aboutus)
+        val win = aboutUsPopup!!.window!!
+        win.setContentView(R.layout.aboutus)
+        var ver = "Mapever v???"
+        try {
+            val pm = packageManager
+            if (pm != null) {
+                val p = pm.getPackageInfo(packageName, 0)
+                ver = "MapEver v" + p.versionName + " (ID " + p.versionCode + ")"
+            }
+        } catch (ignored: Exception) {
+        }
+        val verview = win.findViewById<TextView>(R.id.aboutus_version)
+        verview.text = ver
     }
 }

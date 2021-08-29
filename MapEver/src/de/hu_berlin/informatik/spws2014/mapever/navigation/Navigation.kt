@@ -449,6 +449,7 @@ class Navigation : BaseActivity(), LocationListener {
             // Spezialfall 0: Lade Testkarte
             // => Lade nichts aus der Datenbank, sondern benutze nichtpersistenten LDM. (Debugging)
             iLDMIOHandler = LDMIOEmpty()
+            thisMap = TrackDBEntry.testMapEntry(currentMapID)
         } else {
             if (!TrackDB.loadDB(File(getAbsoluteFilePath(applicationContext,"")))) {
                 Log.e("Nav", "Could not load DB")
