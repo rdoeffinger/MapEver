@@ -27,7 +27,6 @@ import de.hu_berlin.informatik.spws2014.mapever.largeimageview.OverlayIcon
  * Erstelle Eckpunkt an bestimmter Position.
  *
  * @param parentEView die EntzerrungsView
- * @param positionArg Bildkoordinaten des Punktes
  */
 class CornerIcon(parentEView: EntzerrungsView) : OverlayIcon(parentEView) {
     // Context der Activity

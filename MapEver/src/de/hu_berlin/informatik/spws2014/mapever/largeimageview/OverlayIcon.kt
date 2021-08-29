@@ -36,8 +36,7 @@ abstract class OverlayIcon protected constructor(
      * True, wenn Icon gerade angezeigt wird (siehe [.hide] und [.show]).
      */
     // ist das Icon gerade sichtbar?
-    var isVisible = true
-        private set
+    private var isVisible = true
 
     // Transparenz: Alpha-Wert
     private var overlayAlpha = 255

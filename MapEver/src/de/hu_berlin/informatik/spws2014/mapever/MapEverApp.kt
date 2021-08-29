@@ -40,11 +40,11 @@ class MapEverApp : Application() {
         const val TEMP_IMAGE_FILENAME = "temp"
         const val THUMB_EXT = "_thumb"
         fun initializeBaseDir(c: Context) {
-            if (BASE_DIR != null) return;
+            if (BASE_DIR != null) return
             BASE_DIR = Environment.getExternalStorageDirectory().absolutePath + File.separator + BASE_DIR_DIRNAME
             val baseDir = File(BASE_DIR)
             if (!baseDir.exists()) {
-                BASE_DIR = c.getExternalFilesDir(null)!!.absolutePath;
+                BASE_DIR = c.getExternalFilesDir(null)!!.absolutePath
             }
 
             // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
@@ -85,9 +85,5 @@ class MapEverApp : Application() {
         fun isDebugModeEnabled(context: Context?): Boolean {
             return getPreference_debugMode(context)
         }
-    }
-
-    init {
-        // ////// INITIALIZE APP
     }
 }

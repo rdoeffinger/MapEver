@@ -151,13 +151,12 @@ class EntzerrungsView : LargeImageView {
         val sampleSize = max(1, _sampleSize)
 
         if (imageFile == null) {
-            Log.w("EntzerrungsView/getSampledBitmap", "imageStream == null")
+            Log.w("getSampledBitmap", "imageStream == null")
             return null
         }
 
         // Stream erzeugen
-        val imageStream: InputStream
-        imageStream = try {
+        val imageStream: InputStream = try {
             // Sollte eigentlich nie schiefgehen...
             FileInputStream(imageFile)
         } catch (e: FileNotFoundException) {
@@ -168,7 +167,7 @@ class EntzerrungsView : LargeImageView {
         // sampled bitmap dekodieren
         val options = BitmapFactory.Options()
         options.inSampleSize = sampleSize
-        Log.d("EntzerrungsView/getSampledBitmap", "Decoding stream with sample size $sampleSize...")
+        Log.d("getSampledBitmap", "Decoding stream with sample size $sampleSize...")
         return BitmapFactory.decodeStream(imageStream, null, options)
     }// Skaliertes Bitmap erzeugen// Bestimmte optimale Auflösung... Vorerst: fixes Maximum für Höhe und Breite
     // TODO sinnvollere Lösung? bessere Konstanten? -> #230
@@ -266,7 +265,7 @@ class EntzerrungsView : LargeImageView {
         // // Choose the smaller one of each
         // int breite = Math.min(bitmap_breite, view_breite);
         // int hoehe = Math.min(bitmap_hoehe, view_hoehe);
-        Log.d("EntzerrungsView/calcCornerDefaults", "breite/hoehe: $bitmap_breite, $bitmap_hoehe")
+        Log.d("calcCornerDefaults", "breite/hoehe: $bitmap_breite, $bitmap_hoehe")
 
         // Take 20% of it
         val breite_scaled = (0.2 * bitmap_breite).toInt()
@@ -277,7 +276,7 @@ class EntzerrungsView : LargeImageView {
         corners[1].position = Point(bitmap_breite - breite_scaled, hoehe_scaled)
         corners[2].position = Point(bitmap_breite - breite_scaled, bitmap_hoehe - hoehe_scaled)
         corners[3].position = Point(breite_scaled, bitmap_hoehe - hoehe_scaled)
-        Log.d("EntzerrungsView/calcCornerDefaults", "Using default, breite/hoehe_scaled: $breite_scaled, $hoehe_scaled")
+        Log.d("calcCornerDefaults", "Using default, breite/hoehe_scaled: $breite_scaled, $hoehe_scaled")
         punkte_gesetzt = true
     }
 

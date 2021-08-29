@@ -23,9 +23,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import de.hu_berlin.informatik.spws2014.mapever.Settings.Companion.getPreference_quickHelp
-import android.content.pm.PackageInfo
 
-import android.content.pm.PackageManager
 import java.lang.Exception
 
 

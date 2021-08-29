@@ -99,7 +99,7 @@ class MapView : LargeImageView {
                 }
             }
             if (toDeleteRefPointIcon == null) {
-                Log.w("MapView/onRestoreInstanceState", "Tried to restore delete candidate but didn't find it: $deleteCandidatePos")
+                Log.w("onRestoreInstanceState", "Tried to restore delete candidate but didn't find it: $deleteCandidatePos")
             }
         }
 
@@ -369,7 +369,7 @@ class MapView : LargeImageView {
         } else {
             // Referenzpunkt konnte nicht registriert werden -> ungültige/unsinnige Koordinaten?
             // Fehlermeldung anzeigen und Referenzpunkt löschen.
-            Log.w("MapView/acceptReferencePoint", "addMarker for point " + unacceptedRefPointIcon!!.position
+            Log.w("acceptReferencePoint", "addMarker for point " + unacceptedRefPointIcon!!.position
                     + " at time " + unacceptedRefPointIcon!!.timestamp + " returned false")
             Toast.makeText(context, context.getString(R.string.navigation_toast_refpoint_already_set_for_this_position), Toast.LENGTH_SHORT).show()
 

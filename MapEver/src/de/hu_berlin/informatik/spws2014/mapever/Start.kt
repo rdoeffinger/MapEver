@@ -213,7 +213,7 @@ class Start : BaseActivity() {
             return 0
         }
 
-        fun getPx(dimensionDp: Int): Int {
+        private fun getPx(dimensionDp: Int): Int {
             val density = displayMetrics.density
             return (dimensionDp * density + 0.5f).toInt()
         }
@@ -361,7 +361,7 @@ class Start : BaseActivity() {
             try {
                 // InputStream für Quelldatei erzeugen
                 assert(srcUri != null)
-                Log.d("Neue_Karte/onActivityResult", "Copying file '" + srcUri.toString() + "'")
+                Log.d("onActivityResult", "Copying file '" + srcUri.toString() + "'")
                 val inStream = this.contentResolver.openInputStream(srcUri!!)!!
 
                 // Zieldatei erstellen

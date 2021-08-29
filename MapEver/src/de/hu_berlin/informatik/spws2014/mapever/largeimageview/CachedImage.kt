@@ -105,13 +105,13 @@ internal class CachedImage(_inputStream: InputStream?, private val file: String?
      */
     private fun putTileInCache(x: Int, y: Int, sampleSize: Int, tile: Bitmap?) {
         if (tile == null) {
-            Log.e("CachedImage/putTileInCache", "tile == null, won't put into cache!")
+            Log.e("putTileInCache", "tile == null, won't put into cache!")
             return
         }
 
         // Key erzeugen
         val key = getCacheKey(x, y, sampleSize)
-        Log.d("CachedImage/putTileInCache", "Putting tile $key into cache.")
+        Log.d("putTileInCache", "Putting tile $key into cache.")
 
         // Tile im Cache speichern
         put(key, tile)
@@ -134,8 +134,8 @@ internal class CachedImage(_inputStream: InputStream?, private val file: String?
         if (get(key) != null) {
             return null
         }
-        Log.d("CachedImage/generateTileBitmap", "Generating tile $key ...")
-        Log.d("CachedImage/generateTileBitmap", "Memory max: " + Runtime.getRuntime().maxMemory() / 1024 / 1024 + " MB, total: "
+        Log.d("generateTileBitmap", "Generating tile $key ...")
+        Log.d("generateTileBitmap", "Memory max: " + Runtime.getRuntime().maxMemory() / 1024 / 1024 + " MB, total: "
                 + Runtime.getRuntime().totalMemory() / 1024 / 1024 + " MB, free: "
                 + Runtime.getRuntime().freeMemory() / 1024 / 1024 + " MB")
 
@@ -273,7 +273,7 @@ internal class CachedImage(_inputStream: InputStream?, private val file: String?
             // Get max available VM memory, exceeding this amount will throw an OutOfMemory exception.
             // Stored in kilobytes as LruCache takes an int in its constructor.
             val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
-            Log.d("CachedImage/calculateCacheSize", "Memory max: " + Runtime.getRuntime().maxMemory() / 1024 / 1024 + " MB, total: "
+            Log.d("calculateCacheSize", "Memory max: " + Runtime.getRuntime().maxMemory() / 1024 / 1024 + " MB, total: "
                     + Runtime.getRuntime().totalMemory() / 1024 / 1024 + " MB, free: "
                     + Runtime.getRuntime().freeMemory() / 1024 / 1024 + " MB")
 
@@ -283,7 +283,7 @@ internal class CachedImage(_inputStream: InputStream?, private val file: String?
             // .... Tiles sofort rausgeworfen werden... Hmmmmm.)
             // (mal 1/4 nehmen und gucken, wies damit so läuft)
             val cacheSize = maxMemory / 4
-            Log.d("CachedImage/calculateCacheSize", "Max memory: " + maxMemory / 1024 + " MB, thus creating a cache of size "
+            Log.d("calculateCacheSize", "Max memory: " + maxMemory / 1024 + " MB, thus creating a cache of size "
                     + cacheSize / 1024 + " MB")
             return cacheSize
         }

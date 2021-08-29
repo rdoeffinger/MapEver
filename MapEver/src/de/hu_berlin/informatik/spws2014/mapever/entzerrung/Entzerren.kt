@@ -38,7 +38,7 @@ import java.lang.ref.WeakReference
 class Entzerren : BaseActivity() {
     // other constants
     private var INPUTFILENAME: String? = null
-    private var INPUTFILENAMEBAK: String? = null;
+    private var INPUTFILENAMEBAK: String? = null
 
     // View references
     private var entzerrungsView: EntzerrungsView? = null
@@ -334,7 +334,7 @@ class Entzerren : BaseActivity() {
                         // Bitmap erzeugen
                         val sampledBitmap = parent.get()!!.entzerrungsView!!.getSampledBitmap(sampleSize)
                         if (sampledBitmap == null) {
-                            Log.e("EntzerrenTask/doInBackground", "Decoding bitmap with SampleSize $sampleSize resulted in null...")
+                            Log.e("Entzerren/doInBkgd", "Decoding bitmap with SampleSize $sampleSize resulted in null...")
                             sampleSize *= 2
                             continue
                         }
@@ -352,7 +352,7 @@ class Entzerren : BaseActivity() {
                     }
                 }
                 if (entzerrtesBitmap == null) {
-                    Log.e("EntzerrenTask/doInBackground", "Couldn't decode stream after $sampleSize tries!")
+                    Log.e("Entzerren/doInBkgd", "Couldn't decode stream after $sampleSize tries!")
                 } else {
                     // entzerrtes Bild abspeichern
                     parent.get()!!.saveBitmap(entzerrtesBitmap!!, fileName)
@@ -368,7 +368,7 @@ class Entzerren : BaseActivity() {
                 // passiert z.B. bei unpassendem Dateiformat (GIF?)
                 // TODO irgendwas weiter machen? Entzerrung für GIFs von vornherein deaktivieren?
                 result = parent.get()!!.resources.getString(R.string.deskewing_error_deskewfailure)
-                Log.e("EntzerrenTask/doInBackground", "NullPointerException while trying to deskew image")
+                Log.e("Entzerren/doInBkgd", "NullPointerException while trying to deskew image")
                 e.printStackTrace()
             }
             return result

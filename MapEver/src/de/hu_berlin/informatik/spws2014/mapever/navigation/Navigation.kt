@@ -60,8 +60,7 @@ class Navigation : BaseActivity(), LocationListener {
      */
     // ////// VIEWS
     // unsere Karte
-    var mapView: MapView? = null
-        private set
+    private var mapView: MapView? = null
 
     // der Button zum Setzen des Referenzpunkts
     private var setRefPointButton: ImageButton? = null
@@ -274,8 +273,8 @@ class Navigation : BaseActivity(), LocationListener {
             }
             val alertBuilder = AlertDialog.Builder(this)
             alertBuilder.setMessage(R.string.navigation_gps_activation_popup_question)
-                    .setPositiveButton(android.R.string.yes, gpsPromptListener)
-                    .setNegativeButton(android.R.string.no, gpsPromptListener)
+                    .setPositiveButton(android.R.string.ok, gpsPromptListener)
+                    .setNegativeButton(android.R.string.cancel, gpsPromptListener)
                     .show()
         }
     }
@@ -882,8 +881,6 @@ class Navigation : BaseActivity(), LocationListener {
                     return
                 }
             }
-            else -> {
-            }
         }
 
         // Das Kurztutorial soll nur angezeigt werden, wenn es
@@ -922,7 +919,7 @@ class Navigation : BaseActivity(), LocationListener {
     // ////////////////////////////////////////////////////////////////////////
     // //////// GPS
     override fun onLocationChanged(location: Location) {
-        if (location == null || locationDataManager == null || intentPos != null) return
+        if (locationDataManager == null || intentPos != null) return
 
         // Wenn wir in RUNNING sind und wir bisher keine aktuellen Koordinaten hatten, m�ssen wir den (ausgegrauten)
         // Referenzpunkt-Setzen-Button reaktivieren.
@@ -1128,7 +1125,7 @@ class Navigation : BaseActivity(), LocationListener {
      * @param position
      */
     fun unregisterReferencePoint(position: Point2D): Boolean {
-        Log.d("unregisterReferencePoint", "Position: $position")
+        Log.d("unregRefPoint", "Position: $position")
         val result = iLDMIOHandler!!.removeMarker(position)
         locationDataManager!!.refreshLastPosition()
         return result
