@@ -19,9 +19,11 @@ import android.app.Application
 import android.content.Context
 import android.os.Environment
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import de.hu_berlin.informatik.spws2014.mapever.Settings.Companion.getPreference_debugMode
 import java.io.File
 import java.io.IOException
+
 
 // WAS IST DAS?
 // "Application" sorgt für einen globalen (d.h. app-weiten) Kontext, in dem wir
@@ -39,12 +41,23 @@ class MapEverApp : Application() {
         private var BASE_DIR: String? = null
         const val TEMP_IMAGE_FILENAME = "temp"
         const val THUMB_EXT = "_thumb"
+
+        fun checkFileCreate(dir: DocumentFile): Boolean {
+            var testfile = dir.findFile("mapever_writetest")
+            testfile?.delete()
+            if (testfile?.exists() == true) return false
+            testfile = dir.createFile("", "mapever_writetest")
+            if (testfile == null) return false;
+            return testfile.exists() and testfile.delete()
+        }
+
         fun initializeBaseDir(c: Context) {
             if (BASE_DIR != null) return
             BASE_DIR = Environment.getExternalStorageDirectory().absolutePath + File.separator + BASE_DIR_DIRNAME
-            val baseDir = File(BASE_DIR)
-            if (!baseDir.exists()) {
+            var baseDir = File(BASE_DIR)
+            if (!baseDir.exists() || !checkFileCreate(DocumentFile.fromFile(baseDir))) {
                 BASE_DIR = c.getExternalFilesDir(null)!!.absolutePath
+                baseDir = File(BASE_DIR)
             }
 
             // Erstelle App-Verzeichnis, falls dieses noch nicht existiert.
