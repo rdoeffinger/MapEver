@@ -967,14 +967,16 @@ class Navigation : BaseActivity(), LocationListener {
         val random = Random()
         val mockRadius = 0.1
 
+        var mockBaseLoc = mockBaseLocation
         // mockBaseLocation ist der Punkt, der als Zentrum f�r die zuf�llige Verteilung gew�hlt wird (Startkoordinaten)
-        if (mockBaseLocation == null) {
+        if (mockBaseLoc == null) {
             // Verwende folgende Default-Koordinaten, wenn keine Startkoordinaten bekannt (das ist der Fernsehturm :) )
-            mockBaseLocation = Location("mock")
-            mockBaseLocation!!.latitude = 52.520818
-            mockBaseLocation!!.longitude = 13.409403
+            mockBaseLoc = Location("mock")
+            mockBaseLoc.latitude = 52.520818
+            mockBaseLoc.longitude = 13.409403
+            mockBaseLocation = mockBaseLoc
         }
-        val mockLoc = Location(mockBaseLocation)
+        val mockLoc = Location(mockBaseLoc)
         var dLat: Double
         var dLon: Double
         val toastText: String

@@ -95,7 +95,7 @@ class MapEverApp : Application() {
          * Gibt true zurück, falls Debug-Mode aktiviert ist.
          */
         @JvmStatic
-        fun isDebugModeEnabled(context: Context?): Boolean {
+        fun isDebugModeEnabled(context: Context): Boolean {
             return getPreference_debugMode(context)
         }
     }

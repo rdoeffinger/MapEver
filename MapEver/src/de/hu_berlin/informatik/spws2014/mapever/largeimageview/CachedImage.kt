@@ -307,11 +307,10 @@ internal class CachedImage(_inputStream: InputStream?, private val file: String?
     // ////////////////////////////////////////////////////////////////////////
     init {
         // Tilecache erzeugen durch Aufruf des LruCache<String, Bitmap>-Konstruktors
-        var inputStream = _inputStream
 
         // Prefer to use file name, as that allows additional
         // regionDecoder instances for better parallelism.
-        if (file != null) inputStream = FileInputStream(file)
+        val inputStream = if (file != null) FileInputStream(file) else _inputStream!!
 
         // BitmapRegionDecoder instanziieren. Wirft bei nicht unterstütztem Format (andere als JPEG und PNG)
         // eine IOException.

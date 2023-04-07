@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.preference:preference-ktx:1.1.1'
-    implementation "androidx.core:core-ktx:1.6.0"
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation "androidx.core:core-ktx:1.10.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
@@ -22,11 +22,12 @@ allprojects {
 }
 
 android {
+    namespace "de.hu_berlin.informatik.spws2014.mapever"
     signingConfigs {
         config {
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 33
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -57,7 +58,7 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.mapever'
-        targetSdkVersion 30
+        targetSdkVersion 33
         signingConfig signingConfigs.config
         resConfigs 'de', 'en', 'fr', 'sv'
         minSdkVersion 14

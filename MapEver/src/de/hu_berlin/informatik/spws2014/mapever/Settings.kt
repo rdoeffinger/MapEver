@@ -38,7 +38,7 @@ class Settings : AppCompatActivity() {
          * @param context Just use 'this'
          */
         @JvmStatic
-        fun getPreference_quickHelp(context: Context?): Boolean {
+        fun getPreference_quickHelp(context: Context): Boolean {
             return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_quickHelp, false)
         }
 
@@ -48,7 +48,7 @@ class Settings : AppCompatActivity() {
          * @param context Just use 'this'
          */
         @JvmStatic
-        fun getPreference_livMultitouch(context: Context?): Boolean {
+        fun getPreference_livMultitouch(context: Context): Boolean {
             return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_livMultitouch, false)
         }
 
@@ -58,7 +58,7 @@ class Settings : AppCompatActivity() {
          * @param context Just use 'this'
          */
         @JvmStatic
-        fun getPreference_debugMode(context: Context?): Boolean {
+        fun getPreference_debugMode(context: Context): Boolean {
             return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key_debugMode, false)
         }
     }
