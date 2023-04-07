@@ -24,9 +24,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import de.hu_berlin.informatik.spws2014.mapever.Settings.Companion.getPreference_quickHelp
 
-import java.lang.Exception
-
-
 abstract class BaseActivity : AppCompatActivity() {
     // ÜberUns popup
     private var aboutUsPopup: AlertDialog? = null
@@ -73,15 +70,7 @@ abstract class BaseActivity : AppCompatActivity() {
         aboutUsPopup!!.show()
         val win = aboutUsPopup!!.window!!
         win.setContentView(R.layout.aboutus)
-        var ver = "Mapever v???"
-        try {
-            val pm = packageManager
-            if (pm != null) {
-                val p = pm.getPackageInfo(packageName, 0)
-                ver = "MapEver v" + p.versionName + " (ID " + p.versionCode + ")"
-            }
-        } catch (ignored: Exception) {
-        }
+        val ver = "Mapever v" + BuildConfig.VERSION_NAME + " (ID " + BuildConfig.VERSION_CODE + ")"
         val verview = win.findViewById<TextView>(R.id.aboutus_version)
         verview.text = ver
     }
