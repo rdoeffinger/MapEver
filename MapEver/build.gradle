@@ -21,13 +21,17 @@ allprojects {
     }
 }
 
+kotlin {
+    jvmToolchain(8)
+}
+
 android {
     namespace "de.hu_berlin.informatik.spws2014.mapever"
     signingConfigs {
         config {
         }
     }
-    compileSdkVersion 33
+    compileSdkVersion 34
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -58,9 +62,9 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.mapever'
-        targetSdkVersion 33
+        targetSdkVersion 34
         signingConfig signingConfigs.config
-        resConfigs 'de', 'en', 'fr', 'sv'
+        resourceConfigurations += ['de', 'en', 'fr', 'sv']
         minSdkVersion 14
     }
     productFlavors {
