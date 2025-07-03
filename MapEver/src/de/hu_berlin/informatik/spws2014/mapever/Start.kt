@@ -328,7 +328,6 @@ class Start : BaseActivity() {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun onHelpLayoutClick(dummy: View?) {
         hideHelp()
     }
@@ -361,7 +360,7 @@ class Start : BaseActivity() {
             try {
                 // InputStream für Quelldatei erzeugen
                 assert(srcUri != null)
-                Log.d("onActivityResult", "Copying file '" + srcUri.toString() + "'")
+                Log.d("onActivityResult", "Copying file '$srcUri'")
                 val inStream = this.contentResolver.openInputStream(srcUri!!)!!
 
                 // Zieldatei erstellen
@@ -392,12 +391,10 @@ class Start : BaseActivity() {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun onNewMapClick(dummy: View?) {
         showNewMapPopup()
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun onCameraClick(dummy: View?) {
         // Intent erzeugen, der Standard-Android-Kamera startet
         val photoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -429,7 +426,6 @@ class Start : BaseActivity() {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun onFilechooserClick(dummy: View?) {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)

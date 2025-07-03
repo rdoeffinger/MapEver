@@ -1,13 +1,14 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+}
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
-    implementation "androidx.core:core-ktx:1.10.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.gridlayout:gridlayout:1.1.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+    implementation "androidx.core:core-ktx:1.16.0"
 }
 
 repositories {
@@ -16,8 +17,10 @@ repositories {
 }
 
 allprojects {
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
     }
 }
 
@@ -31,7 +34,8 @@ android {
         config {
         }
     }
-    compileSdkVersion 34
+    compileSdk = 36
+    namespace = "de.hu_berlin.informatik.spws2014.mapever"
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -39,8 +43,8 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            shrinkResources true
-            signingConfig signingConfigs.config
+            shrinkResources = true
+            signingConfig = signingConfigs.config
         }
     }
     sourceSets {
@@ -62,10 +66,13 @@ android {
     }
     defaultConfig {
         applicationId 'de.reimardoeffinger.mapever'
-        targetSdkVersion 34
-        signingConfig signingConfigs.config
+        targetSdkVersion 36
+        signingConfig = signingConfigs.config
         resourceConfigurations += ['de', 'en', 'fr', 'sv']
-        minSdkVersion 14
+        minSdkVersion 21
+    }
+    buildFeatures {
+        buildConfig = true
     }
     productFlavors {
     }

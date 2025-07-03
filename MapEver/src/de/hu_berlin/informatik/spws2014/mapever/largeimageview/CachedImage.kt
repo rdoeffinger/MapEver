@@ -314,7 +314,7 @@ internal class CachedImage(_inputStream: InputStream?, private val file: String?
 
         // BitmapRegionDecoder instanziieren. Wirft bei nicht unterstütztem Format (andere als JPEG und PNG)
         // eine IOException.
-        regionDecoder = BitmapRegionDecoder.newInstance(inputStream, true)
+        regionDecoder = BitmapRegionDecoder.newInstance(inputStream!!, true)
                 ?: throw IOException("BitmapRegionDecoder could not create instance for unknown reasons")
     }
 }

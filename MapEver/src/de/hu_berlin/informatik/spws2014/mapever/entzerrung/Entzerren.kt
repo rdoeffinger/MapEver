@@ -172,7 +172,6 @@ class Entzerren : BaseActivity() {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun onClick_EntzerrungOk(v: View?) {
         if (isLoadingActive) return
         if (isInQuickHelp) {

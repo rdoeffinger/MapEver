@@ -17,11 +17,10 @@
 package de.hu_berlin.informatik.spws2014.mapever;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 public class FileUtils {
 
@@ -36,8 +35,8 @@ public class FileUtils {
 
     public static void copyFileToFile(File srcFile, File destFile) throws IOException {
         // Streams für Quell- und für Zieldatei erzeugen
-        InputStream srcStream = new FileInputStream(srcFile);
-        OutputStream destStream = new FileOutputStream(destFile);
+        InputStream srcStream = Files.newInputStream(srcFile.toPath());
+        OutputStream destStream = Files.newOutputStream(destFile.toPath());
 
         // Kopiere Daten von InputStream zu OutputStream
         copyStreamToStream(srcStream, destStream);

@@ -525,7 +525,6 @@ open class LargeImageView : AppCompatImageView {
      *
      * @return true. Auch Overrides sollten stets true zurückgeben (sonst kommen folgende Touch-Events nicht mehr an).
      */
-    @Suppress("UNUSED_PARAMETER")
     private fun onTouchEvent_panZoom(event: MotionEvent, dragAndDropHandled: Boolean) {
         // Was für ein MotionEvent wurde detektiert?
         when (event.actionMasked) {

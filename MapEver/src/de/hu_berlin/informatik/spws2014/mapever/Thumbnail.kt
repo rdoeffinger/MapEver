@@ -49,11 +49,6 @@ object Thumbnail {
         fos.close()
     }
 
-    @Throws(IOException::class)
-    fun generate(input_filename: String, thumb_width: Int, thumb_height: Int) {
-        generate(input_filename, get_thumbnail_filename(input_filename), thumb_width, thumb_height)
-    }
-
     private fun get_best_sample_size(filename: String, _thumb_width: Int, _thumb_height: Int): Int {
         //Decode to get image width/height.
         val thumb_width = max(_thumb_width, 16)
@@ -74,11 +69,4 @@ object Thumbnail {
         return current_sample_size / 2 //last size producing a image >= the desired
     }
 
-    private fun get_thumbnail_filename(original_filename: String): String {
-        return strip_extension(original_filename) + "_thumb.png"
-    }
-
-    private fun strip_extension(filename: String): String {
-        return if (filename.lastIndexOf(".") == -1) filename else filename.substring(0, filename.lastIndexOf("."))
-    }
 }

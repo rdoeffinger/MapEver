@@ -47,7 +47,7 @@ class MapEverApp : Application() {
             testfile?.delete()
             if (testfile?.exists() == true) return false
             testfile = dir.createFile("", "mapever_writetest")
-            if (testfile == null) return false;
+            if (testfile == null) return false
             return testfile.exists() and testfile.delete()
         }
 

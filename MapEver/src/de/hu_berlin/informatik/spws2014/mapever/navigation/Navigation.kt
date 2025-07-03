@@ -203,7 +203,7 @@ class Navigation : BaseActivity(), LocationListener {
             isPositionTracked = savedInstanceState.getBoolean(SAVEDTRACKPOSITION)
 
             // Wiederherstellung des Zustands
-            val restoredState = NavigationStates.values()[savedInstanceState.getInt(SAVEDSTATE)]
+            val restoredState = NavigationStates.entries[savedInstanceState.getInt(SAVEDSTATE)]
             if (restoredState.isHelpState) {
                 // Sonderbehandlung beim Drehen im Bildschirm der Schnellhilfe
                 // XXX besser machen
@@ -394,10 +394,6 @@ class Navigation : BaseActivity(), LocationListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
-            R.id.home -> {
-                returnToStart()
-                true
-            }
             R.id.action_rename_map -> {
                 changeState(NavigationStates.RENAME_MAP)
                 true
@@ -534,8 +530,7 @@ class Navigation : BaseActivity(), LocationListener {
 
         // LocationDataManager initialisieren
         val imageSize = Point2D(mapView!!.imageWidth, mapView!!.imageHeight)
-        val locator: ImagePositionLocator
-        locator = LeastSquaresImagePositionLocator()
+        val locator = LeastSquaresImagePositionLocator()
         locationDataManager = LocationDataManager(locDatManListener, iLDMIOHandler,
                 imageSize,
                 locator)
@@ -635,7 +630,6 @@ class Navigation : BaseActivity(), LocationListener {
      *
      * @param view
      */
-    @Suppress("UNUSED_PARAMETER")
     fun setRefPoint(view: View?) {
         if (state != NavigationStates.RUNNING) {
             Log.w("setRefPoint", "Inkonsistenter Zustand: state != RUNNING")
@@ -661,7 +655,6 @@ class Navigation : BaseActivity(), LocationListener {
      *
      * @param view
      */
-    @Suppress("UNUSED_PARAMETER")
     fun acceptReferencePoint(view: View?) {
         mapView!!.acceptReferencePoint()
 
@@ -683,7 +676,6 @@ class Navigation : BaseActivity(), LocationListener {
         changeState(NavigationStates.RUNNING)
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun cancelReferencePoint(v: View?) {
         cancelReferencePoint()
     }
@@ -693,7 +685,6 @@ class Navigation : BaseActivity(), LocationListener {
      *
      * @param view
      */
-    @Suppress("UNUSED_PARAMETER")
     fun deleteReferencePoint(view: View?) {
         mapView!!.deleteReferencePoint()
 
@@ -706,7 +697,6 @@ class Navigation : BaseActivity(), LocationListener {
      *
      * @param view
      */
-    @Suppress("UNUSED_PARAMETER")
     fun refPointDeleteBack(view: View?) {
         mapView!!.dontDeleteReferencePoint()
 
