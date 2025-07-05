@@ -19,7 +19,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -29,13 +28,15 @@ import de.hu_berlin.informatik.spws2014.mapever.BaseActivity
 import de.hu_berlin.informatik.spws2014.mapever.MapEverApp
 import de.hu_berlin.informatik.spws2014.mapever.R
 import de.hu_berlin.informatik.spws2014.mapever.navigation.Navigation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.ref.WeakReference
 
-class Entzerren : BaseActivity() {
+class Entzerren : BaseActivity(), CoroutineScope by MainScope() {
     // other constants
     private var INPUTFILENAME: String? = null
     private var INPUTFILENAMEBAK: String? = null
@@ -185,8 +186,77 @@ class Entzerren : BaseActivity() {
             lockScreenOrientation()
             startLoadingScreen()
 
-            // Entzerrung in AsyncTask starten
-            EntzerrenTask(this, INPUTFILENAME!!).execute()
+            async {
+                var entzerrtesBitmap: Bitmap? = null
+                var result: String? = null
+                try {
+                    // TODO nach Möglichkeit ohne große Bitmaps (also streambasierte LargeImage-Version für JumbledImage)
+                    // .... (auch saveBitmap ersetzen)
+                    var sampleSize = 1
+
+                    // Beginne mit SampleSize 1 und skalier das Bild soweit runter, bis es nicht an einem OOM scheitert.
+                    // TODO bessere Methode um initiale SampleSize zu bestimmen, um Zeit zu sparen?
+                    // .... (eig. hinfällig mit optimiertem Algorithmus)
+                    while (sampleSize <= 32) {
+                        try {
+                            // Punktkoordinaten als float[8] abrufen
+                            val coordinates = entzerrungsView!!.getPointOffsets(sampleSize)
+
+                            // Bitmap erzeugen
+                            val sampledBitmap = entzerrungsView!!.getSampledBitmap(sampleSize)
+                            if (sampledBitmap == null) {
+                                Log.e("Entzerren/doInBkgd", "Decoding bitmap with SampleSize $sampleSize resulted in null...")
+                                sampleSize *= 2
+                                continue
+                            }
+
+                            // Bitmap entzerren
+                            entzerrtesBitmap = JumbledImage.transform(sampledBitmap, coordinates)
+                            break
+                        } catch (e: OutOfMemoryError) {
+                            // Noch mal mit doppelter SampleSize (halbiere bisherige Bildgröße) versuchen
+                            sampleSize *= 2
+                            if (sampleSize > 32) {
+                                // Exception weiterreichen
+                                throw e
+                            }
+                        }
+                    }
+                    if (entzerrtesBitmap == null) {
+                        Log.e("Entzerren/doInBkgd", "Couldn't decode stream after $sampleSize tries!")
+                    } else {
+                        // entzerrtes Bild abspeichern
+                        saveBitmap(entzerrtesBitmap!!, INPUTFILENAME!!)
+                    }
+                } catch (e: OutOfMemoryError) {
+                    result = resources.getString(R.string.error_outofmemory)
+                    e.printStackTrace()
+                } catch (e: ArrayIndexOutOfBoundsException) {
+                    result = resources.getString(R.string.deskewing_error_invalidcorners)
+                } catch (e: IllegalArgumentException) {
+                    result = resources.getString(R.string.deskewing_error_invalidcorners)
+                } catch (e: NullPointerException) {
+                    // passiert z.B. bei unpassendem Dateiformat (GIF?)
+                    // TODO irgendwas weiter machen? Entzerrung für GIFs von vornherein deaktivieren?
+                    result = resources.getString(R.string.deskewing_error_deskewfailure)
+                    Log.e("Entzerren/doInBkgd", "NullPointerException while trying to deskew image")
+                    e.printStackTrace()
+                }
+
+                // execution of result of long time consuming operation
+                if (result != null) {
+                    showErrorMessage(result)
+                } else {
+                    // entzerrtes Bild in die View laden
+                    loadImageFile()
+                    entzerrungsView!!.showCorners(false)
+                    entzerrungsView!!.calcCornerDefaults()
+                    entzerrt = true
+                }
+                endLoadingScreen()
+                unlockScreenOrientation()
+                entzerrungsView!!.update()
+            }
         } else {
             // temp_bak löschen
             val imageFile_bak = File(INPUTFILENAMEBAK!!)
@@ -309,84 +379,6 @@ class Entzerren : BaseActivity() {
         } catch (e: IOException) {
             showErrorMessage(R.string.error_io)
             e.printStackTrace()
-        }
-    }
-
-    private class EntzerrenTask(parent: Entzerren, private val fileName: String) : AsyncTask<Void?, Void?, String?>() {
-        var entzerrtesBitmap: Bitmap? = null
-        private val parent = WeakReference(parent)
-        override fun doInBackground(vararg params: Void?): String? {
-            var result: String? = null
-            try {
-                // TODO nach Möglichkeit ohne große Bitmaps (also streambasierte LargeImage-Version für JumbledImage)
-                // .... (auch saveBitmap ersetzen)
-                var sampleSize = 1
-
-                // Beginne mit SampleSize 1 und skalier das Bild soweit runter, bis es nicht an einem OOM scheitert.
-                // TODO bessere Methode um initiale SampleSize zu bestimmen, um Zeit zu sparen?
-                // .... (eig. hinfällig mit optimiertem Algorithmus)
-                while (sampleSize <= 32) {
-                    try {
-                        // Punktkoordinaten als float[8] abrufen
-                        val coordinates = parent.get()!!.entzerrungsView!!.getPointOffsets(sampleSize)
-
-                        // Bitmap erzeugen
-                        val sampledBitmap = parent.get()!!.entzerrungsView!!.getSampledBitmap(sampleSize)
-                        if (sampledBitmap == null) {
-                            Log.e("Entzerren/doInBkgd", "Decoding bitmap with SampleSize $sampleSize resulted in null...")
-                            sampleSize *= 2
-                            continue
-                        }
-
-                        // Bitmap entzerren
-                        entzerrtesBitmap = JumbledImage.transform(sampledBitmap, coordinates)
-                        break
-                    } catch (e: OutOfMemoryError) {
-                        // Noch mal mit doppelter SampleSize (halbiere bisherige Bildgröße) versuchen
-                        sampleSize *= 2
-                        if (sampleSize > 32) {
-                            // Exception weiterreichen
-                            throw e
-                        }
-                    }
-                }
-                if (entzerrtesBitmap == null) {
-                    Log.e("Entzerren/doInBkgd", "Couldn't decode stream after $sampleSize tries!")
-                } else {
-                    // entzerrtes Bild abspeichern
-                    parent.get()!!.saveBitmap(entzerrtesBitmap!!, fileName)
-                }
-            } catch (e: OutOfMemoryError) {
-                result = parent.get()!!.resources.getString(R.string.error_outofmemory)
-                e.printStackTrace()
-            } catch (e: ArrayIndexOutOfBoundsException) {
-                result = parent.get()!!.resources.getString(R.string.deskewing_error_invalidcorners)
-            } catch (e: IllegalArgumentException) {
-                result = parent.get()!!.resources.getString(R.string.deskewing_error_invalidcorners)
-            } catch (e: NullPointerException) {
-                // passiert z.B. bei unpassendem Dateiformat (GIF?)
-                // TODO irgendwas weiter machen? Entzerrung für GIFs von vornherein deaktivieren?
-                result = parent.get()!!.resources.getString(R.string.deskewing_error_deskewfailure)
-                Log.e("Entzerren/doInBkgd", "NullPointerException while trying to deskew image")
-                e.printStackTrace()
-            }
-            return result
-        }
-
-        override fun onPostExecute(result: String?) {
-            // execution of result of long time consuming operation
-            if (result != null) {
-                parent.get()?.showErrorMessage(result)
-            } else {
-                // entzerrtes Bild in die View laden
-                parent.get()?.loadImageFile()
-                parent.get()?.entzerrungsView!!.showCorners(false)
-                parent.get()?.entzerrungsView!!.calcCornerDefaults()
-                parent.get()?.entzerrt = true
-            }
-            parent.get()?.endLoadingScreen()
-            parent.get()?.unlockScreenOrientation()
-            parent.get()?.entzerrungsView!!.update()
         }
     }
 
